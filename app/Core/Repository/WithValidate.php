@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Core\Repository;
 
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use \Illuminate\Contracts\Validation\Validator as ValidatorContract;
 
 trait WithValidate
 {

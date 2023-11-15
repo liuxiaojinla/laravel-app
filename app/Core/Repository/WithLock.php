@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Core\Repository;
 
 use App\Contracts\Base\Repository\Repository as RepositoryContract;
 use App\Core\Lock\Lock;

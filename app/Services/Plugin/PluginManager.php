@@ -2,8 +2,8 @@
 
 namespace App\Services\Plugin;
 
-use App\Services\WithConfig;
-use App\Services\WithContainer;
+use App\Core\WithConfig;
+use App\Core\WithContainer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;

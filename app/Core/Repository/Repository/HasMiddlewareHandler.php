@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Repository;
+namespace App\Core\Repository\Repository;
 
 trait HasMiddlewareHandler
 {

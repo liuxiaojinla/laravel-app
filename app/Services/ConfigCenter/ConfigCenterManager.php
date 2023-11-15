@@ -4,7 +4,7 @@ namespace App\Services\ConfigCenter;
 
 use App\Contracts\Config\Factory;
 use App\Contracts\Config\Repository;
-use App\Services\Manager;
+use App\Core\Service\Manager;
 
 /**
  * @mixin Repository

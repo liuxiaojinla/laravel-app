@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Core\Service;
 
+use App\Core\WithConfig;
+use App\Core\WithContainer;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 
@@ -152,7 +154,7 @@ abstract class Manager
      *
      * @throws \BadMethodCallException
      */
-    public function __call($method, array $parameters)
+    public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

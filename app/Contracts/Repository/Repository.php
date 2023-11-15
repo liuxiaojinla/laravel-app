@@ -77,22 +77,12 @@ interface Repository
 
     /**
      * 获取分页列表
-     * @param mixed $search
+     * @param mixed|null $search
      * @param array $with
      * @param array|QueryOptions $queryOptions
      * @return LengthAwarePaginatorContract|LengthAwarePaginator
      */
-    public function paginate($search = null, $with = [], $queryOptions = null);
-
-    /**
-     * 新增
-     * @param array $data
-     * @return mixed
-     * @throws ValidationException
-     * @deprecated
-     * @see Repository::store()
-     */
-    public function add($data);
+    public function paginate(mixed $search = null, $with = [], $queryOptions = null);
 
     /**
      * 新增

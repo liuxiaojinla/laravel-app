@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Repository;
+namespace App\Core\Repository\Repository;
 
 use App\Contracts\Repository\Factory;
 use Illuminate\Support\Arr;

@@ -37,7 +37,7 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
+                        <x-dropdown-link :href="route('profile.index')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
@@ -73,6 +73,9 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('chirps.index')" :active="request()->routeIs('chirps.index')">
+                {{ __('Chirps') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -83,7 +86,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
+                <x-responsive-nav-link :href="route('profile.index')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Core\Repository;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;

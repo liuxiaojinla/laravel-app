@@ -26,14 +26,14 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->routes(function () {
-//            // 加载全局路由文件
-//            Route::middleware('web')
-//                ->namespace($this->namespace)
-//                ->group(base_path('routes/web.php'));
+            // 加载全局路由文件
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));
             // 加载模块路由文件
             /** @var ModuleManager $moduleManager */
-            $moduleManager = $this->app['module'];
-            $moduleManager->run($this->app['request']);
+//            $moduleManager = $this->app['module'];
+//            $moduleManager->run($this->app['request']);
         });
     }
 }

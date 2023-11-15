@@ -2,8 +2,8 @@
 
 namespace App\Services\Module;
 
+use App\Core\Service\Service;
 use App\Http\Kernel;
-use App\Services\Service;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Http\Request;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Repository;
+namespace App\Core\Repository\Repository;
 
 use App\Contracts\Repository\Repository as RepositoryContract;
 use App\Services\Middleware\MiddlewareManager;
@@ -61,13 +61,13 @@ class Repository implements RepositoryContract
      * @inerhitDoc
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($search = [], $with = [], $paginate = 1, array $options = [])
+    public function paginate(mixed $search = [], $with = [], $queryOptions = 1)
     {
         $options['search'] = $search;
-        $options['paginate'] = is_array($paginate)
-            ? $paginate
+        $options['paginate'] = is_array($queryOptions)
+            ? $queryOptions
             : [
-                'page' => $paginate,
+                'page' => $queryOptions,
             ];
 
         return $this->filter(null, $with, $options);

@@ -11,4 +11,6 @@
             <x-primary-button class="mt-4">{{ __('Chirp') }}</x-primary-button>
         </form>
     </div>
+
+
 </x-app-layout>

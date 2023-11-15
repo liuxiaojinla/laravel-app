@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Examples;
 
+use App\Core\Repository\AbstractRepository;
 use App\Models\Base\Company;
-use App\Repositories\AbstractRepository;
 use Illuminate\Validation\Validator;
 
 class ExampleRepository extends AbstractRepository

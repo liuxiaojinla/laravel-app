@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Core\Service;
 
+use App\Core\WithConfig;
+use App\Core\WithContainer;
 use Illuminate\Support\Traits\Macroable;
 
 abstract class Service

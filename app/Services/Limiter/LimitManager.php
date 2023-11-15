@@ -2,7 +2,7 @@
 
 namespace App\Services\Limiter;
 
-use App\Services\WithConfig;
+use App\Core\WithConfig;
 use League\Pipeline\Pipeline;
 use League\Pipeline\ProcessorInterface;
 use League\Pipeline\StageInterface;

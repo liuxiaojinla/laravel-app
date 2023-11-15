@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Core\Repository;
 
-use App\Contracts\Base\Repository\Repository as RepositoryContract;
-use App\Contracts\Base\UseCompanyId as UseCompanyIdContract;
+use App\Contracts\Repository\Repository as RepositoryContract;
+use App\Contracts\Saas\UseSaasAccountId as UseSaasAccountIdContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,9 +11,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-abstract class AbstractRepository implements RepositoryContract, UseCompanyIdContract
+abstract class AbstractRepository implements RepositoryContract, UseSaasAccountIdContract
 {
-    use WithUseCompanyId, WithLock, WithValidate;
+    use WithUseSaasAccountId, WithLock, WithValidate;
 
     /**
      * @var array

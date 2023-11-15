@@ -3,9 +3,9 @@
 namespace App\Repositories\Examples;
 
 use App\Contracts\Base\Repository\Repository;
+use App\Core\Repository\QueryOptions;
 use App\Http\Controllers\Controller;
 use App\Libs\Http\DgHttp;
-use App\Repositories\QueryOptions;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
