@@ -3,5 +3,7 @@
         更新密码
     </x-slot>
 
-    @include('profile.partials.update-password-form')
+    <div class="max-w-xl">
+        @include('profile.partials.update-password-form')
+    </div>
 </x-profile-layout>

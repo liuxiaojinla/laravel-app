@@ -1,28 +1,41 @@
 <?php
 return [
     'defaults' => [
-        'module' => 'api',
+        'module' => 'web',
     ],
 
     // 模块列表
     'modules' => [
         'api' => [
-            'middleware' => 'api',
+            'route' => [
+                'middleware' => 'api',
+            ],
             'exceptionShouldReturnJson' => true,
         ],
         'web' => [
             'path' => app_path('Http'),
-            'prefix' => '',
+            'route' => [
+                'prefix' => '',
+                'middleware' => 'web',
+            ],
             'route_path' => base_path('routes/web.php'),
-            'middleware' => 'web',
+            'view' => [
+                'paths' => [
+                    resource_path('views'),
+                ],
+            ],
             'exceptionShouldReturnJson' => true,
         ],
         'admin' => [
-            'middleware' => 'admin',
+            'route' => [
+                'middleware' => 'admin',
+            ],
             'exceptionShouldReturnJson' => true,
         ],
         'notify' => [
+            'route' => [
 //            'middleware' => 'notify',
+            ],
             'exceptionShouldReturnJson' => true,
         ],
     ],

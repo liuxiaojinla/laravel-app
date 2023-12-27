@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Services\Module;
+namespace App\Core\Module;
 
-use App\Core\Service\Service;
+use App\Core\WithConfig;
+use App\Core\WithContainer;
 use App\Http\Kernel;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Psr\Container\ContainerExceptionInterface;
@@ -15,8 +17,15 @@ use Psr\Container\NotFoundExceptionInterface;
 /**
  * @property-read Application $container
  */
-class ModuleManager extends Service
+class ModuleManager
 {
+    use ModuleBootstrapTrait, WithConfig, WithContainer;
+
+    /**
+     * @var array
+     */
+    protected $config = [];
+
     /**
      * @var string|null
      */
@@ -28,14 +37,84 @@ class ModuleManager extends Service
     protected ?string $path = null;
 
     /**
-     * @var null
-     */
-    protected $moduleBootstarp = null;
-
-    /**
      * @var array
      */
     protected array $needMergeMiddlewareGroups = [];
+
+    /**
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = array_merge_recursive($this->config, $config);
+        $this->initialize();
+    }
+
+    /**
+     * 初始化模块信息
+     * @return void
+     */
+    protected function initialize()
+    {
+        // 路由组信息
+        $this->needMergeMiddlewareGroups = [];
+
+        // 加载路由文件
+        $modulesConfig = $this->getModulesConfig();
+        foreach ($modulesConfig as $moduleName => &$moduleConfig) {
+            $moduleConfig['path'] = $moduleConfig['path'] ?? app_path(Str::studly($moduleName));
+            $moduleConfig['route'] = $this->optimizeRouteConfig($moduleConfig['route'] ?? [], $moduleName);
+            $moduleConfig['view'] = $this->optimizeViewConfig($moduleConfig['view'] ?? [], $moduleConfig);
+
+            // 检测中间件配置文件是否存在
+            $middlewareFile = $moduleConfig['middleware_file'] ?? $moduleConfig['path'] . DIRECTORY_SEPARATOR . "middleware.php";
+            if (file_exists($middlewareFile)) {
+                $moduleConfig['middleware_file'] = $middlewareFile;
+                $middlewareConfig = require_once $middlewareFile;
+                $this->needMergeMiddlewareGroups[$moduleName] = $middlewareConfig;
+            }
+
+            // 拼接路由配置文件
+            $moduleConfig['route_path'] = $moduleConfig['route_path'] ?? $moduleConfig['path']
+            . DIRECTORY_SEPARATOR . 'routes'
+            . DIRECTORY_SEPARATOR . 'index.php';
+        }
+        unset($moduleConfig);
+
+        $this->config['modules'] = $modulesConfig;
+    }
+
+    /**
+     * 优化路由配置信息
+     * @param array $routeConfig
+     * @param string $moduleName
+     * @return array
+     */
+    protected function optimizeRouteConfig(array $routeConfig, $moduleName)
+    {
+        $routeConfig['prefix'] = $routeConfig['prefix'] ?? $moduleName;
+        return $routeConfig;
+    }
+
+    /**
+     * 优化视图配置
+     * @param array $viewConfig
+     * @param array $moduleConfig
+     * @return array
+     */
+    protected function optimizeViewConfig(array $viewConfig, array $moduleConfig)
+    {
+        $viewConfig = array_replace_recursive([
+            'paths' => [
+                implode(DIRECTORY_SEPARATOR, [
+                    $moduleConfig['path'], "resources", 'views',
+                ]),
+
+            ],
+        ], $viewConfig);
+
+        return $viewConfig;
+    }
 
     /**
      * 解析模块
@@ -83,8 +162,8 @@ class ModuleManager extends Service
         // 模块注册
         $this->moduleOnRegister();
 
-        // 加载模块路由信息
-        $this->loadModuleRoutes();
+        // 注册视图
+        $this->registerViews();
 
         // 更新内核中间件配置信息
         $this->updateModuleMiddlewares();
@@ -117,36 +196,14 @@ class ModuleManager extends Service
     }
 
     /**
-     * 加载路由模块信息
      * @return void
      */
-    protected function loadModuleRoutes()
+    protected function registerViews()
     {
-        // 路由组信息
-        $this->needMergeMiddlewareGroups = [];
-
-        // 加载路由文件
-        $modulesConfig = $this->getModulesConfig();
-        foreach ($modulesConfig as $moduleName => &$moduleConfig) {
-            $moduleConfig['prefix'] = $moduleConfig['prefix'] ?? $moduleName;
-            $moduleConfig['path'] = $moduleConfig['path'] ?? app_path(Str::studly($moduleName));
-
-            // 检测中间件配置文件是否存在
-            $middlewareFile = $moduleConfig['path'] . DIRECTORY_SEPARATOR . "middleware.php";
-            if (file_exists($middlewareFile)) {
-                $moduleConfig['middleware_file'] = $middlewareFile;
-                $middlewareConfig = require_once $middlewareFile;
-                $this->needMergeMiddlewareGroups[$moduleName] = $middlewareConfig;
-            }
-
-            // 拼接路由配置文件
-            $moduleConfig['route_path'] = $moduleConfig['route_path'] ?? $moduleConfig['path']
-            . DIRECTORY_SEPARATOR . 'routes'
-            . DIRECTORY_SEPARATOR . 'index.php';
-        }
-        unset($moduleConfig);
-
-        $this->config['modules'] = $modulesConfig;
+        $moduleConfig = $this->getModuleConfig($this->getModule());
+        Config::set('view', array_replace_recursive(
+            Config::get('view'), $moduleConfig['view']
+        ));
     }
 
     /**
@@ -179,53 +236,8 @@ class ModuleManager extends Service
             if (!file_exists($moduleConfig['route_path'])) {
                 throw new \RuntimeException("路由配置文件不存在[{$moduleConfig['route_path']}]");
             }
-            Route::group($moduleConfig, $moduleConfig['route_path']);
+            Route::group($moduleConfig['route'], $moduleConfig['route_path']);
         }
-    }
-
-    /**
-     * 模块注册事件
-     * @return void
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    protected function moduleOnRegister()
-    {
-        $instance = $this->moduleBootstrapInstance();
-        if ($instance && method_exists($instance, 'register')) {
-            $this->container->call([$instance, 'register',]);
-        }
-    }
-
-    /**
-     * 模块启动事件
-     * @return void
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    protected function moduleOnBoot()
-    {
-        $instance = $this->moduleBootstrapInstance();
-        if ($instance && method_exists($instance, 'boot')) {
-            $this->container->call([$instance, 'boot',]);
-        }
-    }
-
-    /**
-     * 模块启动实例
-     * @return mixed|null
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    protected function moduleBootstrapInstance()
-    {
-        $moduleBootstrapClass = "\\App\\" . Str::studly($this->getModule()) . "\\ModuleBootstrap";
-        if ($this->moduleBootstarp && is_a($this->moduleBootstarp, $moduleBootstrapClass)) {
-            return $this->moduleBootstarp;
-        }
-
-        if (!class_exists($moduleBootstrapClass)) {
-            return null;
-        }
-
-        return $this->moduleBootstarp = $this->container->make($moduleBootstrapClass);
     }
 
 

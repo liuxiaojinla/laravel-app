@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Core\Module\ModuleManager;
 use App\Core\RequestContext;
 use App\Exceptions\ValidationException;
-use App\Services\Module\ModuleManager;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;

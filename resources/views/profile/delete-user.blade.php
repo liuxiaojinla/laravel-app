@@ -3,5 +3,7 @@
         删除用户
     </x-slot>
 
-    @include('profile.partials.delete-user-form')
+    <div class="max-w-xl">
+        @include('profile.partials.delete-user-form')
+    </div>
 </x-profile-layout>

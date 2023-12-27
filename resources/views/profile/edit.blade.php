@@ -3,5 +3,7 @@
         {{ __('Profile') }}
     </x-slot>
 
-    @include('profile.partials.update-profile-information-form')
+    <div class="max-w-xl">
+        @include('profile.partials.update-profile-information-form')
+    </div>
 </x-profile-layout>

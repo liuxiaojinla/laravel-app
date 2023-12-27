@@ -2,11 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\Module\ModuleManager;
-use Illuminate\Cache\RateLimiting\Limit;
+use App\Core\Module\ModuleManager;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider

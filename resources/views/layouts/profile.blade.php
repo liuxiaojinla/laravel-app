@@ -51,11 +51,11 @@ $menus = [
             <div class="pr-1.5">
                 {{--                    dark:bg-gray-900 dark:border-gray-700--}}
                 <aside
-                    class="flex flex-col w-64 px-5 py-8 bg-white shadow sm:rounded-lg overflow-y-auto border-r rtl:border-r-0 rtl:border-l">
+                    class="hidden md:flex flex-col w-64 px-5 py-6 bg-white shadow-sm sm:rounded-lg overflow-y-auto border-r rtl:border-r-0 rtl:border-l">
                     {{--                    <a href="#">--}}
                     {{--                        <img class="w-auto h-7" src="https://merakiui.com/images/logo.svg" alt="">--}}
                     {{--                    </a>--}}
-                    <div class="h-7 text-center">
+                    <div class="h-7">
                         <h3 class="font-semibold text-xl text-gray-800 leading-tight">{{$asideTitle??''}}</h3>
                     </div>
 
@@ -65,7 +65,7 @@ $menus = [
                                 <div class="space-y-3 ">
                                     <label class="px-3 text-xs text-gray-500 uppercase">{{$group['title']}}</label>
                                     @foreach($group['items'] as $menu)
-                                        <a class="flex items-center px-3 py-3 transition-colors duration-300 transform rounded-lg {{request()->is(ltrim($menu['url'],'/'))?'text-white bg-indigo-600':'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}}"
+                                        <a class="flex items-center px-3 py-3 transition-colors duration-300 transform rounded-lg {{request()->is(ltrim($menu['url'],'/'))?'text-white bg-indigo-600':'text-gray-600 hover:bg-gray-100 active:bg-gray-100 hover:text-gray-900'}}"
                                            href="{{$menu['url']}}">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                  stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -83,10 +83,8 @@ $menus = [
                 </aside>
             </div>
             <div class="flex-auto pl-1.5">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="max-w-xl">
-                        {{ $slot }}
-                    </div>
+                <div class="p-4 sm:p-8 bg-white shadow-sm sm:rounded-lg">
+                    {{ $slot }}
                 </div>
             </div>
         </div>
