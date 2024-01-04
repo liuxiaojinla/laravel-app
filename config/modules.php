@@ -25,7 +25,7 @@ return [
     */
     'stubs' => [
         'enabled' => false,
-        'path' => base_path('vendor/nwidart/laravel-modules/src/Commands/stubs'),
+        'path' => base_path('stubs/nwidart-stubs'),
         'files' => [
             'routes/web' => 'routes/web.php',
             'routes/api' => 'routes/api.php',
@@ -113,6 +113,7 @@ return [
             'observer' => ['path' => 'app/Observers', 'generate' => false],
             'routes' => ['path' => 'routes', 'generate' => true],
             'controller' => ['path' => 'app/Http/Controllers', 'generate' => true],
+            'controller-api' => ['path' => 'app/Http/Controllers/Api', 'generate' => true],
             'filter' => ['path' => 'app/Http/Middleware', 'generate' => true],
             'request' => ['path' => 'app/Http/Requests', 'generate' => true],
             'provider' => ['path' => 'app/Providers', 'generate' => true],

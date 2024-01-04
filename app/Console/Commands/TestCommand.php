@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\TestJob;
 use Illuminate\Console\Command;
 
 class TestCommand extends Command
@@ -28,14 +29,10 @@ class TestCommand extends Command
      */
     public function handle()
     {
-//        $task = LiveCaptureTask::query()->where('id', 1)->first();
-//        StartLiveCaptureJob::dispatch($task);
+        $this->output->info("test command.");
 
-
-        $i = 0;
-        while ($i < 100) {
-            sleep(1);
-            $i++;
+        for ($i = 0; $i < 10; $i++) {
+            TestJob::dispatch()->delay($i);
         }
 
         return 0;

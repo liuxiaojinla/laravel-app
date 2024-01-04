@@ -72,7 +72,7 @@ class Handler extends ExceptionHandler
      * Convert an authentication exception into a response.
      *
      * @param Request $request
-     * @param \Illuminate\Auth\AuthenticationException $exception
+     * @param AuthenticationException $exception
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)
