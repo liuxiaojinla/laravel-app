@@ -112,16 +112,10 @@ class Handler extends ExceptionHandler
      */
     protected function shouldReturnJson($request, Throwable $e): bool
     {
-        $modulesConfig = config('module.modules');
-        $patterns = Arr::map($modulesConfig, function ($config, $key) {
-            if (!($config['exceptionShouldReturnJson'] ?? true)) {
-                return null;
-            }
-            $prefix = $config['prefix'] ?? $key;
-            return $prefix . "/*";
-        });
-        $patterns = array_filter($patterns);
-        return $request->expectsJson() || $request->is(...$patterns);
+        return $request->expectsJson() || $request->is([
+                'api/*',
+                'notify/*',
+            ]);
     }
 
     /**
@@ -139,7 +133,7 @@ class Handler extends ExceptionHandler
             'exception' => get_class($e),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
-            'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
+            'trace' => collect($e->getTrace())->map(fn($trace) => Arr::except($trace, ['args']))->all(),
         ] : [
             'code' => $code,
             'msg' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',

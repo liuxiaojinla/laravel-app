@@ -46,12 +46,17 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerModuleManager(): void
     {
-        $moduleManager = new ModuleManager(
-            config('module')
-        );
-        $moduleManager->setContainer($this->app);
-        $this->app->instance('module', $moduleManager);
-        $this->app->alias('module', ModuleManager::class);
+//        $moduleManager = new ModuleManager(
+//            config('module', [])
+//        );
+//        $moduleManager->setContainer($this->app);
+//        $this->app->instance('module', $moduleManager);
+//        $this->app->alias('module', ModuleManager::class);
+//
+//        // 加载模块路
+//        $this->app->booted(function () use ($moduleManager) {
+//            $moduleManager->run($this->app['request']);
+//        });
     }
 
     /**

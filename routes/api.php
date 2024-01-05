@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Api\Controllers\IndexController;
+use App\Http\Api\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/', [\App\Http\Api\Controllers\IndexController::class, 'index']);
+Route::get('/', [IndexController::class, 'index']);
+Route::get('/b', [TestController::class, 'index']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

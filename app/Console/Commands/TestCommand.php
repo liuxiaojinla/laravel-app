@@ -31,7 +31,7 @@ class TestCommand extends Command
     {
         $this->output->info("test command.");
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             TestJob::dispatch()->delay($i);
         }
 

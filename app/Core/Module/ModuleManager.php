@@ -46,7 +46,7 @@ class ModuleManager
      */
     public function __construct(array $config)
     {
-        $this->config = array_merge_recursive($this->config, $config);
+        $this->config = array_merge_recursive($this->config, self::makeDefaultConfig(), $config);
         $this->initialize();
     }
 
@@ -290,5 +290,51 @@ class ModuleManager
         return $this->path;
     }
 
+    /**
+     * @return array
+     */
+    public static function makeDefaultConfig()
+    {
+        return [
+            'defaults' => [
+                'module' => 'web',
+            ],
 
+            // 模块列表
+            'modules' => [
+                'api' => [
+//                    'route' => [
+//                        'middleware' => 'api',
+//                    ],
+                    'exceptionShouldReturnJson' => true,
+                ],
+                'web' => [
+                    'path' => app_path('Http'),
+//                    'route' => [
+//                        'prefix' => '',
+//                        'middleware' => 'web',
+//                    ],
+//                    'route_path' => base_path('routes/web.php'),
+                    'view' => [
+                        'paths' => [
+                            resource_path('views'),
+                        ],
+                    ],
+                    'exceptionShouldReturnJson' => true,
+                ],
+                'admin' => [
+//                    'route' => [
+//                        'middleware' => 'admin',
+//                    ],
+                    'exceptionShouldReturnJson' => true,
+                ],
+                'notify' => [
+//                    'route' => [
+////            'middleware' => 'notify',
+//                    ],
+                    'exceptionShouldReturnJson' => true,
+                ],
+            ],
+        ];
+    }
 }
