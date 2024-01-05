@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Core\Module\ModuleManager;
 use App\Core\RequestContext;
 use App\Exceptions\ValidationException;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -59,6 +58,11 @@ class AppServiceProvider extends ServiceProvider
 //        });
     }
 
+    protected function registerRequestMacros()
+    {
+
+    }
+
     /**
      * Bootstrap any application services.
      */
@@ -80,6 +84,20 @@ class AppServiceProvider extends ServiceProvider
 
     private function bootInWebServer(): void
     {
+        // 增加Hint数据处理器
+        $this->app['hint']->hint('api')->setDataPreprocessor(function ($data) {
+            if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+                return [
+                    'current_page' => $data->currentPage(),
+                    'data' => $data->items(),
+                    'per_page' => $data->perPage(),
+                    'total' => $data->total(),
+                ];
+            }
+
+            return $data;
+        });
+
         // 注册Request上下文
         $this->registerRequestContext();
     }

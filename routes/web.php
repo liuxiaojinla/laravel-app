@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/delete', [ProfileController::class, 'destroyShow'])->name('profile.destroy.show');
     Route::delete('/profile/delete', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// 通知
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/lists', [NotificationController::class, 'lists'])->name('lists');
+    Route::post('/read', [NotificationController::class, 'read'])->name('read');
 });
 
 require __DIR__ . '/auth.php';

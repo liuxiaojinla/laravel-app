@@ -11,12 +11,11 @@ class Error
     /**
      * 验证错误
      * @param string $message
-     * @return mixed
-     * @throws ValidationException
+     * @return ValidationException
      */
     public static function validate($message)
     {
-        throw ValidationException::withMessages([
+        return ValidationException::withMessages([
             'default' => $message,
         ]);
     }
@@ -24,20 +23,18 @@ class Error
     /**
      * 验证错误
      * @param array $messages
-     * @return mixed
-     * @throws ValidationException
+     * @return ValidationException
      */
     public static function validateWithMessages($messages)
     {
-        throw ValidationException::withMessages($messages);
+        return ValidationException::withMessages($messages);
     }
 
     /**
      * 用户未登录授权
      * @param string $redirectTo
      * @param array|null $guards
-     * @return mixed
-     * @throws AuthenticationException
+     * @return AuthenticationException
      */
     public static function unauthenticated($redirectTo = null, $guards = null)
     {
@@ -45,7 +42,7 @@ class Error
             $guards = [Auth::getDefaultDriver()];
         }
 
-        throw new AuthenticationException(
+        return new AuthenticationException(
             'Unauthenticated.', $guards, $redirectTo
         );
     }

@@ -13,6 +13,7 @@ return [
 
 		// 默认成功码
 		'success_code' => 1,
+
 		// 默认成功消息
 		'success_msg' => 'OK'
 	],

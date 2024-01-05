@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Concerns\Search;
+use App\Models\Concerns\SerializeDate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Search, SerializeDate;
 
     /**
      * The attributes that are mass assignable.
@@ -47,5 +49,15 @@ class User extends Authenticatable
     public function chirps(): HasMany
     {
         return $this->hasMany(Chirp::class);
+    }
+
+    /**
+     * Get the entity's notifications.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable')->latest();
     }
 }

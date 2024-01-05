@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Search;
-use Illuminate\Support\Facades\Log;
+use App\Models\Concerns\SerializeDate;
 
 /**
  * 基础模型类
@@ -15,5 +15,5 @@ use Illuminate\Support\Facades\Log;
  */
 class Model extends \Illuminate\Database\Eloquent\Model
 {
-    use Search;
+    use Search, SerializeDate;
 }
