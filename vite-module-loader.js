@@ -28,7 +28,6 @@ async function collectModuleAssetsPaths(paths, modulesPath) {
                 if (stat.isFile()) {
                     // Import the module-specific Vite configuration
                     const moduleConfig = await import(viteConfigPath);
-                    console.log(moduleConfig)
 
                     if (moduleConfig.paths && Array.isArray(moduleConfig.paths)) {
                         paths.push(...moduleConfig.paths);

@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator;
+use Xin\Setting\Contracts\Repository as SettingStore;
+use Xin\Setting\Laravel\DatabaseRepository as SettingDatabaseStore;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
 
         // 注册模块加载器
         $this->registerModuleManager();
+
+        // 注册站点配置
+        $this->registerSetting();
     }
 
     /**
@@ -58,9 +63,18 @@ class AppServiceProvider extends ServiceProvider
 //        });
     }
 
-    protected function registerRequestMacros()
+    /**
+     * 注册站点配置
+     * @return void
+     */
+    protected function registerSetting()
     {
-
+//        $this->app->singleton(SettingStore::class, function () {
+//            return new SettingDatabaseStore(
+//                $this->app['cache']
+//            );
+//        });
+//        $this->app->alias(SettingStore::class, 'setting');
     }
 
     /**
@@ -70,6 +84,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // 数据模型映射
         Relation::enforceMorphMap(config('database.morph_mapping'));
+
+        // 加载站点配置到系统配置中
+//        $this->app['setting']->loadToSystemConfig();
 
         if ($this->app->runningInConsole()) {
             $this->bootInConsole();

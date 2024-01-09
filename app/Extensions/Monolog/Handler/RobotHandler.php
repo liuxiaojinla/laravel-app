@@ -4,6 +4,7 @@ namespace App\Extensions\Monolog\Handler;
 
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use Symfony\Component\Console\Input\ArgvInput;
 use Xin\Robot\RobotManager;
 
@@ -30,9 +31,9 @@ class RobotHandler extends AbstractProcessingHandler
     }
 
     /**
-     * @param array $record
+     * @param LogRecord $record
      */
-    protected function write(array $record): void
+    protected function write(LogRecord $record): void
     {
         $env = app()->environment();
         if ($env === 'local') {
@@ -68,12 +69,12 @@ class RobotHandler extends AbstractProcessingHandler
     }
 
     /**
-     * @param array $record
+     * @param LogRecord $record
      * @param string $env
      * @param int $errCount
      * @return string
      */
-    protected function buildContents(array $record, $env, $errCount)
+    protected function buildContents(LogRecord $record, $env, $errCount)
     {
         $title = $record['level_name'];
         $message = $record['formatted'];
