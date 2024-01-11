@@ -21,11 +21,11 @@ class RequestServiceProvider extends ServiceProvider
          * @param string $field
          * @return array
          */
-        Request::macro('ids', function ($field = 'ids') {
+        Request::macro('ids', function ($field = 'ids', $format = 'intval') {
             /** @var $this Request */
             $ids = $this->input($field);
 
-            return $ids ? Str::explode($ids) : [];
+            return $ids ? Str::explode($ids, $format) : [];
         });
 
         /**
@@ -175,11 +175,11 @@ class RequestServiceProvider extends ServiceProvider
          * @param string $field
          * @return array
          */
-        Request::macro('validIds', function ($field = 'ids') {
+        Request::macro('validIds', function ($field = 'ids', $format = 'intval') {
             /** @var $this Request */
-            $ids = $this->ids($field);
+            $ids = $this->ids($field, $format);
             if (empty($ids)) {
-                throw  Error::validate("param {$field} invalid.");
+                throw Error::validate("param {$field} invalid.");
             }
 
             return $ids;

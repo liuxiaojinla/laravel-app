@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/demo', [\App\Http\Controllers\DemoController::class, 'index']);
+Route::get('/demo', [DemoController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

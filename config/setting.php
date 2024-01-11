@@ -14,6 +14,7 @@ return [
         'default' => [
             'driver' => 'model',
             'model' => null,
+//            'database' => 'settings',
         ],
     ],
 ];

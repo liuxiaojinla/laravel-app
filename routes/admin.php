@@ -11,6 +11,9 @@
 |
 */
 
+use App\Http\Admin\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [\App\Http\Admin\Controllers\IndexController::class, 'index']);
+Route::get('/', [IndexController::class, 'index']);
+
+require __DIR__ . '/admin/setting.php';

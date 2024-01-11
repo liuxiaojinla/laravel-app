@@ -114,6 +114,7 @@ class Handler extends ExceptionHandler
     {
         return $request->expectsJson() || $request->is([
                 'api/*',
+                'admin/*',
                 'notify/*',
             ]);
     }
