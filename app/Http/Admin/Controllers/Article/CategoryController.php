@@ -1,0 +1,157 @@
+<?php
+/**
+ * Talents come from diligence, and knowledge is gained by accumulation.
+ *
+ * @author: 晋<657306123@qq.com>
+ */
+
+namespace app\admin\controller\article;
+
+use app\admin\concern\InteractsArticleCategory;
+use app\admin\Controller;
+use app\common\model\article\Article;
+use app\common\model\article\Category;
+use app\common\validate\article\CategoryValidate;
+use Xin\Hint\Facades\Hint;
+use Xin\Support\Arr;
+
+/**
+ * 分类管理
+ */
+class CategoryController extends Controller
+{
+    use InteractsArticleCategory;
+
+    /**
+     * 分类管理
+     *
+     * @return string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function index()
+    {
+        $data = Category::withCount([
+            'articles',
+        ])->order('sort', 'asc')->select()
+            ->append([
+                'cover_small'
+            ], true)->toArray();
+
+        $data = Arr::treeToList(Arr::tree($data, static function ($level, &$item) {
+            $item['level'] = $level;
+        }));
+
+        $this->assign("data", $data);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 创建数据
+     * @return string|\think\Response
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function create()
+    {
+        $id = $this->request->param('id/d', 0);
+
+        if ($this->request->isGet()) {
+            if ($id > 0) {
+                $info = Category::where('id', $id)->find();
+                $this->assign('copy', 1);
+                $this->assign('info', $info);
+            }
+
+            $this->assignTreeArticleCategories();
+
+            return $this->fetch('edit');
+        }
+
+
+        $data = $this->request->validate(null, CategoryValidate::class);
+        $info = Category::create($data);
+
+        return Hint::success("创建成功！", (string)plugin_url('index'), $info);
+    }
+
+    /**
+     * 更新数据
+     * @return string|\think\Response
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function update()
+    {
+        $id = $this->request->validId();
+        $info = Category::where('id', $id)->findOrFail();
+
+        if ($this->request->isGet()) {
+            $this->assign('info', $info);
+            $this->assignTreeArticleCategories();
+
+            return $this->fetch('edit');
+        }
+
+        $data = $this->request->validate(null, CategoryValidate::class);
+        if (!$info->save($data)) {
+            return Hint::error("更新失败！");
+        }
+
+        return Hint::success("更新成功！", (string)plugin_url('index'), $info);
+    }
+
+    /**
+     * 删除数据
+     * @return \think\Response
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function delete()
+    {
+        $ids = $this->request->validIds();
+
+        //检查是否有子分类 计算两个数组交集
+        $pidList = Category::where('pid', 'in', $ids)->column('pid');
+        $pidList = array_intersect($pidList, $ids);
+
+        if (!empty($pidList)) {
+            $titles = implode("、", Category::select($pidList)->column("title"));
+
+            return Hint::error("请先删除【{$titles}】下的子分类！");
+        }
+
+        if (Article::where('category_id', 'in', $ids)->count()) {
+            return Hint::error('请先处理分类下的文章！');
+        }
+
+        if (Category::destroy($ids) === false) {
+            return Hint::error('删除失败！');
+        }
+
+        return Hint::success('删除成功！', null, $ids);
+    }
+
+    /**
+     * 更新数据
+     * @return \think\Response
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function setValue()
+    {
+        $ids = $this->request->validIds();
+        $field = $this->request->validString('field');
+        $value = $this->request->param($field);
+
+        Category::setManyValue($ids, $field, $value);
+
+        return Hint::success("更新成功！");
+    }
+}
