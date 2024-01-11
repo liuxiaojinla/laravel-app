@@ -2,84 +2,123 @@
 
 namespace App\Http\Admin\Controllers\System;
 
-use app\admin\model\Event;
-use app\common\model\Model;
 use App\Http\Admin\Controllers\Controller;
+use App\Http\Admin\Models\Event;
+use App\Http\Admin\Requests\AgreementRequest;
+use App\Http\Admin\Requests\EventRequest;
+use App\Models\Agreement;
+use App\Models\Model;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
-use think\Response;
+use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
-use Xin\Plugin\ThinkPHP\Models\DatabasePlugin;
-use Xin\Plugin\ThinkPHP\Validates\EventValidate;
 
 class EventController extends Controller
 {
+    /**
+     * 数据列表
+     * @param Request $request
+     * @return View
+     */
     public function index(Request $request)
     {
-        $type = $this->request->param('type/d', -1);
+        $type = (int)$request->input('type', -1);
 
-        $search = $this->request->get();
+        $search = $request->query();
+
         $data = Event::simple()->search($search)
-            ->order('id desc')->paginate($this->request->paginate());
+            ->orderByDesc('id desc')->paginate();
 
-        $this->assign('type', $type);
-        $this->assign('data', $data);
-
-        return $this->fetch();
+        return view('event.index', [
+            'data' => $data,
+            'type' => $type,
+        ]);
     }
 
+    /**
+     * 数据创建表单
+     * @param Request $request
+     * @return View
+     */
     public function create(Request $request)
     {
+        $id = (int)$request->input('id', 0);
+        $copy = 0;
+        $info = null;
 
-    }
-
-    public function store(Request $request)
-    {
-        $id = $this->request->param('id/d', 0);
-
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = Event::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            return $this->fetch('edit');
+        if ($id > 0) {
+            $copy = 1;
+            $info = Event::query()->where('id', $id)->first();
         }
 
+        return view('event.edit', [
+            'copy' => $copy,
+            'info' => $info,
+        ]);
+    }
 
-        $data = $this->request->validate(null, EventValidate::class . ".create");
+    /**
+     * 数据创建
+     * @param EventRequest $request
+     * @return Response
+     */
+    public function store(EventRequest $request)
+    {
+        $data = $request->validated();
         if (!isset($data['addons'])) {
             $data['addons'] = [];
         }
+
         $info = Event::create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
+    /**
+     * 数据展示
+     * @param Request $request
+     * @return View
+     */
     public function show(Request $request)
     {
+        $id = $request->validId();
 
+        $info = Event::query()->where('id', $id)->firstOrFail();
+
+        return view('event.show', [
+            'info' => $info,
+        ]);
     }
 
+    /**
+     * 数据更新表单
+     * @param Request $request
+     * @return View
+     */
     public function edit(Request $request)
     {
+        $id = $request->validId();
 
+        $info = Event::query()->where('id', $id)->firstOrFail();
+
+        return view('event.edit', [
+            'info' => $info,
+        ]);
     }
 
-    public function update(Request $request)
+    /**
+     * 数据更新
+     * @param EventRequest $request
+     * @return Response
+     */
+    public function update(EventRequest $request)
     {
-        $id = $this->request->validId();
-        $info = Event::where('id', $id)->findOrFail();
+        $id = $request->validId();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
+        $info = Agreement::query()->where('id', $id)->firstOrFail();
 
-            return $this->fetch('edit');
-        }
+        $data = $request->validated();
 
-        $data = $this->request->validate(null, EventValidate::class);
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -87,13 +126,22 @@ class EventController extends Controller
         return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
+    /**
+     * 数据删除
+     * @param Request $request
+     * @return Response
+     */
     public function destroy(Request $request)
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = (int)$request->input('force', 0);
 
-        Event::whereIn('id', $ids)->where('system', '=', 0)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        Event::query()->whereIn('id', $ids)->where('system', '=', 0)->get()->each(function (Model $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
@@ -106,11 +154,11 @@ class EventController extends Controller
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function setValue()
+    public function setValue(Request $request)
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->input($field);
 
         Event::setManyValue($ids, $field, $value);
 
@@ -124,13 +172,13 @@ class EventController extends Controller
      * @throws DataNotFoundException
      * @throws ModelNotFoundException
      */
-    public function plugin()
+    public function plugin(Request $request)
     {
         /** @var Event $info */
         $info = $this->findIsEmptyAssert();
 
-        if ($this->request->isPost()) {
-            $addons = $this->request->param('addons/a');
+        if ($request->isPost()) {
+            $addons = $request->param('addons/a');
             $info->addons = $addons;
             $info->save();
 
@@ -170,10 +218,10 @@ class EventController extends Controller
             return Event::findOrFail($id);
         }
 
-        if ($this->request->has('name')) {
-            return Event::where('name', $this->request->validString('name'))->findOrFail($id);
+        if ($request->has('name')) {
+            return Event::where('name', $request->validString('name'))->findOrFail($id);
         }
 
-        return Event::findOrFail($this->request->validId());
+        return Event::findOrFail($request->validId());
     }
 }

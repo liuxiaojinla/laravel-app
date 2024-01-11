@@ -1,11 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
-
-namespace app\admin\model;
+namespace App\Http\Admin\Models;
 
 use think\model\Pivot;
 

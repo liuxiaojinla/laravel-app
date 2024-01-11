@@ -1,24 +1,25 @@
 <?php
 
-namespace app\admin\controller\advertisement;
+namespace App\Http\Admin\Controllers\Advertisement;
 
-use app\admin\Controller;
-use app\common\model\advertisement\Position as AdvertisementPosition;
-use app\common\validate\advertisement\PositionValidate as AdvertisementPositionValidate;
-use think\facade\Db;
+use App\Http\Admin\Controllers\Controller;
+use App\Http\Admin\Requests\Advertisement\PositionRequest as AdvertisementPositionRequest;
+use App\Models\Advertisement\Position as AdvertisementPosition;
+use App\Models\Model;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
-use Xin\Support\Str;
 
 class PositionController extends Controller
 {
     /**
      * 数据列表
-     * @return string
-     * @throws \think\db\exception\DbException
+     * @return View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $search = $this->request->get();
+        $search = $request->query();
 
         $order = [
             'id' => 'desc',
@@ -26,64 +27,97 @@ class PositionController extends Controller
 
         $data = AdvertisementPosition::simple()
             ->withCount([
-                'items'
+                'items',
             ])
-            ->search($search)->order($order)->paginate($this->request->paginate());
+            ->search($search)->order($order)->paginate();
 
-        $this->assign('data', $data);
+        return view('advertisement.position.index', [
+            'data' => $data,
+        ]);
+    }
 
-        return $this->fetch();
+
+    /**
+     * 数据创建表单
+     * @param Request $request
+     * @return View
+     */
+    public function create(Request $request)
+    {
+        $id = (int)$request->input('id', 0);
+        $copy = 0;
+        $info = null;
+
+        if ($id > 0) {
+            $copy = 1;
+            $info = AdvertisementPosition::query()->where('id', $id)->first();
+        }
+
+        return view('advertisement.position.edit', [
+            'copy' => $copy,
+            'info' => $info,
+        ]);
     }
 
     /**
-     * 创建数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 数据创建
+     * @param AdvertisementPositionRequest $request
+     * @return Response
      */
-    public function create()
+    public function store(AdvertisementPositionRequest $request)
     {
-        $id = $this->request->param('id/d', 0);
+        $data = $request->validated();
 
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = AdvertisementPosition::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            return $this->fetch('edit');
-        }
-
-
-        $data = $this->request->validate(null, AdvertisementPositionValidate::class);
-        if (empty($data['name'])) {
-            $data['name'] = Str::random();
-        }
         $info = AdvertisementPosition::create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
-     * 更新数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 数据展示
+     * @param Request $request
+     * @return View
      */
-    public function update()
+    public function show(Request $request)
     {
-        $id = $this->request->validId();
-        $info = AdvertisementPosition::where('id', $id)->findOrFail();
+        $id = $request->validId();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
+        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
 
-            return $this->fetch('edit');
-        }
+        return view('advertisement.position.show', [
+            'info' => $info,
+        ]);
+    }
 
-        $data = $this->request->validate(null, AdvertisementPositionValidate::class);
+    /**
+     * 数据更新表单
+     * @param Request $request
+     * @return View
+     */
+    public function edit(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
+
+        return view('advertisement.position.edit', [
+            'info' => $info,
+        ]);
+    }
+
+    /**
+     * 数据更新
+     * @param AdvertisementPositionRequest $request
+     * @return Response
+     */
+    public function update(AdvertisementPositionRequest $request)
+    {
+        $id = $request->validId();
+
+        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
+
+        $data = $request->validated();
+
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -92,39 +126,36 @@ class PositionController extends Controller
     }
 
     /**
-     * 删除数据
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 数据删除
+     * @param Request $request
+     * @return Response
      */
-    public function delete()
+    public function destroy(Request $request)
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = (int)$request->input('force', 0);
 
-        AdvertisementPosition::whereIn('id', $ids)->select()->each(function (AdvertisementPosition $item) use ($isForce) {
-            Db::transaction(function () use ($item, $isForce) {
-                $item->together(['items'])->force($isForce)->delete();
-            });
+        AdvertisementPosition::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
+            $item->together(['items'])->force($isForce)->delete();
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
     }
 
-
     /**
      * 更新数据
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
-    public function setValue()
+    public function setValue(Request $request)
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->param($field);
 
         AdvertisementPosition::setManyValue($ids, $field, $value);
 

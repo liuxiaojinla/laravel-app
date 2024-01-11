@@ -1,21 +1,16 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
 
-namespace app\admin\middleware;
+namespace App\Http\Admin\Middleware;
 
-use app\admin\controller\ErrorController;
-use app\admin\model\AdminMenu;
-use app\Request;
-use Xin\ThinkPHP\Facade\Gate;
-use Xin\ThinkPHP\Foundation\Middleware\InteractsExcept;
+use App\Http\Admin\Models\Admin;
+use App\Http\Admin\Models\AdminMenu;
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Xin\Laravel\Strengthen\Http\Middleware\InteractsExcept;
 
 class CheckForRouteAuth
 {
-
     use InteractsExcept;
 
     /**
@@ -30,11 +25,11 @@ class CheckForRouteAuth
     ];
 
     /**
-     * @param \app\Request $request
-     * @param \Closure $next
+     * @param Request $request
+     * @param Closure $next
      * @return mixed
      */
-    public function handle(Request $request, \Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         $this->defineAbility();
 
@@ -52,12 +47,12 @@ class CheckForRouteAuth
     protected function defineAbility()
     {
         Gate::define('route', static function ($user, $checkUrl) {
-            /** @var \app\admin\model\Admin $user */
+            /** @var Admin $user */
             if ($user->is_admin) {
                 return true;
             }
 
-            $menus = AdminMenu::select();
+            $menus = AdminMenu::all();
             foreach ($menus as $item) {
                 $url = $item['url'];
                 if ($url == $checkUrl) {

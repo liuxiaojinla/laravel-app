@@ -2,6 +2,9 @@
 
 namespace App\Http\Admin\Controllers;
 
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+
 class UrlChoiceController extends Controller
 {
     /**
@@ -10,19 +13,21 @@ class UrlChoiceController extends Controller
     protected $data = [];
 
     /**
-     * @return string
+     * 数据列表
+     * @param Request $request
+     * @return View
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->initConfig();
 
-        $module = $this->request->get('_module', '', 'trim');
-        $subModule = $this->request->get('_submodule/d', -1);
+        $module = $request->get('_module', '', 'trim');
+        $subModule = (int)$request->get('_submodule', -1);
 
         if (empty($this->data)) {
-            $this->assign('config', $this->data);
-
-            return $this->fetch();
+            return view('url_choice', [
+                'config' => $this->data,
+            ]);
         }
 
         if (empty($module) || !isset($this->data[$module])) {
@@ -46,11 +51,12 @@ class UrlChoiceController extends Controller
             }
         }
 
-        $this->assign('config', $this->data);
-        $this->assign('module', $module);
-        $this->assign('submodule', $subModule);
-
-        return $this->fetch();
+        return view('url_choice', [
+            'data' => $data ?? [],
+            'config' => $this->data,
+            'module' => $module,
+            'submodule' => $subModule,
+        ]);
     }
 
     /**

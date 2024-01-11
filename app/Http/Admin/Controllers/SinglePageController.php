@@ -2,10 +2,12 @@
 
 namespace App\Http\Admin\Controllers;
 
-use app\common\model\Model;
-use app\common\model\SinglePage;
-use app\common\validate\DiyPageValidate;
+use App\Http\Admin\Requests\SinglePageRequest;
+use App\Models\Model;
+use App\Models\SinglePage;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Str;
 
@@ -13,69 +15,99 @@ class SinglePageController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $this->request->get();
-        $data = SinglePage::simple()->search($search)
-            ->order([
-                'id' => 'desc',
-            ])
-            ->paginate($this->request->paginate());
+        $search = $request->query();
 
-        $this->assign('data', $data);
+        $data = SinglePage::simple()->search($search)->orderByDesc('id')->paginate();
 
-        return $this->fetch();
+        return view('single_page.index', [
+            'data' => $data,
+        ]);
     }
 
+    /**
+     * 数据创建表单
+     * @param Request $request
+     * @return View
+     */
     public function create(Request $request)
     {
+        $id = (int)$request->input('id', 0);
+        $copy = 0;
+        $info = null;
 
-    }
-
-    public function store(Request $request)
-    {
-        $id = $this->request->param('id/d', 0);
-
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = SinglePage::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            return $this->fetch('edit');
+        if ($id > 0) {
+            $copy = 1;
+            $info = SinglePage::query()->where('id', $id)->first();
         }
 
+        return view('single_page.edit', [
+            'copy' => $copy,
+            'info' => $info,
+        ]);
+    }
 
-        $data = $this->request->validate(null, DiyPageValidate::class);
+    /**
+     * 数据创建
+     * @param SinglePageRequest $request
+     * @return Response
+     */
+    public function store(SinglePageRequest $request)
+    {
+        $data = $request->validated();
         if (empty($data['name'])) {
             $data['name'] = Str::random();
         }
+
         $info = SinglePage::create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
+    /**
+     * 数据展示
+     * @param Request $request
+     * @return View
+     */
     public function show(Request $request)
     {
+        $id = $request->validId();
 
+        $info = SinglePage::query()->where('id', $id)->firstOrFail();
+
+        return view('agreement.show', [
+            'info' => $info,
+        ]);
     }
 
+    /**
+     * 数据更新表单
+     * @param Request $request
+     * @return View
+     */
     public function edit(Request $request)
     {
+        $id = $request->validId();
 
+        $info = SinglePage::query()->where('id', $id)->firstOrFail();
+
+        return view('agreement.edit', [
+            'info' => $info,
+        ]);
     }
 
-    public function update(Request $request)
+    /**
+     * 数据更新
+     * @param SinglePageRequest $request
+     * @return Response
+     */
+    public function update(SinglePageRequest $request)
     {
-        $id = $this->request->validId();
-        $info = SinglePage::where('id', $id)->findOrFail();
+        $id = $request->validId();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
+        $info = SinglePage::query()->where('id', $id)->firstOrFail();
 
-            return $this->fetch('edit');
-        }
+        $data = $request->validated();
 
-        $data = $this->request->validate(null, DiyPageValidate::class);
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -83,13 +115,22 @@ class SinglePageController extends Controller
         return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
+    /**
+     * 数据删除
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function destroy(Request $request)
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = (int)$request->input('force/d', 0);
 
-        SinglePage::whereIn('id', $ids)->where('system', 1)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        SinglePage::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
@@ -102,11 +143,11 @@ class SinglePageController extends Controller
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function setValue()
+    public function setValue(Request $request)
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->param($field);
 
         SinglePage::setManyValue($ids, $field, $value);
 
@@ -118,12 +159,12 @@ class SinglePageController extends Controller
      *
      * @return string|\think\Response
      */
-    public function about()
+    public function about(Request $request)
     {
         /** @var SinglePage $info */
-        $info = SinglePage::where('name', SinglePage::ABOUT)->findOrEmpty();
+        $info = SinglePage::query()->where('name', SinglePage::ABOUT)->firstOrNew();
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             $extra = $info->extra;
             if ($extra && !empty($extra['region'])) {
                 $extra['region_json'] = json_encode($extra['region'], JSON_UNESCAPED_UNICODE);
@@ -134,7 +175,7 @@ class SinglePageController extends Controller
             return $this->fetch();
         }
 
-        $data = $this->request->data();
+        $data = $request->input();
         if (isset($data['location'])) {
             $location = explode(',', $data['location'], 2);
             $data['extra']['lng'] = $location[0] ?? '';

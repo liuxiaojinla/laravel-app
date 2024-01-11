@@ -7,10 +7,15 @@
 
 namespace App\Http\Admin\Controllers\System;
 
-use app\admin\Controller;
-use app\admin\model\AdminMenu;
-use app\admin\validate\AdminMenuValidate;
-use think\exception\ValidateException;
+use App\Exceptions\Error;
+use App\Http\Admin\Controllers\Controller;
+use App\Http\Admin\Models\AdminMenu;
+use App\Http\Admin\Requests\AdminMenuRequest;
+use App\Models\Agreement;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Xin\Hint\Facades\Hint;
 use Xin\Menu\Contracts\Factory as MenuFactory;
 use Xin\Support\Arr;
@@ -20,30 +25,30 @@ class MenuController extends Controller
 {
 
     /**
-     * @return string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 菜单列表
+     * @param Request $request
+     * @return View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = AdminMenu::order('sort')->select();
+        $data = AdminMenu::query()->orderBy('sort')->get();
         $data = Arr::treeToList(Arr::tree($data->toArray(), static function ($level, &$item) {
             $item['level'] = $level;
         }));
 
-        $this->assign("data", $data);
-
-        return $this->fetch();
+        return view('menu.index', [
+            'data' => $data,
+        ]);
     }
 
     /**
      * 同步菜单
      *
-     * @param \Xin\Menu\Contracts\Factory $factory
-     * @return \think\Response
+     * @param Request $request
+     * @param MenuFactory $factory
+     * @return Response
      */
-    public function sync(MenuFactory $factory)
+    public function sync(Request $request, MenuFactory $factory)
     {
         $config = $factory->getMenuConfig('admin');
         $baseMenus = require_once $config['base_path'];
@@ -52,58 +57,91 @@ class MenuController extends Controller
             'system' => 1,
         ]);
 
-        return Hint::success("同步完成！", $this->request->header('referer') ?: (string)url('index/index'));
+        return Hint::success("同步完成！", $request->header('referer') ?: (string)url('index/index'));
     }
 
     /**
      * 创建数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return View
      */
-    public function create()
+    public function create(Request $request)
     {
-        $id = $this->request->param('id/d', 0);
+        $id = (int)$request->input('id', 0);
+        $copy = 0;
+        $info = null;
 
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = AdminMenu::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
+        if ($id > 0) {
+            $copy = 1;
+            $info = AdminMenu::query()->where('id', $id)->first();
             $this->assignTreeNodes();
-
-            return $this->fetch('edit');
         }
 
+        return view('menu.edit', [
+            'copy' => $copy,
+            'info' => $info,
+        ]);
+    }
 
-        $data = $this->request->validate(null, AdminMenuValidate::class);
+    /**
+     * 数据创建
+     * @param AdminMenuRequest $request
+     * @return Response
+     */
+    public function store(AdminMenuRequest $request)
+    {
+        $data = $request->validated();
+
         $info = AdminMenu::create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
-     * 更新数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 数据展示
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
      */
-    public function update()
+    public function show(Request $request)
     {
-        $id = $this->request->validId();
-        $info = AdminMenu::where('id', $id)->findOrFail();
+        $id = $request->validId();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
-            $this->assignTreeNodes();
+        $info = AdminMenu::query()->where('id', $id)->firstOrFail();
 
-            return $this->fetch('edit');
-        }
+        return view('agreement.show', [
+            'info' => $info,
+        ]);
+    }
 
-        $data = $this->request->validate(null, AdminMenuValidate::class);
+    /**
+     * 数据更新表单
+     * @param Request $request
+     * @return View
+     */
+    public function edit(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = AdminMenu::query()->where('id', $id)->firstOrFail();
+        $this->assignTreeNodes();
+
+        return view('agreement.edit', [
+            'info' => $info,
+        ]);
+    }
+
+    /**
+     * 更新数据
+     * @param AdminMenuRequest $request
+     * @return Response
+     */
+    public function update(AdminMenuRequest $request)
+    {
+        $id = $request->validId();
+
+        $info = Agreement::query()->where('id', $id)->firstOrFail();
+
+        $data = $request->validated();
+
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -115,9 +153,6 @@ class MenuController extends Controller
      * 生成菜单树
      *
      * @param int $id
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     protected function assignTreeNodes($id = 0)
     {
@@ -126,7 +161,7 @@ class MenuController extends Controller
             $map[] = ['id', '<>', $id];
         }
 
-        $pList = AdminMenu::field('id,pid,title')->where($map)->select()->toArray();
+        $pList = AdminMenu::query()->select(['id', 'pid', 'title'])->where($map)->get()->toArray();
         $menus = Arr::tree($pList, static function ($level, &$val) {
             $tmp_str = str_repeat(str_repeat("&nbsp;", 5) . "│", $level - 1);
             $tmp_str .= str_repeat("&nbsp;", 4) . "┝";
@@ -141,41 +176,36 @@ class MenuController extends Controller
 
     /**
      * 删除数据
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @param Request $request
+     * @return Response
+     * @throws ValidationException
      */
-    protected function delete()
+    public function destroy(Request $request)
     {
-        $ids = $this->request->validIds();
+        $ids = $request->validIds();
 
         //检查是否有子分类 计算两个数组交集
         $pidList = AdminMenu::where('pid', 'in', $ids)->column('pid');
         $pidList = array_intersect($pidList, $ids);
 
         if (!empty($pidList)) {
-            $titles = implode("、", AdminMenu::select($pidList)->column("title"));
-            throw new ValidateException("请先删除【{$titles}】下的子菜单！");
+            $titles = implode("、", AdminMenu::query()->select($pidList)->pluck("title")->toArray());
+            throw Error::validate("请先删除【{$titles}】下的子菜单！");
         }
 
-        AdminMenu::whereIn('id', $ids)->where('system', '=', 0)->delete();
+        AdminMenu::query()->whereIn('id', $ids)->where('system', '=', 0)->delete();
 
         return Hint::success("已删除！");
     }
 
     /**
      * 更新数据
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function setValue()
+    public function setValue(Request $request)
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->param($field);
 
         AdminMenu::setManyValue($ids, $field, $value);
 
@@ -185,19 +215,13 @@ class MenuController extends Controller
     /**
      * 菜单排序
      *
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function sort()
+    public function sort(Request $request)
     {
-        if ($this->request->isPost()) {
-            $groupIds = $this->request->param("ids/a");
+        if ($request->isPost()) {
+            $groupIds = $request->input("ids");
             foreach ($groupIds as $kg => $group) {
-                if (AdminMenu::where('id', $group['root'])->update(["sort" => $kg]) === false) {
-                    return Hint::error("保存排序失败！");
-                }
+                AdminMenu::query()->where('id', $group['root'])->update(["sort" => $kg]);
 
                 $group['childs'] = isset($group['childs']) ? Str::explode($group['childs']) : [];
                 foreach ($group['childs'] as $kc => $childIds) {
@@ -214,7 +238,9 @@ class MenuController extends Controller
         }
 
         $map = ['show' => 1];
-        $menus = AdminMenu::field('id,pid,title,icon')->where($map)->order('sort')->select();
+        $menus = AdminMenu::query()->select([
+            'id', 'pid', 'title', 'icon',
+        ])->where($map)->orderBy('sort')->get();
 
         $getChildren = static function (&$menus, $pid) {
             $children = [];

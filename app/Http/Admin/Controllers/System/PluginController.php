@@ -2,23 +2,19 @@
 
 namespace App\Http\Admin\Controllers\System;
 
-use app\admin\concern\InteractsEvent;
-use app\admin\Controller;
-use app\admin\model\Plugin;
-use think\App;
-use think\facade\Db;
+
+use App\Http\Admin\Controllers\Controller;
+use App\Http\Admin\Models\Plugin;
+use App\Http\Admin\Requests\PluginRequest;
+use App\Models\Agreement;
+use App\Models\Model;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Xin\Hint\Facades\Hint;
 use Xin\Menu\Facades\Menu;
-use Xin\Plugin\Contracts\Factory as PluginManager;
-use Xin\Plugin\Contracts\PluginInfo;
-use Xin\Plugin\Contracts\PluginInfo as PluginInfoContract;
-use Xin\Plugin\Contracts\PluginNotFoundException;
-use Xin\Plugin\ThinkPHP\Models\DatabaseEvent;
-use Xin\Plugin\ThinkPHP\Models\DatabasePlugin;
-use Xin\Plugin\ThinkPHP\Validates\PluginValidate;
-use Xin\Support\Arr;
 use Xin\Support\File;
-use Xin\Support\Str;
 
 class PluginController extends Controller
 {
@@ -41,54 +37,61 @@ class PluginController extends Controller
 
     /**
      * 列表查询
-     * @return string
-     * @throws \think\db\exception\DbException
+     * @return View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $install = $this->request->param('install');
+        $install = $request->input('install');
         $install = $install === '' ? null : (int)$install;
 
-        $search = $this->request->get();
+        $search = $request->get();
         $data = Plugin::simple()->search($search)
-            ->order('id desc')
-            ->paginate($this->request->paginate());
+            ->orderByDesc('id')
+            ->paginate();
 
-        $this->assign('install', $install);
-        $this->assign('data', $data);
 
-        return $this->fetch();
+        return view('plugin.index', [
+            'install' => $install,
+            'data' => $data,
+        ]);
     }
 
     /**
      * 快速创建视图
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return View
      */
-    public function create()
+    public function create(Request $request)
     {
-        $id = $this->request->param('id/d', 0);
+        $id = (int)$request->input('id', 0);
+        $copy = 0;
+        $info = null;
 
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = Plugin::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
+        if ($id > 0) {
+            $copy = 1;
+            $info = Plugin::query()->where('id', $id)->first();
             $this->assignEvents();
             $this->assign('config_tpl', $this->buildConfigTplContent());
-
-            return $this->fetch('edit');
         }
 
+        return view('plugin.edit', [
+            'copy' => $copy,
+            'info' => $info,
+        ]);
 
-        $data = $this->request->validate(null, PluginValidate::class);
+
+    }
+
+    /**
+     * 数据创建
+     * @param PluginRequest $request
+     * @return Response
+     */
+    public function store(PluginRequest $request)
+    {
+        $data = $request->validated();
 
         /** @var Plugin $info */
-        $info = Db::transaction(function () use (&$data) {
+        $info = DB::transaction(function () use (&$data) {
             $data['config'] = new \stdClass();
             $data['events'] = isset($data['events']) ? $data['events'] : [];
             $info = Plugin::create($data);
@@ -103,25 +106,51 @@ class PluginController extends Controller
     }
 
     /**
-     * 更新数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * 数据展示
+     * @param Request $request
+     * @return View
      */
-    public function update()
+    public function show(Request $request)
     {
-        $id = $this->request->validId();
-        $info = Plugin::where('id', $id)->findOrFail();
+        $id = $request->validId();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
+        $info = Plugin::query()->where('id', $id)->firstOrFail();
+        $this->assignEvents();
 
-            $this->assignEvents();
-            return $this->fetch('edit');
-        }
+        return view('plugin.show', [
+            'info' => $info,
+        ]);
+    }
 
-        $data = $this->request->validate(null, PluginValidate::class);
+    /**
+     * 数据更新表单
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function edit(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = Plugin::query()->where('id', $id)->firstOrFail();
+        $this->assignEvents();
+
+        return view('plugin.edit', [
+            'info' => $info,
+        ]);
+    }
+
+    /**
+     * 更新数据
+     * @return Response
+     */
+    public function update(PluginRequest $request)
+    {
+        $id = $request->validId();
+
+        $info = Agreement::query()->where('id', $id)->firstOrFail();
+
+        $data = $request->validated();
+
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -133,18 +162,19 @@ class PluginController extends Controller
 
     /**
      * 删除数据
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
-    public function delete()
+    public function delete(Request $request)
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = (int)$request->input('force', 0);
 
-        Plugin::whereIn('id', $ids)->select()->each(function (Plugin $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        Plugin::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
@@ -153,10 +183,7 @@ class PluginController extends Controller
     /**
      * 安装插件
      *
-     * @return \think\Response
-     * @throws \Xin\Plugin\Contracts\PluginNotFoundException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
     public function install()
     {
@@ -190,10 +217,7 @@ class PluginController extends Controller
     /**
      * 卸载插件
      *
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
     public function uninstall()
     {
@@ -234,7 +258,7 @@ class PluginController extends Controller
     /**
      * 升级插件
      *
-     * @return \think\Response
+     * @return Response
      * @throws \Xin\Plugin\Contracts\PluginNotFoundException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
@@ -317,12 +341,9 @@ class PluginController extends Controller
     /**
      * 插件配置
      *
-     * @return \think\Response|string
-     * @throws \Xin\Plugin\Contracts\PluginNotFoundException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
-    public function config()
+    public function config(Request $request)
     {
         /** @var DatabasePlugin $info */
         $info = $this->findIsEmptyAssert();
@@ -333,7 +354,7 @@ class PluginController extends Controller
         // 获取插件实例
         $pluginInfo = $this->pluginManager->plugin($info->name);
 
-        if (!$this->request->isPost()) {
+        if (!$request->isPost()) {
             // 获取插件配置
             $this->assign([
                 'info' => $info,
@@ -343,7 +364,7 @@ class PluginController extends Controller
             return $this->fetch();
         }
 
-        $config = $this->request->param('config/a', []);
+        $config = $request->param('config/a', []);
         foreach ($pluginInfo->getConfigTypeList() as $key => $type) {
             if (!isset($config[$key])) {
                 continue;
@@ -380,11 +401,11 @@ class PluginController extends Controller
             return Plugin::findOrFail($id);
         }
 
-        if ($this->request->has('name')) {
-            return Plugin::where('name', $this->request->validString('name'))->findOrFail($id);
+        if ($request->has('name')) {
+            return Plugin::where('name', $request->validString('name'))->findOrFail($id);
         }
 
-        return Plugin::findOrFail($this->request->validId());
+        return Plugin::findOrFail($request->validId());
     }
 
     /**
@@ -396,9 +417,9 @@ class PluginController extends Controller
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \Xin\Plugin\Contracts\PluginNotFoundException
      */
-    public function refreshMenus()
+    public function refreshMenus(Request $request)
     {
-        $plugin = $this->request->param('plugin', '', 'trim');
+        $plugin = $request->param('plugin', '', 'trim');
 
         $menuGuards = array_keys($this->app->config->get('menu.menus'));
         foreach ($menuGuards as $guard) {
@@ -769,10 +790,10 @@ class IndexController extends Controller{
 	 */
 	public function index()
 	{
-		\$search = \$this->request->get();
+		\$search = \$request->get();
 		\$data = {$className}::simple()->search(\$search)
 			->order('id desc')
-			->paginate(\$this->request->paginate());
+			->paginate(\);
 
 		\$this->assign('data', \$data);
 
@@ -788,10 +809,10 @@ class IndexController extends Controller{
 	 */
 	public function create()
 	{
-		\$isCopy = \$this->request->param('copy', 0);
-		\$id = \$this->request->param('id/d', 0);
+		\$isCopy = \$request->param('copy', 0);
+		\$id = \$request->param('id/d', 0);
 
-		if (\$this->request->isGet()) {
+		if (\$request->isGet()) {
 			if (\$isCopy && \$id > 0) {
 				\$info = {$className}::where('id', \$id)->find();
 				\$this->assign('info', \$info);
@@ -801,7 +822,7 @@ class IndexController extends Controller{
 		}
 
 
-		\$data = \$this->request->validate(null, {$className}Validate::class);
+		\$data = \$request->validate(null, {$className}Validate::class);
 		\$info = {$className}::create(\$data);
 
 		return Hint::success("创建成功！", null, \$info);
@@ -816,16 +837,16 @@ class IndexController extends Controller{
 	 */
 	public function update()
 	{
-		\$id = \$this->request->validId();
+		\$id = \$request->validId();
 		\$info = {$className}::where('id', \$id)->findOrFail();
 
-		if (\$this->request->isGet()) {
+		if (\$request->isGet()) {
 			\$this->assign('info', \$info);
 
 			return \$this->fetch('edit');
 		}
 
-		\$data = \$this->request->validate(null, {$className}Validate::class);
+		\$data = \$request->validate(null, {$className}Validate::class);
 		if (!\$info->save(\$data)) {
 			return Hint::error("更新失败！");
 		}
@@ -842,8 +863,8 @@ class IndexController extends Controller{
 	 */
 	public function delete()
 	{
-		\$ids = \$this->request->validIds();
-		\$isForce = \$this->request->param('force/d', 0);
+		\$ids = \$request->validIds();
+		\$isForce = \$request->param('force/d', 0);
 
 		{$className}::whereIn('id', \$ids)->select()->each(function (Model \$item) use (\$isForce) {
 			\$item->force(\$isForce)->delete();

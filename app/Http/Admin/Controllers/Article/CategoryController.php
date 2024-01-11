@@ -57,9 +57,9 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $id = $this->request->param('id/d', 0);
+        $id = $request->param('id/d', 0);
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             if ($id > 0) {
                 $info = Category::where('id', $id)->find();
                 $this->assign('copy', 1);
@@ -72,7 +72,7 @@ class CategoryController extends Controller
         }
 
 
-        $data = $this->request->validate(null, CategoryValidate::class);
+        $data = $request->validate(null, CategoryValidate::class);
         $info = Category::create($data);
 
         return Hint::success("创建成功！", (string)plugin_url('index'), $info);
@@ -87,17 +87,17 @@ class CategoryController extends Controller
      */
     public function update()
     {
-        $id = $this->request->validId();
+        $id = $request->validId();
         $info = Category::where('id', $id)->findOrFail();
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             $this->assign('info', $info);
             $this->assignTreeArticleCategories();
 
             return $this->fetch('edit');
         }
 
-        $data = $this->request->validate(null, CategoryValidate::class);
+        $data = $request->validate(null, CategoryValidate::class);
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -114,7 +114,7 @@ class CategoryController extends Controller
      */
     public function delete()
     {
-        $ids = $this->request->validIds();
+        $ids = $request->validIds();
 
         //检查是否有子分类 计算两个数组交集
         $pidList = Category::where('pid', 'in', $ids)->column('pid');
@@ -146,9 +146,9 @@ class CategoryController extends Controller
      */
     public function setValue()
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->param($field);
 
         Category::setManyValue($ids, $field, $value);
 

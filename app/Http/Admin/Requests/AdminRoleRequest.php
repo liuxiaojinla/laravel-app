@@ -1,15 +1,9 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+namespace App\Http\Admin\Requests;
 
-namespace app\admin\validate;
+use Xin\Laravel\Strengthen\Request\FormRequest;
 
-use think\Validate;
-
-class AdminRoleValidate extends Validate
+class AdminRoleRequest extends FormRequest
 {
 
 	/**

@@ -5,9 +5,9 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\admin\middleware;
+namespace App\Http\Admin\Middleware;
 
-use Xin\ThinkPHP\Foundation\Middleware\CheckForSafeVisit as Middleware;
+use Xin\Laravel\Strengthen\Http\Middleware\CheckForSafeVisit as Middleware;
 
 class CheckForSafeVisit extends Middleware
 {

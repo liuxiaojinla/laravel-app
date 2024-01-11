@@ -1,15 +1,13 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
 
-namespace app\admin\controller\finance;
+namespace App\Http\Admin\Controllers\Finance;
 
-use app\admin\Controller;
-use app\common\model\User;
-use app\common\model\user\Cashout;
+use App\Http\Admin\Controllers\Controller;
+use App\Models\User;
+use App\Models\User\Cashout;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
 
 class UserCashoutController extends Controller
@@ -18,38 +16,34 @@ class UserCashoutController extends Controller
     /**
      * 会员提现
      *
-     * @return string
-     * @throws \think\db\exception\DbException
+     * @return View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $status = $this->request->validIntIn('status/d', [0, 2, 3], 0);
+        $status = $request->validIntIn('status', [0, 2, 3], 0);
 
-        $data = Cashout::with('user')->where([
+        $data = Cashout::query()->with('user')->where([
             'status' => $status,
-        ])->paginate($this->request->paginate());
+        ])->paginate();
 
-        $this->assign('data', $data);
-        $this->assign('status', $status);
-
-        return $this->fetch();
+        return view('user_cashout.index', [
+            'data' => $data,
+            'status' => $status,
+        ]);
     }
 
     /**
      * 设置打款
      *
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
-    public function payment()
+    public function payment(Request $request)
     {
-        $id = $this->request->validId();
+        $id = $request->validId();
 
         /** @var Cashout $info */
-        $info = Cashout::where('id', $id)->findOrFail();
-        if (!$this->request->isPost()) {
+        $info = Cashout::query()->where('id', $id)->findOrFail();
+        if (!$request->isPost()) {
             $this->assign('info', $info);
 
             return $this->fetch();
@@ -59,7 +53,7 @@ class UserCashoutController extends Controller
             return Hint::error('请勿重复打款！');
         }
 
-        $data = $this->request->validate([
+        $data = $request->validate([
             'transfer_type', 'audit_status', 'refuse_msg',
         ], [
             'rules' => [
@@ -77,19 +71,19 @@ class UserCashoutController extends Controller
         if ($data['audit_status'] == 0) { // 同意打款
             $status = $this->dispatch($data['type'], $info);
             $info->save([
-                'status' => Cashout::STATUS_TRANSFER,
-                'audit_time' => $this->request->time(),
-                'transfer_time' => $this->request->time(),
+                'status' => Cashout::STATUS_TRANSFERRED,
+                'audit_time' => $request->time(),
+                'transfer_time' => $request->time(),
                 'refuse_msg' => $data['refuse_msg'],
             ]);
         } else {
-            /** @var \app\common\model\User $user */
-            $user = User::where('id', $info->user_id)->find();
+            /** @var User $user */
+            $user = User::query()->where('id', $info->user_id)->firstOrFail();
             $user->inc('cash_amount', $info->apply_money)->update([]);
 
             $info->save([
                 'status' => 3,
-                'audit_time' => $this->request->time(),
+                'audit_time' => $request->time(),
                 'refuse_msg' => $data['refuse_msg'],
             ]);
         }
@@ -101,14 +95,14 @@ class UserCashoutController extends Controller
      * 开始打款
      *
      * @param int $type
-     * @param \app\common\model\user\Cashout $info
+     * @param Cashout $info
      * @return int
      */
     private function dispatch($type, Cashout $info)
     {
         if ($type == Cashout::TYPE_BANK) {
         } else {
-            /** @var \app\common\model\User $user */
+            /** @var User $user */
             $openid = User::where('id', $info->user_id)->value('openid');
 
             $amount = $info->money * 100;

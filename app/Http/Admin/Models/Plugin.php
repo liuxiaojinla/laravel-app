@@ -1,9 +1,9 @@
 <?php
 
-namespace app\admin\model;
+namespace App\Http\Admin\Models;
 
-use Xin\Plugin\ThinkPHP\Models\DatabasePlugin;
-use Xin\ThinkPHP\Model\Modelable;
+
+use Xin\Laravel\Strengthen\Model\Modelable;
 
 class Plugin extends DatabasePlugin
 {

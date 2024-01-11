@@ -1,9 +1,9 @@
 <?php
 
-namespace app\admin\model;
+namespace App\Http\Admin\Models;
 
-use Xin\Setting\ThinkPHP\DatabaseSetting;
-use Xin\ThinkPHP\Model\Modelable;
+use Xin\Laravel\Strengthen\Model\Modelable;
+use Xin\Setting\Laravel\DatabaseSetting;
 
 class Setting extends DatabaseSetting
 {
@@ -17,7 +17,7 @@ class Setting extends DatabaseSetting
         return [
             'id', 'title', 'name', 'group', 'type',
             'system', 'public', 'status', 'sort',
-            'create_time'
+            'create_time',
         ];
     }
 

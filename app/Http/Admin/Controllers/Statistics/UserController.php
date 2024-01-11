@@ -1,9 +1,9 @@
 <?php
 
-namespace app\admin\controller\statistics;
+namespace App\Http\Admin\Controllers\Statistics;
 
-use app\admin\Controller;
-use app\common\model\User;
+use App\Http\Admin\Controllers\Controller;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -12,25 +12,22 @@ class UserController extends Controller
      * 会员概览
      *
      * @return string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function index()
     {
-        $totalCount = User::count();
+        $totalCount = User::query()->count();
 
-        $todayCount = User::whereDay('create_time')->count();
-        $yesterdayCount = User::whereDay('create_time', 'yesterday')->count();
+        $todayCount = User::query()->whereDay('create_time')->count();
+        $yesterdayCount = User::query()->whereDay('create_time', 'yesterday')->count();
 
-        $weekCount = User::whereWeek('create_time')->count();
-        $lastWeekCount = User::whereWeek('create_time', 'last week')->count();
+        $weekCount = User::query()->whereWeek('create_time')->count();
+        $lastWeekCount = User::query()->whereWeek('create_time', 'last week')->count();
 
-        $monthCount = User::whereMonth('create_time')->count();
-        $lastMonthCount = User::whereMonth('create_time', 'last month')->count();
+        $monthCount = User::query()->whereMonth('create_time')->count();
+        $lastMonthCount = User::query()->whereMonth('create_time', 'last month')->count();
 
-        $cityCounts = User::field('province,count(id) as count')
-            ->group('province')->order('count desc')->select()
+        $cityCounts = User::query()->selectRaw('province,count(id) as count')
+            ->groupBy('province')->orderByDesc('count')->get()
             ->each(function ($item) use ($totalCount) {
                 $item['rate'] = ($item['count'] == 0 || $totalCount == 0)
                     ? 0 : bcdiv($item['count'], $totalCount, 4) * 100;

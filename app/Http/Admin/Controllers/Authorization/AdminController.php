@@ -24,9 +24,9 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $search = $this->request->get();
+        $search = $request->get();
 
-        $data = Admin::simple()->search($search)->order('id desc')->paginate($this->request->paginate());
+        $data = Admin::simple()->search($search)->order('id desc')->paginate();
 
         $this->assign('data', $data);
 
@@ -42,9 +42,9 @@ class AdminController extends Controller
      */
     public function create()
     {
-        $id = $this->request->param('id/d', 0);
+        $id = $request->param('id/d', 0);
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             if ($id > 0) {
                 $info = Admin::where('id', $id)->find();
                 $this->assign('copy', 1);
@@ -55,7 +55,7 @@ class AdminController extends Controller
         }
 
 
-        $data = $this->request->validate(null, AdminValidate::class . ".create");
+        $data = $request->validate(null, AdminValidate::class . ".create");
         $data['password'] = app('hash')->make($data['password']);
         $info = Admin::create($data);
 
@@ -70,11 +70,11 @@ class AdminController extends Controller
      */
     public function update()
     {
-        $id = $this->request->validId();
+        $id = $request->validId();
         /** @var Admin $info */
         $info = Admin::where('id', $id)->findOrFail();
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             $this->assign('info', $info);
 
             return $this->fetch('edit');
@@ -84,7 +84,7 @@ class AdminController extends Controller
             throw new ValidateException("不允许修改超级管理员");
         }
 
-        $data = $this->request->validate(null, AdminValidate::class);
+        $data = $request->validate(null, AdminValidate::class);
         if (isset($data['password'])) {
             $data['password'] = app('hash')->make($data['password']);
         }
@@ -105,8 +105,8 @@ class AdminController extends Controller
      */
     public function delete()
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = $request->param('force/d', 0);
 
         Admin::checkIsUpdateAdmin($ids);
 
@@ -126,9 +126,9 @@ class AdminController extends Controller
      */
     public function setValue()
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->param($field);
 
         Admin::setManyValue($ids, $field, $value);
 

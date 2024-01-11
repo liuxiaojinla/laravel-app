@@ -1,9 +1,8 @@
 <?php
 
-namespace app\admin\model;
+namespace App\Http\Admin\Models;
 
-use Xin\Plugin\ThinkPHP\Models\DatabaseEvent;
-use Xin\ThinkPHP\Model\Modelable;
+use Xin\Laravel\Strengthen\Model\Modelable;
 
 class Event extends DatabaseEvent
 {

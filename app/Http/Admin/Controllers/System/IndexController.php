@@ -2,13 +2,10 @@
 
 namespace App\Http\Admin\Controllers\System;
 
-use app\admin\controller\system\PluginController;
-use app\admin\model\Setting;
-use App\Http\Admin\Controllers\Controller;
-use think\facade\Console;
+
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Xin\Hint\Facades\Hint;
-use Xin\Plugin\ThinkPHP\Models\DatabaseEvent;
-use Xin\ThinkPHP\Util\QueueUtil;
 
 class IndexController extends Controller
 {
@@ -19,9 +16,9 @@ class IndexController extends Controller
      */
     public function clearCache()
     {
-        Console::call('clear', ['admin']);
-        Console::call('clear', ['index']);
-        Console::call('clear', ['store']);
+        Artisan::call('clear', ['admin']);
+        Artisan::call('clear', ['index']);
+        Artisan::call('clear', ['store']);
 
         $this->refreshSettingCache();
         $this->refreshMenuCache();
@@ -32,7 +29,7 @@ class IndexController extends Controller
     /**
      * 清除配置缓存
      *
-     * @return \think\Response
+     * @return Response
      */
     public function clearSettingCache()
     {
@@ -54,7 +51,7 @@ class IndexController extends Controller
     /**
      * 清除菜单缓存
      *
-     * @return \think\Response
+     * @return Response
      */
     public function clearMenuCache()
     {

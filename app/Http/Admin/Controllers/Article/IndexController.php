@@ -28,10 +28,10 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $search = $this->request->get();
+        $search = $request->get();
         $data = Article::simple()->search($search)
             ->order('id desc')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         $this->assign('data', $data);
 
@@ -49,9 +49,9 @@ class IndexController extends Controller
      */
     public function create()
     {
-        $id = $this->request->param('id/d', 0);
+        $id = $request->param('id/d', 0);
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             if ($id > 0) {
                 $info = Article::where('id', $id)->find();
                 $this->assign('copy', 1);
@@ -63,7 +63,7 @@ class IndexController extends Controller
             return $this->fetch('edit');
         }
 
-        $data = $this->request->validate(null, ArticleValidate::class);
+        $data = $request->validate(null, ArticleValidate::class);
         $info = Article::create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
@@ -78,17 +78,17 @@ class IndexController extends Controller
      */
     public function update()
     {
-        $id = $this->request->validId();
+        $id = $request->validId();
         $info = Article::where('id', $id)->findOrFail();
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             $this->assign('info', $info);
             $this->assignTreeArticleCategories();
 
             return $this->fetch('edit');
         }
 
-        $data = $this->request->validate(null, ArticleValidate::class);
+        $data = $request->validate(null, ArticleValidate::class);
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -105,8 +105,8 @@ class IndexController extends Controller
      */
     public function delete()
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = $request->param('force/d', 0);
 
         Article::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
             $item->force($isForce)->delete();
@@ -124,9 +124,9 @@ class IndexController extends Controller
      */
     public function setValue()
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->param($field);
 
         Article::setManyValue($ids, $field, $value);
 
@@ -140,8 +140,8 @@ class IndexController extends Controller
      */
     public function move()
     {
-        $ids = $this->request->validIds();
-        $targetId = $this->request->validId('category_id');
+        $ids = $request->validIds();
+        $targetId = $request->validId('category_id');
 
         if (!Category::where('id', $targetId)->count()) {
             throw new ValidateException("所选分类不存在！");

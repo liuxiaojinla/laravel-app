@@ -2,61 +2,53 @@
 
 namespace App\Http\Admin\Controllers;
 
-use app\common\model\Feedback;
-use app\common\model\Model;
+use App\Models\Feedback;
+use App\Models\Model;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
 
 class FeedbackController extends Controller
 {
+
+    /**
+     * 数据列表
+     * @param Request $request
+     * @return View
+     */
     public function index(Request $request)
     {
-        $search = $this->request->get();
-        if ($this->request->has('datetime')) {
-            $search['datetime'] = $this->request->rangeTime();
+        $search = $request->query();
+        if ($request->has('datetime')) {
+            $search['datetime'] = $request->rangeTime();
         }
 
         $data = Feedback::simple()->search($search)
-            ->order('id desc')
-            ->paginate($this->request->paginate());
+            ->orderByDesc('id')
+            ->paginate();
 
-        $this->assign('data', $data);
-
-        return $this->fetch();
+        return view('feedback.index', [
+            'data' => $data,
+        ]);
     }
 
-    public function create(Request $request)
-    {
-
-    }
-
-    public function store(Request $request)
-    {
-
-    }
-
-    public function show(Request $request)
-    {
-
-    }
-
-    public function edit(Request $request)
-    {
-
-    }
-
-    public function update(Request $request)
-    {
-
-    }
-
+    /**
+     * 数据删除
+     * @param Request $request
+     * @return Response
+     */
     public function destroy(Request $request)
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = (int)$request->input('force/d', 0);
 
-        Feedback::whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        Feedback::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);

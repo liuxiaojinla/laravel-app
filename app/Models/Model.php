@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Search;
-use App\Models\Concerns\SerializeDate;
+use Xin\Laravel\Strengthen\Model\Modelable;
 
 /**
  * 基础模型类
@@ -15,5 +14,5 @@ use App\Models\Concerns\SerializeDate;
  */
 class Model extends \Illuminate\Database\Eloquent\Model
 {
-    use Search, SerializeDate;
+    use Modelable;
 }

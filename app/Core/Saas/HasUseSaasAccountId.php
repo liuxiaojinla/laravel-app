@@ -35,7 +35,7 @@ trait HasUseSaasAccountId
     public function getUseSaasAccountId($failException = true)
     {
         if (empty($this->useSaasAccountId) && $failException) {
-            throw new \LogicException(static::class . '->setUseCompanyId must be set.');
+            throw new \LogicException(static::class . '->setUseSaasAccountId must be set.');
         }
 
         return $this->useSaasAccountId;

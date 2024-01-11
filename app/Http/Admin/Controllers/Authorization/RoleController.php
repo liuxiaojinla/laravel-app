@@ -27,10 +27,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $search = $this->request->get();
+        $search = $request->get();
         $data = AdminRole::simple()->search($search)
             ->order('id desc')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         $this->assign('data', $data);
 
@@ -46,9 +46,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $id = $this->request->param('id/d', 0);
+        $id = $request->param('id/d', 0);
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             if ($id > 0) {
                 $info = AdminRole::where('id', $id)->find();
                 $this->assign('copy', 1);
@@ -59,7 +59,7 @@ class RoleController extends Controller
         }
 
 
-        $data = $this->request->validate(null, AdminRoleValidate::class);
+        $data = $request->validate(null, AdminRoleValidate::class);
         $info = AdminRole::create($data);
 
         return Hint::success("创建成功！", null, $info);
@@ -73,16 +73,16 @@ class RoleController extends Controller
      */
     public function update()
     {
-        $id = $this->request->validId();
+        $id = $request->validId();
         $info = AdminRole::where('id', $id)->findOrFail();
 
-        if ($this->request->isGet()) {
+        if ($request->isGet()) {
             $this->assign('info', $info);
 
             return $this->fetch('edit');
         }
 
-        $data = $this->request->validate(null, AdminRoleValidate::class);
+        $data = $request->validate(null, AdminRoleValidate::class);
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -99,8 +99,8 @@ class RoleController extends Controller
      */
     public function delete()
     {
-        $ids = $this->request->validIds();
-        $isForce = $this->request->param('force/d', 0);
+        $ids = $request->validIds();
+        $isForce = $request->param('force/d', 0);
 
         AdminRole::whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
             $item->force($isForce)->delete();
@@ -118,9 +118,9 @@ class RoleController extends Controller
      */
     public function setValue()
     {
-        $ids = $this->request->validIds();
-        $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $ids = $request->validIds();
+        $field = $request->validString('field');
+        $value = $request->param($field);
 
         AdminRole::setManyValue($ids, $field, $value);
 
@@ -136,10 +136,10 @@ class RoleController extends Controller
      */
     public function access()
     {
-        $id = $this->request->validId();
+        $id = $request->validId();
         /** @var AdminRole $info */
         $info = AdminRole::where('id', $id)->findOrFail();
-        $type = $this->request->param('type', 'menu', 'trim');
+        $type = $request->param('type', 'menu', 'trim');
 
         $method = "access{$type}";
         $response = $this->$method($info);
@@ -167,8 +167,8 @@ class RoleController extends Controller
      */
     protected function accessMenu($info)
     {
-        if ($this->request->isPost()) {
-            $ids = $this->request->ids();
+        if ($request->isPost()) {
+            $ids = $request->ids();
             if (empty($ids)) {
                 $info->menus()->detach();
             } else {
@@ -221,9 +221,9 @@ class RoleController extends Controller
      */
     protected function accessUser($info)
     {
-        if ($this->request->isPost()) {
-            $subType = $this->request->param('sub_type/d', 0);
-            $adminIds = $this->request->validIds();
+        if ($request->isPost()) {
+            $subType = $request->param('sub_type/d', 0);
+            $adminIds = $request->validIds();
 
             if ($subType) {
                 $info->admins()->attach($adminIds, [
@@ -241,12 +241,12 @@ class RoleController extends Controller
             //				}), $subType == 0);
         }
 
-        $keywords = $this->request->keywordsSql();
+        $keywords = $request->keywordsSql();
         $data = Admin::with('roles')->when(!empty($keywords), [
             ['username', 'like', $keywords],
         ])->where('id', '<>', 1)->order('id desc')->paginate([
-            'page' => $this->request->page(),
-            'query' => $this->request->get(),
+            'page' => $request->page(),
+            'query' => $request->get(),
         ])->each(function (Admin $admin) use ($info) {
             $admin['isOwn'] = in_array($info->id, $admin->roles->column('id'), true);
         });
@@ -279,7 +279,7 @@ class RoleController extends Controller
     //					'type'        => $type,
     //					'target_id'   => $id,
     //					'role_id'     => $roleId,
-    //					'create_time' => $this->request->time(),
+    //					'create_time' => $request->time(),
     //				];
     //			}, array_diff($ids, $existIds)));
     //		}

@@ -1,20 +1,15 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
 
-namespace app\admin\middleware;
+namespace App\Http\Admin\Middleware;
 
-use Xin\Auth\Contracts\AuthVerifyType;
-use Xin\Menu\ThinkPHP\Middleware;
+use Closure;
+use Xin\Menu\Laravel\Middleware;
 
 class MenuInit extends Middleware
 {
 
     /**
-     * @return \Closure
+     * @return Closure
      */
     protected function getFilterResolver()
     {
