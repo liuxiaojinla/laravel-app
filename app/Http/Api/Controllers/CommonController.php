@@ -1,6 +1,6 @@
 <?php
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
 use app\BaseController;
 use think\db\Query;
@@ -11,7 +11,7 @@ class CommonController extends BaseController
 {
     /**
      * 获取城市数据
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException

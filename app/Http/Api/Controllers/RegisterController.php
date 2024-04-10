@@ -3,7 +3,7 @@
 namespace app\api\controller;
 
 use app\BaseController;
-use app\common\model\User;
+use App\Models\User;
 use think\exception\ValidateException;
 use Xin\Auth\Events\Registered;
 use Xin\Hint\Facades\Hint;
@@ -13,7 +13,7 @@ use Xin\VerifyCode\VerifyCodeManager;
 class RegisterController extends BaseController
 {
     /**
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {

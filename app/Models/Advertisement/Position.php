@@ -20,14 +20,9 @@ class Position extends Model
     public const STATUS_DISABLED = 2;
 
     /**
-     * @var null
-     */
-    protected $defaultSoftDelete = 0;
-
-    /**
      * @var string
      */
-    protected $name = 'advertisement';
+    protected $table = 'advertisements';
 
     /**
      * @var array
@@ -37,7 +32,7 @@ class Position extends Model
     ];
 
     /**
-     * @return \think\model\relation\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function items()
     {

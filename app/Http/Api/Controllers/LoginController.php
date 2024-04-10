@@ -9,7 +9,7 @@ namespace app\api\controller;
 
 use app\api\concern\LoginHandle;
 use app\BaseController;
-use app\common\model\User;
+use App\Models\User;
 use Xin\Hint\Facades\Hint;
 
 class LoginController extends BaseController
@@ -20,7 +20,7 @@ class LoginController extends BaseController
     /**
      * 用户登录
      *
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -37,7 +37,7 @@ class LoginController extends BaseController
             ],
         ]);
 
-        /** @var \app\common\model\User $user */
+        /** @var \App\Models\User $user */
         $user = $this->auth->loginUsingCredential([
             'mobile' => $data['account'],
             'password' => $data['password'],

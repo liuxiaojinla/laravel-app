@@ -8,7 +8,6 @@
 namespace app\api\controller;
 
 use app\api\concern\WechatAuthenticatesUsers;
-use app\api\Controller;
 use Overtrue\Socialite\AuthorizeFailedException;
 use think\App;
 use think\exception\ValidateException;
@@ -37,7 +36,7 @@ class WechatAuthorizeController extends Controller
     /**
      * 登录
      *
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
@@ -74,7 +73,7 @@ class WechatAuthorizeController extends Controller
     /**
      * 公众号授权登录
      *
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException

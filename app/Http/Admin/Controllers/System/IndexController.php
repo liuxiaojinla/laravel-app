@@ -12,7 +12,7 @@ class IndexController extends Controller
     /**
      * 清除全部缓存
      *
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      */
     public function clearCache()
     {

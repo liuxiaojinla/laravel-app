@@ -7,7 +7,6 @@
 
 namespace app\api\controller;
 
-use app\api\Controller;
 use EasyWeChat\Kernel\Exceptions\DecryptException;
 use think\facade\Log;
 use Xin\Hint\Facades\Hint;
@@ -21,7 +20,7 @@ class WechatController extends Controller
      * code 换取 session_key
      *
      * @param WechatFactory $wechatFactory
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
      */
     public function code2session(WechatFactory $wechatFactory)
@@ -44,7 +43,7 @@ class WechatController extends Controller
      * 解密手机号
      *
      * @param WechatFactory $wechatFactory
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

@@ -37,6 +37,11 @@ class SettingController extends Controller
         $search = $request->query();
 
         $data = $this->settingManager->paginate($search);
+        if ($request->ajax()){
+            return Hint::result($data);
+        }
+
+        return Hint::result($data);
 
         return view('setting.index', [
             'data' => $data,

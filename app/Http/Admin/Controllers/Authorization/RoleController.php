@@ -92,7 +92,7 @@ class RoleController extends Controller
 
     /**
      * 删除数据
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
@@ -111,7 +111,7 @@ class RoleController extends Controller
 
     /**
      * 更新数据
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
@@ -160,7 +160,7 @@ class RoleController extends Controller
      * 分配菜单权限
      *
      * @param AdminRole $info
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
@@ -215,7 +215,7 @@ class RoleController extends Controller
      * 分配 Admin 角色
      *
      * @param AdminRole $info
-     * @return \think\Response|void
+     * @return \Illuminate\Http\Response|void
      * @throws \think\db\exception\DbException
      * @throws \Exception
      */

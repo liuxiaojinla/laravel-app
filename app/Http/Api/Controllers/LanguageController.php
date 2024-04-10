@@ -7,14 +7,13 @@
 
 namespace app\api\controller;
 
-use app\api\Controller;
 use Xin\Hint\Facades\Hint;
 
 class LanguageController extends Controller
 {
 
     /**
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {

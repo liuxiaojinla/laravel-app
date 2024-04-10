@@ -5,18 +5,18 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
-use app\api\Controller;
-use app\common\model\advertisement\Item as AdvertisementItem;
-use app\common\model\advertisement\Position as AdvertisementPosition;
-use app\common\model\Agreement;
-use app\common\model\Feedback;
-use app\common\model\Notice;
-use app\common\model\SinglePage;
-use think\exception\ValidateException;
+use App\Exceptions\ValidationException;
+use App\Models\Advertisement\Item as AdvertisementItem;
+use App\Models\Advertisement\Position as AdvertisementPosition;
+use App\Models\Agreement;
+use App\Models\Feedback;
+use App\Models\Notice;
+use App\Models\SinglePage;
+use App\Supports\SQL;
 use Xin\Hint\Facades\Hint;
-use Xin\Setting\ThinkPHP\DatabaseSetting;
+use Xin\Setting\Facades\Setting;
 use Xin\Support\Fluent;
 
 class IndexController extends Controller
@@ -25,35 +25,31 @@ class IndexController extends Controller
     /**
      * 获取首页数据
      *
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function index()
     {
         $data = new Fluent;
-
         // 获取 Banner
         if (class_exists(AdvertisementItem::class)) {
-            $data['banner_list'] = AdvertisementItem::where([
+            $advertisementId = AdvertisementPosition::query()->where('name', 'mobile_home')->value('id') ?: 0;
+            $data['banner_list'] = AdvertisementItem::simple()->where([
                 ['status', '=', 1,],
-                ['begin_time', '<', $this->request->time(),],
-                ['end_time', '>', $this->request->time(),],
-                ['advertisement_id', '=', AdvertisementPosition::getIdByName('index')],
-            ])->order('sort asc,id desc')->select();
+                ['begin_time', '<', $this->request->timeFormat(),],
+                ['end_time', '>', $this->request->timeFormat(),],
+                ['advertisement_id', '=', $advertisementId],
+            ])->oldest('sort')->latest('id')->get();
         }
 
         // 获取 Notice
         if (class_exists(Notice::class)) {
-            $data['notice_list'] = Notice::where([
+            $data['notice_list'] = Notice::simple()->where([
                 ['status', '=', 1,],
-                ['begin_time', '<', $this->request->time(),],
-                ['end_time', '>', $this->request->time(),],
-            ])->order('sort asc,id desc')->select();
+                ['begin_time', '<', $this->request->timeFormat(),],
+                ['end_time', '>', $this->request->timeFormat(),],
+            ])->oldest('sort')->latest('id')->get();
         }
 
-        adv_event('ApiIndex', $data);
+//        adv_event('ApiIndex', $data);
 
         return Hint::result($data);
     }
@@ -61,23 +57,16 @@ class IndexController extends Controller
     /**
      * 获取系统配置
      *
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return \Illuminate\Http\Response
      */
     public function config()
     {
-        return Hint::result(DatabaseSetting::loadPublic());
+        return Hint::result(Setting::loadOnPublic());
     }
 
     /**
      * 获取协议
-     *
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return \Illuminate\Http\Response
      */
     public function getAgreement()
     {
@@ -91,10 +80,7 @@ class IndexController extends Controller
     /**
      * 关于我们
      *
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return \Illuminate\Http\Response
      */
     public function getAbout()
     {
@@ -106,10 +92,7 @@ class IndexController extends Controller
     /**
      * 获取通知列表
      *
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return \Illuminate\Http\Response
      */
     public function getNoticeList()
     {
@@ -125,10 +108,7 @@ class IndexController extends Controller
     /**
      * 获取广告位列表
      *
-     * @return \think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return \Illuminate\Http\Response
      */
     public function getBannerList()
     {
@@ -147,13 +127,14 @@ class IndexController extends Controller
     /**
      * 创建反馈
      *
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
+     * @throws ValidationException
      */
     public function createFeedback()
     {
         $message = $this->request->post('message', '', 'trim');
         if (empty($message)) {
-            throw new ValidateException('请输入留言内容！');
+            ValidationException::throwException('请输入留言内容！');
         }
 
         $data = [

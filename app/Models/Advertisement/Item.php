@@ -19,14 +19,9 @@ class Item extends Model
     use SoftDeletes;
 
     /**
-     * @var null
-     */
-    protected $defaultSoftDelete = 0;
-
-    /**
      * @var string
      */
-    protected $name = 'advertisement_item';
+    protected $table = 'advertisement_items';
 
     /**
      * @var string[]
@@ -38,7 +33,7 @@ class Item extends Model
 
     /**
      * 关联广告位
-     * @return \think\model\relation\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function advertisement()
     {

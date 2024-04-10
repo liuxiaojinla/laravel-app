@@ -33,10 +33,10 @@ class CheckForRouteAuth
     {
         $this->defineAbility();
 
-        $path = $request->path($request);
-        if (!$this->isExcept($request) && !Gate::check('route', $path)) {
-            return ErrorController::output403();
-        }
+//        $path = $request->path($request);
+//        if (!$this->isExcept($request) && !Gate::check('route', $path)) {
+//            return ErrorController::output403();
+//        }
 
         return $next($request);
     }

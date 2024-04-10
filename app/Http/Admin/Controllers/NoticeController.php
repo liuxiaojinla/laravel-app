@@ -145,7 +145,7 @@ class NoticeController extends Controller
 
     /**
      * 更新数据
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException

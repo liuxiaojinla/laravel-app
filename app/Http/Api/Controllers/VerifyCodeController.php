@@ -20,7 +20,7 @@ class VerifyCodeController extends BaseController
 
     /**
      * 发送短信验证码
-     * @return \think\Response
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {

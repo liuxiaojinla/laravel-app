@@ -228,5 +228,26 @@ class RequestServiceProvider extends ServiceProvider
 
             return $value;
         });
+
+        /**
+         * 获取当前请求的时间
+         * @access public
+         * @param bool $float 是否使用浮点类型
+         * @return integer|float
+         */
+        Request::macro('time', function (bool $float = false) {
+            /** @var $this Request */
+            return $float ? $this->server('REQUEST_TIME_FLOAT') : $this->server('REQUEST_TIME');
+        });
+
+        /**
+         * 获取当前请求的时间-格式化后的日期时间
+         * @access public
+         * @return string
+         */
+        Request::macro('timeFormat', function () {
+            /** @var $this Request */
+            return date('Y-m-d H:i:s', $this->time());
+        });
     }
 }
