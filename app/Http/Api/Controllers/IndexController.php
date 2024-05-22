@@ -7,14 +7,13 @@
 
 namespace App\Http\Api\Controllers;
 
-use App\Exceptions\ValidationException;
 use App\Models\Advertisement\Item as AdvertisementItem;
 use App\Models\Advertisement\Position as AdvertisementPosition;
 use App\Models\Agreement;
-use App\Models\Feedback;
 use App\Models\Notice;
 use App\Models\SinglePage;
-use App\Supports\SQL;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Xin\Hint\Facades\Hint;
 use Xin\Setting\Facades\Setting;
 use Xin\Support\Fluent;
@@ -25,6 +24,7 @@ class IndexController extends Controller
     /**
      * 获取首页数据
      *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -68,11 +68,11 @@ class IndexController extends Controller
      * 获取协议
      * @return \Illuminate\Http\Response
      */
-    public function getAgreement()
+    public function agreement()
     {
         $name = $this->request->validString('name');
 
-        $info = Agreement::where('name', $name)->find();
+        $info = Agreement::query()->where('name', $name)->first();
 
         return Hint::result($info);
     }
@@ -82,73 +82,28 @@ class IndexController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getAbout()
+    public function about()
     {
-        $info = SinglePage::where('name', 'about')->find();
+        $info = SinglePage::query()->where('name', 'about')->first();
 
         return Hint::result($info);
     }
 
     /**
-     * 获取通知列表
-     *
+     * 获取城市数据
      * @return \Illuminate\Http\Response
      */
-    public function getNoticeList()
+    public function regions()
     {
-        $data = Notice::where([
-            ['status', '=', 1,],
-            ['begin_time', '<', $this->request->time(),],
-            ['end_time', '>', $this->request->time(),],
-        ])->select();
+        $level = intval($this->request->input('level', 0));
+        $pid = intval($this->request->input('pid', -1));
 
-        return Hint::result($data);
+        $regions = Db::table('regions')->when($level, function (Builder $query) use ($level) {
+            $query->where('level', '<=', $level);
+        })->when($pid >= 0, function (Builder $query) use ($pid) {
+            $query->where('pid', '=', $pid);
+        })->get();
+
+        return Hint::result($regions);
     }
-
-    /**
-     * 获取广告位列表
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getBannerList()
-    {
-        $name = $this->request->param('name', '', 'trim');
-        $name = $name ?: 'index';
-        $data = AdvertisementItem::where([
-            ['status', '=', 1,],
-            ['begin_time', '<', $this->request->time(),],
-            ['end_time', '>', $this->request->time(),],
-            ['advertisement_id', '=', AdvertisementPosition::getIdByName($name)],
-        ])->order('sort asc,id desc')->select();
-
-        return Hint::result($data);
-    }
-
-    /**
-     * 创建反馈
-     *
-     * @return \Illuminate\Http\Response
-     * @throws ValidationException
-     */
-    public function createFeedback()
-    {
-        $message = $this->request->post('message', '', 'trim');
-        if (empty($message)) {
-            ValidationException::throwException('请输入留言内容！');
-        }
-
-        $data = [
-            'name' => $this->request->user('nickname'),
-            'content' => $message,
-        ];
-        $data['ip'] = $this->request->ip();
-        $data['user_agent'] = $this->request->server('HTTP_USER_AGENT');
-        $data['referer'] = $this->request->server('HTTP_REFERER');
-
-        Feedback::create($data);
-
-        return Hint::success("已留言！");
-    }
-
-
 }

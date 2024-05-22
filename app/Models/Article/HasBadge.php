@@ -1,9 +1,14 @@
 <?php
 
-namespace app\common\model\article;
+namespace App\Models\Article;
 
-use think\facade\Db;
 
+use App\Models\Model;
+use Illuminate\Support\Facades\DB;
+
+/**
+ * @mixin Model
+ */
 trait HasBadge
 {
 
@@ -41,7 +46,7 @@ trait HasBadge
      */
     protected function getBadgeListAttr()
     {
-        $badgeIds = $this->getData('badge_id_list');
+        $badgeIds = $this->getRawOriginal('badge_id_list');
 
         return self::getBadgeList($badgeIds);
     }
@@ -55,7 +60,7 @@ trait HasBadge
     protected static function getBadgeList(array $badgeIds)
     {
         if (is_null(self::$BADGE_LIST)) {
-            self::$BADGE_LIST = Db::name('badge')->column('title', 'id');
+            self::$BADGE_LIST = Db::table('badge')->column('title', 'id');
         }
 
         $result = [];

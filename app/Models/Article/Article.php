@@ -6,15 +6,13 @@
  * @date: 2019/7/26 18:32
  */
 
-namespace app\common\model\article;
+namespace App\Models\Article;
 
-use app\common\model\Model;
-use think\db\Query;
-use think\model\concern\SoftDelete;
+use App\Models\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Xin\Support\Number;
 use Xin\Support\Str;
 use Xin\Support\Time;
-use function get_cover_path;
 
 /**
  * 文章模型
@@ -32,7 +30,7 @@ use function get_cover_path;
  */
 class Article extends Model
 {
-    use SoftDelete;
+    use SoftDeletes;
 
     /**
      * 标题

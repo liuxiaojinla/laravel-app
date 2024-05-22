@@ -31,7 +31,7 @@ class Notice extends Model
     {
         return [
             'id', 'title', 'status', 'sort',
-            'begin_time', 'end_time', 'create_time'
+            'begin_time', 'end_time', 'created_at'
         ];
     }
 

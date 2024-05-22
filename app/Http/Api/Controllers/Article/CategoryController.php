@@ -7,9 +7,9 @@
 
 namespace App\Http\Api\Controllers\Article;
 
-use App\Models\article\Article;
-use App\Models\article\Category;
-use App\Models\user\Favorite;
+use App\Models\Article\Article;
+use App\Models\Article\Category;
+use App\Models\User\Favorite;
 use Xin\Auth\Contracts\AuthVerifyType;
 use Xin\Hint\Facades\Hint;
 

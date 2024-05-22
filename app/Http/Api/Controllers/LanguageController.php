@@ -5,22 +5,28 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
+use Illuminate\Http\Response;
+use Illuminate\Translation\Translator;
 use Xin\Hint\Facades\Hint;
+use Xin\Support\Reflect;
 
 class LanguageController extends Controller
 {
 
     /**
-     * @return \Illuminate\Http\Response
+     * @return Response
+     * @throws \ReflectionException
      */
     public function index()
     {
-        return Hint::result([
-            'en-us' => require_once base_path('lang') . 'en-us.php',
-            'zh-cn' => require_once base_path('lang') . 'zh-cn.php',
-        ]);
+        /** @var Translator $translator */
+        $translator = $this->app['translator'];
+        $translator->load('*', '*', 'en');
+        $translator->load('*', '*', 'zh_CN');
+        $languages = Reflect::getPropertyValue($translator, 'loaded')['*']['*'];
+        return Hint::result($languages);
     }
 
 }

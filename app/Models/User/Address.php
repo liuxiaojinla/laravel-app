@@ -5,14 +5,9 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use app\common\model\Model;
-use app\common\model\Region;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\exception\ValidateException;
+use App\Models\Model;
 
 /**
  * @property-read int id
@@ -29,9 +24,6 @@ class Address extends Model
      * 优化关联ID
      * @param array $data
      * @return array
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
     public static function optimizeWithRelationId(array $data)
     {
@@ -89,9 +81,6 @@ class Address extends Model
      *
      * @param int $userId
      * @return static
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public static function getUserDefaultPlainInfo($userId)
     {

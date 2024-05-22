@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
 use EasyWeChat\Kernel\Exceptions\DecryptException;
 use think\facade\Log;
@@ -49,10 +49,10 @@ class WechatController extends Controller
      */
     public function decryptPhoneNumber(WechatFactory $wechatFactory)
     {
-        $code = $this->request->param('code/s', '', 'trim');
-        $sessionKey = $this->request->param('session_key/s', '', 'trim');
-        $iv = $this->request->param('iv/s', '', 'trim');
-        $encryptedData = $this->request->param('encryptedData/s', '', 'trim');
+        $code = $this->request->input('code/s', '', 'trim');
+        $sessionKey = $this->request->input('session_key/s', '', 'trim');
+        $iv = $this->request->input('iv/s', '', 'trim');
+        $encryptedData = $this->request->input('encryptedData/s', '', 'trim');
 
         $miniProgram = $wechatFactory->miniProgram();
         if ($code) {

@@ -2,12 +2,15 @@
 
 namespace App\Core\Repository;
 
-use App\Contracts\Base\Repository\Repository as RepositoryContract;
+use App\Contracts\Repository\Repository as RepositoryContract;
 use App\Core\Lock\Lock;
 use Illuminate\Contracts\Cache\LockTimeoutException;
+use Xin\Laravel\Strengthen\Lock\WithLock as BaseWithLock;
 
 trait WithLock
 {
+    use BaseWithLock;
+
     /**
      * @var Lock
      */

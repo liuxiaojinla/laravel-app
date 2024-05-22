@@ -5,10 +5,10 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use app\common\model\Model;
-use app\common\model\User;
+use App\Models\Model;
+use App\Models\User;
 
 /**
  * 点赞模型
@@ -27,7 +27,7 @@ class Like extends Model
 	/**
 	 * 关联用户模型
 	 *
-	 * @return \think\model\relation\BelongsTo
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function user()
 	{
@@ -41,9 +41,6 @@ class Like extends Model
 	 * @param int $topicId
 	 * @param int $userId
 	 * @return bool
-	 * @throws \think\db\exception\DataNotFoundException
-	 * @throws \think\db\exception\DbException
-	 * @throws \think\db\exception\ModelNotFoundException
 	 */
 	public static function toggle($type, $topicId, $userId)
 	{
@@ -101,9 +98,6 @@ class Like extends Model
 	 * @param int $topicId
 	 * @param int $userId
 	 * @return bool
-	 * @throws \think\db\exception\DataNotFoundException
-	 * @throws \think\db\exception\DbException
-	 * @throws \think\db\exception\ModelNotFoundException
 	 */
 	public static function isLike($type, $topicId, $userId)
 	{
@@ -117,9 +111,6 @@ class Like extends Model
 	 * @param int $topicId
 	 * @param int $userId
 	 * @return array|\think\Model|null
-	 * @throws \think\db\exception\DataNotFoundException
-	 * @throws \think\db\exception\DbException
-	 * @throws \think\db\exception\ModelNotFoundException
 	 */
 	public static function findLike($type, $topicId, $userId)
 	{

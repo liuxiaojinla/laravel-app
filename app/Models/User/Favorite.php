@@ -5,14 +5,10 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use app\common\model\User;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\model\Pivot;
-use Xin\ThinkPHP\Model\Morph;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * 收藏模型
@@ -43,7 +39,7 @@ class Favorite extends Pivot
 	/**
 	 * 关联用户模型
 	 *
-	 * @return \think\model\relation\BelongsTo
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function user()
 	{
@@ -53,7 +49,7 @@ class Favorite extends Pivot
 	/**
 	 * 多态关联
 	 *
-	 * @return \think\model\relation\MorphTo
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
 	 */
 	public function favoriteable()
 	{
@@ -69,9 +65,6 @@ class Favorite extends Pivot
 	 * @param int $topicId
 	 * @param int $userId
 	 * @return bool
-	 * @throws \think\db\exception\DataNotFoundException
-	 * @throws \think\db\exception\DbException
-	 * @throws \think\db\exception\ModelNotFoundException
 	 */
 	public static function toggle($type, $topicId, $userId)
 	{
@@ -149,9 +142,6 @@ class Favorite extends Pivot
 	 * @param int $topicId
 	 * @param int $userId
 	 * @return bool
-	 * @throws \think\db\exception\DataNotFoundException
-	 * @throws \think\db\exception\DbException
-	 * @throws \think\db\exception\ModelNotFoundException
 	 */
 	public static function isFavorite($type, $topicId, $userId)
 	{
@@ -165,9 +155,6 @@ class Favorite extends Pivot
 	 * @param int $topicId
 	 * @param int $userId
 	 * @return array|\think\Model|null
-	 * @throws \think\db\exception\DataNotFoundException
-	 * @throws \think\db\exception\DbException
-	 * @throws \think\db\exception\ModelNotFoundException
 	 */
 	public static function findFavorite($type, $topicId, $userId)
 	{

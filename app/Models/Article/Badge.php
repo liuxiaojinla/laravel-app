@@ -1,8 +1,9 @@
 <?php
 
-namespace app\common\model\article;
+namespace App\Models\Article;
 
-use app\common\model\Model;
+
+use App\Models\Model;
 
 class Badge extends Model
 {

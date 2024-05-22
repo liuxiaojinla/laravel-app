@@ -1,12 +1,13 @@
 <?php
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
-use app\BaseController;
-use think\exception\ValidateException;
-use think\facade\Validate;
+use App\Exceptions\ValidationException;
+use App\Http\Controller as BaseController;
+use App\Rules\MobileRule;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 use Xin\Hint\Facades\Hint;
-use Xin\VerifyCode\VerifyCodeManager;
 
 class VerifyCodeController extends BaseController
 {
@@ -20,7 +21,8 @@ class VerifyCodeController extends BaseController
 
     /**
      * 发送短信验证码
-     * @return \Illuminate\Http\Response
+     * @return Response
+     * @throws ValidationException
      */
     public function index()
     {
@@ -29,7 +31,7 @@ class VerifyCodeController extends BaseController
 
         $result = $this->verifyCodeManager()->make($mobile, $type);
         if (!$result) {
-            throw new ValidateException("发送失败，请稍后再试~");
+            ValidationException::throwException("发送失败，请稍后再试~");
         }
 
         return Hint::success("已发送", null, []);
@@ -37,14 +39,22 @@ class VerifyCodeController extends BaseController
 
     /**
      * 获取要发送的手机号
-     * @return array|mixed
+     * @return string
+     * @throws ValidationException
      */
     protected function getMobile()
     {
-        $mobile = $this->request->param('mobile', '', 'trim');
-        if (!Validate::is($mobile, 'mobile')) {
-            throw new ValidateException("手机号不合法！");
-        }
+        $mobile = trim($this->request->input('mobile', ''));
+        $validator = Validator::make([
+            'mobile' => $mobile,
+        ], [
+            'mobile' => 'required|mobile',
+        ]);
+        $validator->addRules([
+            'mobile' => new MobileRule(),
+        ]);
+
+        $validator->validated();
 
         return $mobile;
     }
@@ -52,12 +62,13 @@ class VerifyCodeController extends BaseController
     /**
      * 获取类型
      * @return bool
+     * @throws ValidationException
      */
     protected function getType()
     {
-        $type = $this->request->param('type', '', 'trim');
+        $type = trim($this->request->input('type', ''));
         if (!in_array($type, $this->typeList, true)) {
-            throw new ValidateException("param type invalid.");
+            ValidationException::throwException("param type invalid.");
         }
 
         return $type;

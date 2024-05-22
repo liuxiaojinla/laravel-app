@@ -5,9 +5,10 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use think\model\Pivot;
+
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class TagRelation extends Pivot
 {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chirp;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
 

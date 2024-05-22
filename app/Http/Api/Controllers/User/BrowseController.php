@@ -7,7 +7,7 @@
 
 namespace App\Http\Api\Controllers\User;
 
-use App\Models\user\Browse;
+use App\Models\User\Browse;
 use Xin\Hint\Facades\Hint;
 use Xin\ThinkPHP\Model\MorphMaker;
 

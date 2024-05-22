@@ -5,10 +5,10 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use app\common\model\Model;
-use app\common\model\User;
+use App\Models\Model;
+use App\Models\User;
 
 /**
  * @property-read int id
@@ -25,7 +25,7 @@ class Tag extends Model
 	/**
 	 * 关联用户
 	 *
-	 * @return \think\model\relation\BelongsToMany
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
 	public function users()
 	{

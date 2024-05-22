@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use \Xin\Laravel\Strengthen\Validation\ValidationException;
 
 class Error
 {

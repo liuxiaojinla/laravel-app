@@ -8,7 +8,7 @@
 namespace App\Http\Api\Controllers\User;
 
 use App\Models\User;
-use App\Models\user\Cashout as UserCashout;
+use App\Models\User\Cashout as UserCashout;
 use think\db\exception\ModelNotFoundException;
 use think\db\Query;
 use think\exception\ValidateException;

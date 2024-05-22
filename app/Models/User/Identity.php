@@ -5,9 +5,9 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use app\common\model\Model;
+use App\Models\Model;
 
 /**
  * @property-read int id

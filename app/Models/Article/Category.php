@@ -5,12 +5,12 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\article;
+namespace App\Models\Article;
 
 use app\common\material\Image;
-use app\common\model\Model;
-use app\common\model\User;
-use app\common\model\user\Favorite;
+use App\Models\Model;
+use App\Models\User;
+use App\Models\User\Favorite;
 use think\db\exception\DbException;
 use think\facade\Cache;
 use think\Model\Collection as ModelCollection;

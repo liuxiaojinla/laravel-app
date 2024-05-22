@@ -1,18 +1,15 @@
 <?php
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
-use app\BaseController;
-use App\Models\User;
-use think\exception\ValidateException;
-use Xin\Auth\Events\Registered;
+use App\Http\Controller as BaseController;
 use Xin\Hint\Facades\Hint;
-use Xin\Thinkphp\Facade\Hash;
-use Xin\VerifyCode\VerifyCodeManager;
+
 
 class RegisterController extends BaseController
 {
     /**
+     * 注册
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -29,7 +26,7 @@ class RegisterController extends BaseController
         $user = $this->auth->loginUsingId($user->id);
 
         return Hint::result($user, [
-            'session_id' => $this->auth->getSessionId(),
+            'session_id' => $this->request->session()->getId(),
         ]);
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Core\Job\Job;
+use Xin\Laravel\Strengthen\Queue\Job;
 
 class TestJob extends Job
 {

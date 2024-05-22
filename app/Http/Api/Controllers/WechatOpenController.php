@@ -5,10 +5,10 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
 use EasyWeChat\Kernel\Contracts\EventHandlerInterface;
-use think\facade\Log;
+use Illuminate\Support\Facades\Log;
 use Xin\Support\Str;
 use Xin\Wechat\Contracts\Factory as WechatFactory;
 
@@ -40,7 +40,7 @@ class WechatOpenController implements EventHandlerInterface
     public function handle($payload = null)
     {
         $raw = file_get_contents('php://input');
-        Log::write($raw . "\n" . json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'wechat.open');
+        Log::log($raw . "\n" . json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'wechat.open');
 
         // 微信全局事件
         adv_event('WechatOpen', $payload);

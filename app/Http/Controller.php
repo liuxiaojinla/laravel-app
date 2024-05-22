@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace App\Http;
 
 use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 /**

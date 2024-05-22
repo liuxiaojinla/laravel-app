@@ -1,22 +1,20 @@
 <?php
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use app\common\model\Model;
-use app\common\model\User;
-use think\db\Query;
-use think\facade\Db;
+use App\Models\Model;
+use App\Models\User;
 use Xin\Support\SQL;
 
 class UserBalanceLog extends Model
 {
     /**
      * 关联用户
-     * @return \think\model\relation\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id')->field(User::getPublicFields());
+        return $this->belongsTo(User::class, 'user_id')->select(User::getPublicFields());
     }
 
     /**

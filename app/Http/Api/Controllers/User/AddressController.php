@@ -7,7 +7,7 @@
 
 namespace App\Http\Api\Controllers\User;
 
-use App\Models\user\Address;
+use App\Models\User\Address;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;

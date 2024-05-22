@@ -9,9 +9,9 @@ namespace app\admin\controller\article;
 
 use app\admin\concern\InteractsArticleCategory;
 use app\admin\Controller;
-use app\common\model\article\Article;
-use app\common\model\article\Category;
 use app\common\validate\article\CategoryValidate;
+use App\Models\Article\Article;
+use App\Models\Article\Category;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Arr;
 

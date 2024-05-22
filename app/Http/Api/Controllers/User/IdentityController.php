@@ -7,7 +7,7 @@
 
 namespace App\Http\Api\Controllers\User;
 
-use App\Models\user\Identity;
+use App\Models\User\Identity;
 use Xin\Hint\Facades\Hint;
 
 class IdentityController extends Controller

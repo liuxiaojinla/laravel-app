@@ -5,10 +5,9 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
-use app\api\concern\LoginHandle;
-use app\BaseController;
+use App\Http\Controller as BaseController;
 use App\Models\User;
 use Xin\Hint\Facades\Hint;
 
@@ -37,22 +36,26 @@ class LoginController extends BaseController
             ],
         ]);
 
-        /** @var \App\Models\User $user */
-        $user = $this->auth->loginUsingCredential([
+        $isLoginSuccess = $this->auth->attemptWhen([
             'mobile' => $data['account'],
             'password' => $data['password'],
-        ], null, function (User $user) {
+        ], function (User $user) {
+            /** @var \App\Models\User $user */
             if ($user->status !== 1) {
                 Hint::outputError("用户" . $user->status_text);
             }
 
             $this->loginAfterHandle($user);
         });
+        if (!$isLoginSuccess) {
+            return Hint::error("账号密码不正确！");
+        }
 
+        $user = $this->auth->getLastAttempted();
         $user->save();
 
         return Hint::result($user, [
-            'session_id' => $this->auth->getSessionId(),
+            'session_id' => $this->request->session()->getId(),
         ]);
     }
 

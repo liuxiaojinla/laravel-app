@@ -5,12 +5,8 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\api\controller;
+namespace App\Http\Api\Controllers;
 
-use app\api\concern\WechatAuthenticatesUsers;
-use Overtrue\Socialite\AuthorizeFailedException;
-use think\App;
-use think\exception\ValidateException;
 use Xin\Hint\Facades\Hint;
 use Xin\Wechat\Contracts\Factory as WechatFactory;
 use Xin\Wechat\WechatResult;
@@ -38,9 +34,6 @@ class WechatAuthorizeController extends Controller
      *
      * @return \Illuminate\Http\Response
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function weapp()
     {

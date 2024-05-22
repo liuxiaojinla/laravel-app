@@ -2,7 +2,7 @@
 
 namespace App\Core\Repository;
 
-use App\Contracts\Base\Repository\QueryOptions as SelectOptionsContract;
+use App\Contracts\Repository\QueryOptions as SelectOptionsContract;
 use Illuminate\Support\Arr;
 
 /**

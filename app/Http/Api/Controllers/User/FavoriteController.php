@@ -8,7 +8,7 @@
 namespace App\Http\Api\Controllers\User;
 
 use app\common\event\FavoriteEvent;
-use App\Models\user\Favorite;
+use App\Models\User\Favorite;
 use LogicException;
 use think\facade\Db;
 use think\facade\Event;

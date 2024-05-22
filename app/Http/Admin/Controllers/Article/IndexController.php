@@ -9,10 +9,10 @@ namespace app\admin\controller\article;
 
 use app\admin\concern\InteractsArticleCategory;
 use app\admin\Controller;
-use app\common\model\article\Article;
-use app\common\model\article\Category;
 use app\common\model\Model;
 use app\common\validate\article\ArticleValidate;
+use App\Models\Article\Article;
+use App\Models\Article\Category;
 use think\exception\ValidateException;
 use Xin\Hint\Facades\Hint;
 

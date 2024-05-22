@@ -5,11 +5,10 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\common\model\user;
+namespace App\Models\User;
 
-use app\common\model\User;
-use think\model\Pivot;
-use Xin\ThinkPHP\Model\Morph;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property-read int $id
@@ -47,7 +46,7 @@ class Browse extends Pivot
 	/**
 	 * 多态关联
 	 *
-	 * @return \think\model\relation\MorphTo
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
 	 */
 	public function browseable()
 	{
@@ -63,9 +62,6 @@ class Browse extends Pivot
 	 * @param int $topicId
 	 * @param int $userId
 	 * @return static|array|\think\Model|null
-	 * @throws \think\db\exception\DataNotFoundException
-	 * @throws \think\db\exception\DbException
-	 * @throws \think\db\exception\ModelNotFoundException
 	 */
 	public static function attach($type, $topicId, $userId)
 	{

@@ -9,7 +9,7 @@ namespace App\Http\Api\Controllers\Article;
 
 use App\Models\article\Article;
 use App\Models\article\Category;
-use App\Models\user\Favorite;
+use App\Models\User\Favorite;
 use think\db\exception\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;
 
