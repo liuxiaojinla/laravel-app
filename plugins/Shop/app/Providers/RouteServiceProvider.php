@@ -2,7 +2,7 @@
 
 namespace Plugins\Shop\app\Providers;
 
-use App\Core\Plugin\RouteServiceProvider as ServiceProvider;
+use Plugin\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {

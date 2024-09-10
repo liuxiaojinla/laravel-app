@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 use Xin\Hint\Facades\Hint;
-use Xin\Laravel\Strengthen\Foundation\Exceptions\Handler as ExceptionHandler;
+use Xin\LaravelFortify\Foundation\Exceptions\Handler as ExceptionHandler;
 
 //use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 

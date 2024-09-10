@@ -4,10 +4,10 @@ namespace App\Http\Api\Controllers;
 
 use App\Exceptions\ValidationException;
 use App\Http\Controller as BaseController;
-use App\Rules\MobileRule;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\Rules\MobileRule;
 
 class VerifyCodeController extends BaseController
 {

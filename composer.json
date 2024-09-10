@@ -52,7 +52,7 @@
         },
         {
             "type": "path",
-            "url": "../../Projects/PhpProjects/php-laravel-strengthen"
+            "url": "../../Projects/PhpProjects/php-laravel-fortify"
         }
     ],
     "autoload": {

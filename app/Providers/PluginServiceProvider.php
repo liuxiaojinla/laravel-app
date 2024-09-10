@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\Plugin\PluginInfo;
 use App\Events\Plugin\Booted;
 use App\Services\Plugin\PluginManager;
+use Contracts\Plugin\PluginInfo;
 use Illuminate\Console\Application as ConsoleApplication;
-use Illuminate\Database\Eloquent\Factories\Factory as   FactoriesFactory;
+use Illuminate\Database\Eloquent\Factories\Factory as FactoriesFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
