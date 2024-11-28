@@ -21,29 +21,29 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->query();
-
         $advertisement = $this->advertisementPosition();
 
-        $order = [
-            'sort' => 'asc',
-        ];
+        $search = $request->query();
         $search['advertisement_id'] = $advertisement->id;
-        $data = AdvertisementItem::simple()->search($search)->order($order)->paginate();
+        $data = AdvertisementItem::simple()->search($search)->orderBy('sort')->paginate();
 
-        $this->assign('advertisement', $advertisement);
-        $this->assign('data', $data);
-        $this->assign('showDataAddBtnArgs', [
-            'advertisement_id' => $advertisement->id,
-        ]);
-
-        return view('advertisement.item.index', [
+        return Hint::result($data, [
             'advertisement' => $advertisement,
-            'data' => $data,
-            'showDataAddBtnArgs' => [
-                'advertisement_id' => $advertisement->id,
-            ],
         ]);
+
+        //        $this->assign('advertisement', $advertisement);
+        //        $this->assign('data', $data);
+        //        $this->assign('showDataAddBtnArgs', [
+        //            'advertisement_id' => $advertisement->id,
+        //        ]);
+        //
+        //        return view('advertisement.item.index', [
+        //            'advertisement'      => $advertisement,
+        //            'data'               => $data,
+        //            'showDataAddBtnArgs' => [
+        //                'advertisement_id' => $advertisement->id,
+        //            ],
+        //        ]);
     }
 
     /**
@@ -64,8 +64,8 @@ class ItemController extends Controller
         }
 
         return view('advertisement.item.edit', [
-            'copy' => $copy,
-            'info' => $info,
+            'copy'          => $copy,
+            'info'          => $info,
             'advertisement' => $advertisement,
         ]);
     }
@@ -89,17 +89,21 @@ class ItemController extends Controller
      * @param Request $request
      * @return View
      */
-    public function show(Request $request)
+    public function info(Request $request)
     {
         $id = $request->validId();
 
-        $info = AdvertisementItem::query()->where('id', $id)->firstOrFail();
-        $this->assign('advertisement', $info->advertisement);
-        $this->assignAdvertisements();
+        $info = AdvertisementItem::query()->with([
+            'advertisement',
+        ])->where('id', $id)->firstOrFail();
 
-        return view('advertisement.item.show', [
-            'info' => $info,
-        ]);
+        return Hint::result($info);
+        //        $this->assign('advertisement', $info->advertisement);
+        //        $this->assignAdvertisements();
+        //
+        //        return view('advertisement.item.show', [
+        //            'info' => $info,
+        //        ]);
     }
 
     /**
@@ -166,7 +170,7 @@ class ItemController extends Controller
      */
     protected function advertisementId()
     {
-        return $request->validId('advertisement_id');
+        return request()->validId('advertisement_id');
     }
 
     /**

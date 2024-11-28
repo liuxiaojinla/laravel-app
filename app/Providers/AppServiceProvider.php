@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
-use App\Core\RequestContext;
-use App\Exceptions\ValidationException;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator;
+use Symfony\Component\Routing\RequestContext;
+use Xin\LaravelFortify\Validation\ValidationException;
 use Xin\Setting\Contracts\Repository as SettingStore;
 use Xin\Setting\Laravel\DatabaseRepository as SettingDatabaseStore;
 

@@ -13,7 +13,14 @@
 
 use App\Http\Admin\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
+use Xin\Hint\Facades\Hint;
 
 Route::get('/', [IndexController::class, 'index']);
 
+require __DIR__ . '/admin/authorization.php';
+require __DIR__ . '/admin/advertisement.php';
 require __DIR__ . '/admin/setting.php';
+
+Route::fallback(function () {
+    return Hint::error("404 Not Found");
+});

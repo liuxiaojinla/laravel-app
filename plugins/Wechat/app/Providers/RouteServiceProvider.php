@@ -2,7 +2,7 @@
 
 namespace Plugins\Wechat\app\Providers;
 
-use Plugin\RouteServiceProvider as ServiceProvider;
+use Xin\LaravelFortify\Plugin\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {

@@ -24,10 +24,10 @@
         "xin/analysis": "^2.0",
         "xin/capsule": "^1.0",
         "xin/hint": "^1.0",
+        "xin/laravel-fortify": "@dev",
+        "xin/menu": "@dev",
         "xin/robot": "@dev",
         "xin/setting": "@dev",
-        "xin/menu": "@dev",
-        "xin/laravel-fortify": "@dev",
         "yansongda/pay": "^3.5"
     },
     "require-dev": {

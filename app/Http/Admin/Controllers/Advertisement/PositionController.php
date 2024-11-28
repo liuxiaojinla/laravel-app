@@ -21,19 +21,16 @@ class PositionController extends Controller
     {
         $search = $request->query();
 
-        $order = [
-            'id' => 'desc',
-        ];
-
         $data = AdvertisementPosition::simple()
             ->withCount([
                 'items',
             ])
-            ->search($search)->order($order)->paginate();
+            ->search($search)->orderByDesc('id')->paginate();
 
-        return view('advertisement.position.index', [
-            'data' => $data,
-        ]);
+        return Hint::result($data);
+//        return view('advertisement.position.index', [
+//            'data' => $data,
+//        ]);
     }
 
 
@@ -78,15 +75,16 @@ class PositionController extends Controller
      * @param Request $request
      * @return View
      */
-    public function show(Request $request)
+    public function info(Request $request)
     {
         $id = $request->validId();
 
         $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
 
-        return view('advertisement.position.show', [
-            'info' => $info,
-        ]);
+        return Hint::result($info);
+//        return view('advertisement.position.show', [
+//            'info' => $info,
+//        ]);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Plugins\Crawler\app\Providers;
 
-use Plugin\RouteServiceProvider as ServiceProvider;
+use Xin\LaravelFortify\Plugin\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {

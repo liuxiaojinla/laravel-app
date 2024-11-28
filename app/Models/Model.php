@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use Xin\Laravel\Strengthen\Model\Modelable;
+use Illuminate\Database\Eloquent\Model as BaseModel;
+use Xin\LaravelFortify\Model\Modelable;
 
 /**
  * 基础模型类
@@ -12,7 +13,7 @@ use Xin\Laravel\Strengthen\Model\Modelable;
  * @property-read \Illuminate\Support\Carbon $created_at
  * @method static create(array $attributes = []) static
  */
-class Model extends \Illuminate\Database\Eloquent\Model
+class Model extends BaseModel
 {
     use Modelable;
 }

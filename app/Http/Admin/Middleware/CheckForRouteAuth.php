@@ -7,7 +7,7 @@ use App\Http\Admin\Models\AdminMenu;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Xin\Laravel\Strengthen\Http\Middleware\InteractsExcept;
+use Xin\LaravelFortify\Http\Middleware\InteractsExcept;
 
 class CheckForRouteAuth
 {
@@ -21,6 +21,7 @@ class CheckForRouteAuth
         'login/login',
         'login/logout',
         'index/captcha',
+        'authorization/menu/lists',
         'upload/callback',
     ];
 
@@ -33,10 +34,10 @@ class CheckForRouteAuth
     {
         $this->defineAbility();
 
-//        $path = $request->path($request);
-//        if (!$this->isExcept($request) && !Gate::check('route', $path)) {
-//            return ErrorController::output403();
-//        }
+        //        $path = $request->path($request);
+        //        if (!$this->isExcept($request) && !Gate::check('route', $path)) {
+        //            return ErrorController::output403();
+        //        }
 
         return $next($request);
     }
