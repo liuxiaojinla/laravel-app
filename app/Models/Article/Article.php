@@ -9,6 +9,9 @@
 namespace App\Models\Article;
 
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Xin\Support\Number;
 use Xin\Support\Str;
@@ -69,36 +72,36 @@ class Article extends Model
      * @var array
      */
     protected $type = [
-        'id' => 'int',
-        'user_id' => 'int',
-        'app_id' => 'int',
-        'category_id' => 'int',
-        'status' => 'int',
-        'is_original' => 'int',
-        'allow_comment' => 'int',
-        'view_count' => 'int',
-        'good_count' => 'int',
-        'comment_count' => 'int',
+        'id'                 => 'int',
+        'user_id'            => 'int',
+        'app_id'             => 'int',
+        'category_id'        => 'int',
+        'status'             => 'int',
+        'is_original'        => 'int',
+        'allow_comment'      => 'int',
+        'view_count'         => 'int',
+        'good_count'         => 'int',
+        'comment_count'      => 'int',
         'last_reply_user_id' => 'int',
-        'last_reply_time' => 'int',
-        'delete_time' => 'int',
+        'last_reply_time'    => 'int',
+        'delete_time'        => 'int',
     ];
 
     /**
      * 分类动态属性
      *
-     * @return \think\model\relation\BelongsTo
+     * @return BelongsTo
      */
     public function category()
     {
         return $this->belongsTo(Category::class, "category_id")
-            ->field('id,title,cover,description');
+            ->select(['id', 'title', 'cover', 'description']);
     }
 
     /**
      * 关联评论
      *
-     * @return \think\model\relation\HasMany
+     * @return HasMany
      */
     public function comments()
     {
@@ -107,11 +110,11 @@ class Article extends Model
 
     /**
      * 多个分类搜索器
-     * @param Query $query
+     * @param Builder $query
      * @param array $value
      * @return void
      */
-    public function searchCategoryIdAttr(Query $query, $value)
+    public function searchCategoryIdAttr(Builder $query, $value)
     {
         $value = Str::explode($value);
         $value = array_filter($value);
@@ -217,7 +220,7 @@ class Article extends Model
             'share_count', 'virtual_share_count',
             'is_original', 'original_url',
             'good_time', 'publish_time',
-            'update_time', 'create_time',
+            'updated_at', 'created_at',
         ];
     }
 
@@ -238,21 +241,21 @@ class Article extends Model
     public static function getEnumStatusData()
     {
         return [
-            self::STATUS_DRAFT => [
+            self::STATUS_DRAFT    => [
                 'class_type' => 'default',
-                'text' => '草稿中',
+                'text'       => '草稿中',
             ],
-            self::STATUS_PUBLISH => [
+            self::STATUS_PUBLISH  => [
                 'class_type' => 'success',
-                'text' => '已发布',
+                'text'       => '已发布',
             ],
-            self::STATUS_REFUSED => [
+            self::STATUS_REFUSED  => [
                 'class_type' => 'danger',
-                'text' => '已禁用',
+                'text'       => '已禁用',
             ],
             self::STATUS_DISABLED => [
                 'class_type' => 'danger',
-                'text' => '已禁用',
+                'text'       => '已禁用',
             ],
         ];
     }

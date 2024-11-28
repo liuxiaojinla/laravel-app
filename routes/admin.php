@@ -19,6 +19,7 @@ Route::get('/', [IndexController::class, 'index']);
 
 require __DIR__ . '/admin/authorization.php';
 require __DIR__ . '/admin/advertisement.php';
+require __DIR__ . '/admin/article.php';
 require __DIR__ . '/admin/setting.php';
 
 Route::fallback(function () {

@@ -8,44 +8,63 @@
 namespace App\Http\Admin\Controllers\Article;
 
 
+use App\Exceptions\Error;
+use App\Http\Admin\Controllers\Concerns\InteractsArticleCategory;
+use App\Http\Admin\Controllers\Controller;
+use App\Models\Article\Article;
+use App\Models\Article\Category;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
+
 class IndexController extends Controller
 {
     use InteractsArticleCategory;
 
     /**
      * 数据列表
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\db\exception\DbException
      */
-    public function index()
+    public function index(Request $request)
     {
-        $search = $request->get();
+        $search = $request->query();
         $data = Article::simple()->search($search)
-            ->order('id desc')
+            ->orderByDesc('id')
             ->paginate();
 
-        $this->assign('data', $data);
+        return Hint::result($data);
 
-        $this->assignTreeArticleCategories();
+        //        $this->assign('data', $data);
+        //        $this->assignTreeArticleCategories();
+        //        return $this->fetch();
+    }
 
-        return $this->fetch();
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return mixed
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = Article::query()->with([
+            'category' => function ($query) {
+            },
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
     }
 
     /**
      * 创建数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return string
      */
-    public function create()
+    public function create(Request $request)
     {
         $id = $request->param('id/d', 0);
 
         if ($request->isGet()) {
             if ($id > 0) {
-                $info = Article::where('id', $id)->find();
+                $info = Article::query()->where('id', $id)->firstOrFail();
                 $this->assign('copy', 1);
                 $this->assign('info', $info);
             }
@@ -63,12 +82,9 @@ class IndexController extends Controller
 
     /**
      * 更新数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return string
      */
-    public function update()
+    public function update(Request $request)
     {
         $id = $request->validId();
         $info = Article::where('id', $id)->findOrFail();
@@ -90,12 +106,9 @@ class IndexController extends Controller
 
     /**
      * 删除数据
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
-    public function delete()
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
         $isForce = $request->param('force/d', 0);
@@ -109,12 +122,9 @@ class IndexController extends Controller
 
     /**
      * 更新数据
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
      */
-    public function setValue()
+    public function setValue(Request $request)
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
@@ -127,16 +137,17 @@ class IndexController extends Controller
 
     /**
      * 移动文章
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
+     * @param Request $request
+     * @return Response
+     * @throws ValidationException
      */
-    public function move()
+    public function move(Request $request)
     {
         $ids = $request->validIds();
         $targetId = $request->validId('category_id');
 
-        if (!Category::where('id', $targetId)->count()) {
-            throw new ValidateException("所选分类不存在！");
+        if (!Category::query()->where('id', $targetId)->count()) {
+            throw Error::validate("所选分类不存在！");
         }
 
         Article::withTrashed()->whereIn('id', $ids)->update([

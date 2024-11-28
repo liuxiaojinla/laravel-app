@@ -8,6 +8,14 @@
 namespace App\Http\Admin\Controllers\Article;
 
 
+use App\Http\Admin\Controllers\Concerns\InteractsArticleCategory;
+use App\Http\Admin\Controllers\Controller;
+use App\Models\Article\Article;
+use App\Models\Article\Category;
+use Illuminate\Http\Request;
+use Xin\Hint\Facades\Hint;
+use Xin\Support\Arr;
+
 /**
  * 分类管理
  */
@@ -19,36 +27,45 @@ class CategoryController extends Controller
      * 分类管理
      *
      * @return string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function index()
     {
-        $data = Category::withCount([
+        $data = Category::query()->withCount([
             'articles',
-        ])->order('sort', 'asc')->select()
+        ])
+            ->orderBy('sort', 'asc')->get()
             ->append([
-                'cover_small'
+                'cover_small',
             ], true)->toArray();
 
         $data = Arr::treeToList(Arr::tree($data, static function ($level, &$item) {
             $item['level'] = $level;
         }));
 
-        $this->assign("data", $data);
+        return Hint::result($data);
 
-        return $this->fetch();
+        //        $this->assign("data", $data);
+        //        return $this->fetch();
+    }
+
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return mixed
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = Category::query()->with([
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
     }
 
     /**
      * 创建数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return string
      */
-    public function create()
+    public function create(Request $request)
     {
         $id = $request->param('id/d', 0);
 
@@ -73,12 +90,9 @@ class CategoryController extends Controller
 
     /**
      * 更新数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return string
      */
-    public function update()
+    public function update(Request $request)
     {
         $id = $request->validId();
         $info = Category::where('id', $id)->findOrFail();
@@ -101,31 +115,26 @@ class CategoryController extends Controller
     /**
      * 删除数据
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function delete()
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
 
         //检查是否有子分类 计算两个数组交集
-        $pidList = Category::where('pid', 'in', $ids)->column('pid');
+        $pidList = Category::query()->where('pid', 'in', $ids)->pluck('pid')->toArray();
         $pidList = array_intersect($pidList, $ids);
 
         if (!empty($pidList)) {
-            $titles = implode("、", Category::select($pidList)->column("title"));
+            $titles = implode("、", Category::query()->whereIn('id', $pidList)->pluck("title")->toArray());
 
             return Hint::error("请先删除【{$titles}】下的子分类！");
         }
 
-        if (Article::where('category_id', 'in', $ids)->count()) {
+        if (Article::query()->where('category_id', 'in', $ids)->count()) {
             return Hint::error('请先处理分类下的文章！');
         }
 
-        if (Category::destroy($ids) === false) {
-            return Hint::error('删除失败！');
-        }
+        Category::destroy($ids);
 
         return Hint::success('删除成功！', null, $ids);
     }
@@ -133,11 +142,8 @@ class CategoryController extends Controller
     /**
      * 更新数据
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function setValue()
+    public function setValue(Request $request)
     {
         $ids = $request->validIds();
         $field = $request->validString('field');

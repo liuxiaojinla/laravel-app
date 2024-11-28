@@ -7,13 +7,14 @@
 
 namespace App\Models\Article;
 
-use app\common\material\Image;
 use App\Models\Model;
 use App\Models\User;
 use App\Models\User\Favorite;
-use think\db\exception\DbException;
-use think\facade\Cache;
-use think\Model\Collection as ModelCollection;
+use App\Supports\Image;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 use Xin\Support\Number;
 
 /**
@@ -31,7 +32,7 @@ use Xin\Support\Number;
  * @property-read string $article_count
  * @property-read int $real_article_view_count
  * @property-read string $article_view_count
- * @property ModelCollection $follow_users
+ * @property Collection $follow_users
  */
 class Category extends Model
 {
@@ -54,7 +55,7 @@ class Category extends Model
     /**
      * @var string
      */
-    protected $name = 'article_category';
+    protected $table = 'article_categories';
 
     /**
      * @var int
@@ -71,7 +72,7 @@ class Category extends Model
     /**
      * 关联文章
      *
-     * @return \think\model\relation\HasMany
+     * @return HasMany
      */
     public function articles()
     {
@@ -81,12 +82,12 @@ class Category extends Model
     /**
      * 关注用户
      *
-     * @return \think\model\relation\BelongsToMany
+     * @return BelongsToMany
      */
     public function followUsers()
     {
         return $this->belongsToMany(User::class, Favorite::class, 'user_id', 'topic_id')
-            ->field(array_map(function ($field) {
+            ->select(array_map(function ($field) {
                 return "user.{$field}";
             }, User::getPublicFields()))
             ->wherePivot('topic_type', 'article');
@@ -97,18 +98,15 @@ class Category extends Model
      *
      * @param User $user
      * @param int $count
-     * @return \think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Collection
      */
     public function getLastFollowUsers($user = null, $count = 5)
     {
         $followUsers = $this->followUsers()
-            ->order('pivot.id desc')
-            ->withLimit($count)
-            ->hidden(['pivot'])
-            ->select();
+            ->orderByDesc('pivot.id')
+            ->limit($count)
+            ->get()
+            ->makeHidden(['pivot']);
 
         if (empty($user)) {
             return $followUsers;
@@ -131,9 +129,9 @@ class Category extends Model
         return $followUsers;
     }
 
-    protected function getCoverSmallAttr()
+    protected function getCoverSmallAttribute()
     {
-        $val = $this->getData('cover');
+        $val = $this->getAttribute('cover');
 
         return Image::thumbnail($val);
     }
@@ -141,13 +139,12 @@ class Category extends Model
     /**
      * 获取真实文章数量
      * @return int
-     * @throws DbException
      */
     protected function getRealArticleCountAttr()
     {
-        return Article::where([
-            'status' => 1,
-            'category_id' => $this->getOrigin('id'),
+        return Article::query()->where([
+            'status'      => 1,
+            'category_id' => $this->getRawOriginal('id'),
         ])->count();
     }
 
@@ -157,8 +154,8 @@ class Category extends Model
      */
     protected function getArticleCountAttr()
     {
-        $realCount = $this->getAttr('real_article_count');
-        $virtualCount = $this->getAttr('virtual_article_count');
+        $realCount = $this->getAttribute('real_article_count');
+        $virtualCount = $this->getAttribute('virtual_article_count');
 
         return Number::formatSimple($realCount + $virtualCount);
     }
@@ -169,9 +166,9 @@ class Category extends Model
      */
     protected function getRealArticleViewCountAttr()
     {
-        return Article::where([
-            'status' => 1,
-            'category_id' => $this->getOrigin('id'),
+        return Article::query()->where([
+            'status'      => 1,
+            'category_id' => $this->getRawOriginal('id'),
         ])->sum('view_count');
     }
 
@@ -181,9 +178,9 @@ class Category extends Model
      */
     protected function getVirtualArticleViewCountAttr()
     {
-        return Article::where([
-            'status' => 1,
-            'category_id' => $this->getOrigin('id'),
+        return Article::query()->where([
+            'status'      => 1,
+            'category_id' => $this->getRawOriginal('id'),
         ])->sum('virtual_view_count');
     }
 
@@ -193,8 +190,8 @@ class Category extends Model
      */
     protected function getArticleViewCountAttr()
     {
-        $realCount = $this->getAttr('real_article_view_count');
-        $virtualCount = $this->getAttr('virtual_article_view_count');
+        $realCount = $this->getAttribute('real_article_view_count');
+        $virtualCount = $this->getAttribute('virtual_article_view_count');
 
         return Number::formatSimple($realCount + $virtualCount);
     }
@@ -206,21 +203,18 @@ class Category extends Model
      * @param string $order
      * @param int $page
      * @param int $limit
-     * @return array|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Collection
      */
     public static function getGoodList($query, $order = 'sort asc', $page = 1, $limit = 10)
     {
         $field = 'id,title,description,cover';
 
-        return static::where('status', 1)
+        return static::query()->where('status', 1)
             ->where($query)
-            ->field($field)
-            ->order($order)
-            ->page($page, $limit)
-            ->select();
+            ->select($field)
+            ->orderBy($order)
+            ->forPage($page, $limit)
+            ->get();
     }
 
     /**
