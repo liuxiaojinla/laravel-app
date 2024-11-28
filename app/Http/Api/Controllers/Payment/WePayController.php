@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Notify\Controllers;
+namespace App\Http\Api\Controllers\Payment;
+
+use App\Http\Notify\Controllers\Controller;
 
 class WePayController extends Controller
 {

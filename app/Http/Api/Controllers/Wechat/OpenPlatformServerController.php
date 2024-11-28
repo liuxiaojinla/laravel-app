@@ -5,14 +5,15 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace App\Http\Api\Controllers;
+namespace App\Http\Api\Controllers\Wechat;
 
 use EasyWeChat\Kernel\Contracts\EventHandlerInterface;
 use Illuminate\Support\Facades\Log;
 use Xin\Support\Str;
 use Xin\Wechat\Contracts\Factory as WechatFactory;
+use function App\Http\Api\Controllers\adv_event;
 
-class WechatOpenController implements EventHandlerInterface
+class OpenPlatformServerController implements EventHandlerInterface
 {
 
     /**

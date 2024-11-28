@@ -23,7 +23,7 @@ class LeaveMessage extends Model
      * @param array $rangeTime
      * @return void
      */
-    public function searchCreateTimeAttr(Builder $query, $rangeTime)
+    public function searchCreateTimeAttribute(Builder $query, $rangeTime)
     {
         if (empty($rangeTime)) {
             return;

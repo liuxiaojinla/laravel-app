@@ -8,6 +8,7 @@
 namespace App\Models\User;
 
 use App\Models\Model;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 /**
  * @property-read int id
@@ -31,7 +32,7 @@ class Address extends Model
         /** @var Region $province */
         $province = Region::where('name', $provinceName)->find();
         if (empty($province)) {
-            throw new ValidateException("请联系管理员完善地址库！");
+            ValidationException::throwException("请联系管理员完善地址库！");
         }
         $data['province_id'] = $province->id;
 
@@ -87,7 +88,7 @@ class Address extends Model
         return static::simple()->where([
             'user_id' => $userId,
             'is_default' => 1,
-        ])->order('is_default DESC')->find();
+        ])->orderByDesc('is_default')->first();
     }
 
 }

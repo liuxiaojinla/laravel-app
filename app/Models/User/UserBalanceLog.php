@@ -4,6 +4,7 @@ namespace App\Models\User;
 
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Xin\Support\SQL;
 
 class UserBalanceLog extends Model
@@ -14,13 +15,13 @@ class UserBalanceLog extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id')->select(User::getPublicFields());
+        return $this->belongsTo(User::class, 'user_id')->select(User::getSimpleFields());
     }
 
     /**
      * @inerhitDoc
      */
-    public function searchKeywordsAttr(Query $query, $value)
+    public function searchKeywordsAttribute(Builder $query, $value)
     {
         $values = SQL::keywords($value);
         if (empty($values)) {

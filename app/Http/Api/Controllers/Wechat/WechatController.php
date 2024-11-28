@@ -5,8 +5,9 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace App\Http\Api\Controllers;
+namespace App\Http\Api\Controllers\Wechat;
 
+use App\Http\Api\Controllers\Controller;
 use EasyWeChat\Kernel\Exceptions\DecryptException;
 use think\facade\Log;
 use Xin\Hint\Facades\Hint;

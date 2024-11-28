@@ -7,6 +7,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property-read int $id
  * @property-read int $user_id
  * @property-read int $topic_id
- * @property \think\Model $favoriteable
+ * @property Model $favoriteable
  */
 class Favorite extends Pivot
 {
@@ -86,9 +87,6 @@ class Favorite extends Pivot
      * @param int $topicId
      * @param int $userId
      * @return bool
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
 	public static function favorite($topicType, $topicId, $userId)
 	{
@@ -154,15 +152,15 @@ class Favorite extends Pivot
 	 * @param string $type
 	 * @param int $topicId
 	 * @param int $userId
-	 * @return array|\think\Model|null
-	 */
+	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
 	public static function findFavorite($type, $topicId, $userId)
 	{
-		return static::where([
+		return static::query()->where([
 			'topic_type' => $type,
 			'topic_id' => $topicId,
 			'user_id' => $userId,
-		])->find();
+		])->first();
 	}
 
 }

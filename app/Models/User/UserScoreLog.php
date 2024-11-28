@@ -4,6 +4,8 @@ namespace App\Models\User;
 
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Xin\Support\SQL;
 
 class UserScoreLog extends Model
@@ -14,21 +16,21 @@ class UserScoreLog extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id')->select(User::getPublicFields());
+        return $this->belongsTo(User::class, 'user_id')->select(User::getSimpleFields());
     }
 
     /**
      * @inerhitDoc
      */
-    public function searchKeywordsAttr(Query $query, $value)
+    public function searchKeywordsAttribute(Builder $query, $value)
     {
         $values = SQL::keywords($value);
         if (empty($values)) {
             return;
         }
 
-        $query->whereIn('user_id', Db::raw(
-            User::field('id')->where('nickname|mobile', 'like', $values)->buildSql()
+        $query->whereIn('user_id', DB::raw(
+            User::query()->select('id')->where('nickname|mobile', 'like', $values)
         ));
     }
 
@@ -38,7 +40,7 @@ class UserScoreLog extends Model
     public static function getSearchFields()
     {
         return array_merge(parent::getSearchFields(), [
-            'user_id', 'create_time'
+            'user_id', 'create_time',
         ]);
     }
 }

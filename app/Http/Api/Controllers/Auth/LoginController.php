@@ -5,8 +5,9 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace App\Http\Api\Controllers;
+namespace App\Http\Api\Controllers\Auth;
 
+use App\Http\Api\Controllers\LoginHandle;
 use App\Http\Controller as BaseController;
 use App\Models\User;
 use Xin\Hint\Facades\Hint;

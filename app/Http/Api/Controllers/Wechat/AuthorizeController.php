@@ -5,13 +5,12 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace App\Http\Api\Controllers;
+namespace App\Http\Api\Controllers\Wechat;
 
+use App\Http\Api\Controllers\Controller;
 use Xin\Hint\Facades\Hint;
-use Xin\Wechat\Contracts\Factory as WechatFactory;
-use Xin\Wechat\WechatResult;
 
-class WechatAuthorizeController extends Controller
+class AuthorizeController extends Controller
 {
 
     use WechatAuthenticatesUsers;
@@ -30,7 +29,7 @@ class WechatAuthorizeController extends Controller
     }
 
     /**
-     * 登录
+     * 登录小程序
      *
      * @return \Illuminate\Http\Response
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException

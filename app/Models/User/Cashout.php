@@ -136,9 +136,9 @@ class Cashout extends Model
 	 *
 	 * @return string
 	 */
-	protected function getApplyTypeTextAttr()
+	protected function getApplyTypeTextAttribute()
 	{
-		$type = $this->getOrigin('apply_type');
+		$type = $this->getRawOriginal('apply_type');
 
 		return static::$TYPE_TEXT_MAP[$type];
 	}
@@ -148,9 +148,9 @@ class Cashout extends Model
 	 *
 	 * @return string
 	 */
-	protected function getTransferTypeTextAttr()
+	protected function getTransferTypeTextAttribute()
 	{
-		$type = $this->getOrigin('transfer_type');
+		$type = $this->getRawOriginal('transfer_type');
 
 		return static::$TYPE_TEXT_MAP[$type];
 	}
@@ -160,9 +160,9 @@ class Cashout extends Model
 	 *
 	 * @return string
 	 */
-	protected function getStatusTextAttr()
+	protected function getStatusTextAttribute()
 	{
-		$type = $this->getOrigin('status');
+		$type = $this->getRawOriginal('status');
 
 		return static::$STATUS_TEXT_MAP[$type];
 	}

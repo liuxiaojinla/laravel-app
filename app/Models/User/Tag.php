@@ -17,30 +17,30 @@ use App\Models\User;
 class Tag extends Model
 {
 
-	/**
-	 * @var string
-	 */
-	protected $name = "user_tag";
+    /**
+     * @var string
+     */
+    protected $name = "user_tag";
 
-	/**
-	 * 关联用户
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
-	public function users()
-	{
-		return $this->belongsToMany(User::class, TagRelation::class, 'user_id', 'tag_id');
-	}
+    /**
+     * 关联用户
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, TagRelation::class, 'user_id', 'tag_id');
+    }
 
-	/**
-	 * 跟进用户ID获取标签ID列表
-	 *
-	 * @param int $userId
-	 * @return array
-	 */
-	public static function getIdListOfUserId(int $userId)
-	{
-		return TagRelation::where(['user_id' => $userId])->column('tag_id');
-	}
+    /**
+     * 跟进用户ID获取标签ID列表
+     *
+     * @param int $userId
+     * @return array
+     */
+    public static function getIdListOfUserId(int $userId)
+    {
+        return TagRelation::query()->where(['user_id' => $userId])->pluck('tag_id')->toArray();
+    }
 
 }

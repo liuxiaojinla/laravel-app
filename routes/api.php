@@ -4,12 +4,9 @@ use App\Http\Api\Controllers\BannerController;
 use App\Http\Api\Controllers\FeedbackController;
 use App\Http\Api\Controllers\IndexController;
 use App\Http\Api\Controllers\LanguageController;
-use App\Http\Api\Controllers\LoginController;
 use App\Http\Api\Controllers\NoticeController;
-use App\Http\Api\Controllers\RegisterController;
 use App\Http\Api\Controllers\TestController;
 use App\Http\Api\Controllers\VerifyCodeController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,3 +38,4 @@ Route::post('/verify_code', [VerifyCodeController::class, 'index']);
 
 require __DIR__ . '/api/article.php';
 require __DIR__ . '/api/media.php';
+require __DIR__ . '/api/wechat.php';
