@@ -22,22 +22,21 @@ class IndexController extends Controller
     public function center()
     {
         /** @var User $info */
-        $info = $this->auth->getUser();
+        $info = $this->auth->user();
         $info = $info->refresh();
-        $this->auth->temporaryUser($info);
 
         $info['parent_user_nickname'] = '';
         if ($info['parent_user_id']) {
-            $info['parent_user_nickname'] = User::where('id', $info['parent_user_id'])->value('nickname');
+            $info['parent_user_nickname'] = User::query()->where('id', $info['parent_user_id'])->value('nickname');
         }
 
-        adv_event('ApiUserCenter', static function ($key, $value) use (&$data) {
-            $data[$key] = $value;
-        });
+        //        adv_event('ApiUserCenter', static function ($key, $value) use (&$data) {
+        //            $data[$key] = $value;
+        //        });
 
         return Hint::result([
             'userinfo' => $info,
-            'config' => $data,
+            //            'config'   => $data,
         ]);
     }
 
@@ -49,8 +48,8 @@ class IndexController extends Controller
     public function info()
     {
         /** @var User $info */
-        $info = $this->auth->getUser();
-        $this->auth->temporaryUser($info->refresh());
+        $info = $this->auth->user();
+        $info->refresh();
 
         return Hint::result($info);
     }
@@ -62,20 +61,16 @@ class IndexController extends Controller
      */
     public function update()
     {
-        $userId = $this->request->userId();
         $data = $this->request->only([
             'nickname', 'avatar', 'gender',
             'language', 'province', 'city',
         ]);
 
-        User::update($data, ['id' => $userId]);
+        /** @var User $user */
+        $user = $this->auth->user();
+        $user->fill($data)->save();
 
-        /** @var User $origin */
-        $origin = $this->auth->getUser();
-        $origin->fill($data);
-        $this->auth->temporaryUser($origin);
-
-        return Hint::success("已更新！", null, $origin);
+        return Hint::success("已更新！", null, $user);
     }
 
 }

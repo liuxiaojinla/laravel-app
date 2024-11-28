@@ -71,7 +71,7 @@ class RequestServiceProvider extends ServiceProvider
          * @param int $default
          * @return int
          */
-        Request::macro('page', function (int $max = 100, int $default = 15) {
+        Request::macro('limit', function (int $max = 100, int $default = 15) {
             /** @var $this Request */
             $limit = (int)$this->input('limit', 0);
             if ($limit < 1) {

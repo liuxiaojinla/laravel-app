@@ -2,15 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator;
 use Symfony\Component\Routing\RequestContext;
 use Xin\LaravelFortify\Validation\ValidationException;
-use Xin\Setting\Contracts\Repository as SettingStore;
-use Xin\Setting\Laravel\DatabaseRepository as SettingDatabaseStore;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,17 +51,17 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerModuleManager(): void
     {
-//        $moduleManager = new ModuleManager(
-//            config('module', [])
-//        );
-//        $moduleManager->setContainer($this->app);
-//        $this->app->instance('module', $moduleManager);
-//        $this->app->alias('module', ModuleManager::class);
-//
-//        // 加载模块路
-//        $this->app->booted(function () use ($moduleManager) {
-//            $moduleManager->run($this->app['request']);
-//        });
+        //        $moduleManager = new ModuleManager(
+        //            config('module', [])
+        //        );
+        //        $moduleManager->setContainer($this->app);
+        //        $this->app->instance('module', $moduleManager);
+        //        $this->app->alias('module', ModuleManager::class);
+        //
+        //        // 加载模块路
+        //        $this->app->booted(function () use ($moduleManager) {
+        //            $moduleManager->run($this->app['request']);
+        //        });
     }
 
     /**
@@ -69,12 +70,12 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerSetting()
     {
-//        $this->app->singleton(SettingStore::class, function () {
-//            return new SettingDatabaseStore(
-//                $this->app['cache']
-//            );
-//        });
-//        $this->app->alias(SettingStore::class, 'setting');
+        //        $this->app->singleton(SettingStore::class, function () {
+        //            return new SettingDatabaseStore(
+        //                $this->app['cache']
+        //            );
+        //        });
+        //        $this->app->alias(SettingStore::class, 'setting');
     }
 
     /**
@@ -86,12 +87,20 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap(config('database.morph_mapping'));
 
         // 加载站点配置到系统配置中
-//        $this->app['setting']->loadToSystemConfig();
+        //        $this->app['setting']->loadToSystemConfig();
 
         if ($this->app->runningInConsole()) {
             $this->bootInConsole();
         } else {
             $this->bootInWebServer();
+            /** @var \Illuminate\Auth\RequestGuard $guard */
+            $guard = $this->app['auth']->guard('sanctum');
+            Auth::resolved(function (AuthManager $auth) {
+                $auth->forgetGuards();
+                $auth->viaRequest('sanctum', function ($request) {
+                    return User::query()->first();
+                });
+            });
         }
     }
 
@@ -106,9 +115,9 @@ class AppServiceProvider extends ServiceProvider
             if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator) {
                 return [
                     'current_page' => $data->currentPage(),
-                    'data' => $data->items(),
-                    'per_page' => $data->perPage(),
-                    'total' => $data->total(),
+                    'data'         => $data->items(),
+                    'per_page'     => $data->perPage(),
+                    'total'        => $data->total(),
                 ];
             }
 

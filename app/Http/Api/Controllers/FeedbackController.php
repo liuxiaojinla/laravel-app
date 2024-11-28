@@ -14,7 +14,7 @@ class FeedbackController extends Controller
      */
     public function index()
     {
-        $userId = $this->auth->id();
+        $userId = $this->request->user()?->id ?? 0;
         $data = Feedback::query()->where([
             ['user_id', '=', $userId],
         ])->paginate();
@@ -32,19 +32,21 @@ class FeedbackController extends Controller
     {
         $message = trim($this->request->post('message', ''));
         if (empty($message)) {
-            ValidationException::throwException('请输入留言内容！');
+            ValidationException::throwException('请输入反馈内容！');
         }
 
+        $user = $this->request->user();
         $data = [
-            'name' => $this->request->user('nickname'),
-            'content' => $message,
+            'user_id'    => $user?->id ?? 0,
+            'name'       => $user?->nickname ?? '',
+            'content'    => $message,
+            'ip'         => $this->request->ip(),
+            'user_agent' => $this->request->server('HTTP_USER_AGENT'),
+            'referer'    => $this->request->server('HTTP_REFERER') ?: '',
         ];
-        $data['ip'] = $this->request->ip();
-        $data['user_agent'] = $this->request->server('HTTP_USER_AGENT');
-        $data['referer'] = $this->request->server('HTTP_REFERER');
 
         Feedback::create($data);
 
-        return Hint::success("已留言！");
+        return Hint::success("已反馈！");
     }
 }

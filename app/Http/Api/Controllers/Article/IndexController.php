@@ -28,17 +28,17 @@ class IndexController extends Controller
     {
         $keywords = $this->request->keywordsSql();
 
-        $order = 'publish_time desc';
+        $order = 'publish_time';
         if (!empty($keywords)) {
-            $order = 'view_count desc';
+            $order = 'view_count';
         }
 
-        $search = $this->request->get();
-        $data = Article::with('category')
-            ->simple()
+        $search = $this->request->query();
+        $data = Article::simple()
             ->search($search)
+            ->with('category')
             ->where('status', 1)
-            ->order($order)
+            ->orderByDesc($order)
             ->paginate($this->request->paginate());
 
         return Hint::result($data);

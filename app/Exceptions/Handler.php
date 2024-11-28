@@ -30,8 +30,8 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticatedJson(AuthenticationException $exception)
     {
-        $url = $exception->redirectTo() ?? route('login');
-        return Hint::error($exception->getMessage(), $url, -1);
+        $url = $exception->redirectTo();
+        return Hint::error($exception->getMessage(), Error::UNAUTHENTICATED, $url);
     }
 
     /**

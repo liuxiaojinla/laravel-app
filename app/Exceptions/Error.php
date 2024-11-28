@@ -8,6 +8,8 @@ use Xin\LaravelFortify\Validation\ValidationException;
 
 class Error
 {
+    const UNAUTHENTICATED = -1;
+
     /**
      * 验证错误
      * @param string $message

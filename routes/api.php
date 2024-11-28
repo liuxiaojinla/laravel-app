@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/test', [TestController::class, 'index']);
 
 Route::controller(IndexController::class)->group(function () {
-    Route::get('/', 'index');
+    Route::get('/index', 'index');
     Route::get('/config', 'config');
     Route::get('/agreement', 'agreement');
     Route::get('/about', 'about');
@@ -36,6 +36,7 @@ Route::apiResource('/feedback', FeedbackController::class)->only(['index', 'stor
 
 Route::post('/verify_code', [VerifyCodeController::class, 'index']);
 
+require __DIR__ . '/api/auth.php';
 require __DIR__ . '/api/article.php';
 require __DIR__ . '/api/media.php';
 require __DIR__ . '/api/wechat.php';

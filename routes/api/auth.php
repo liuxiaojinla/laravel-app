@@ -12,12 +12,12 @@ use App\Http\Api\Controllers\User\RestPasswordController;
 use App\Http\Api\Controllers\User\TeamController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [LoginController::class, 'index']);
-Route::post('/register', [RegisterController::class, 'index']);
+Route::post('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/register', [RegisterController::class, 'index'])->name('register');
 
 // 基本信息
 Route::middleware(['auth:sanctum'])->prefix('user')->name('user.')->group(function () {
-    Route::get('/', [IndexController::class, 'index'])->name('info');
+    Route::get('/info', [IndexController::class, 'info'])->name('info');
     Route::get('/center', [IndexController::class, 'center'])->name('center');
     Route::post('/update', [IndexController::class, 'update'])->name('update');
     Route::post('/rest_password', [RestPasswordController::class, 'rest'])->name('rest_password');

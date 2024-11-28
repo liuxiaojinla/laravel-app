@@ -37,24 +37,20 @@ class RegisterController extends BaseController
 
     /**
      * @return array
+     * @throws ValidationException
      */
     protected function getCredential()
     {
         $data = $this->request->validate([
-            'mobile', 'code', 'password', 'repassword',
-        ], [
-            'rules'  => [
-                'mobile'     => 'require|mobile',
-                'code'       => 'require',
-                'password'   => 'require|password',
-                'repassword' => 'require|confirm:password',
-            ],
-            'fields' => [
-                'mobile'     => '手机号',
-                'code'       => '验证码',
-                'password'   => '密码',
-                'repassword' => '重复密码',
-            ],
+            'mobile'     => 'require|mobile',
+            'code'       => 'require',
+            'password'   => 'require|password',
+            'repassword' => 'require|confirm:password',
+        ], [], [
+            'mobile'     => '手机号',
+            'code'       => '验证码',
+            'password'   => '密码',
+            'repassword' => '重复密码',
         ]);
 
         if (!$this->validateCode($data['mobile'], $data['code'])) {
