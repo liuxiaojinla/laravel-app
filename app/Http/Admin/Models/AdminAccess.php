@@ -1,7 +1,8 @@
 <?php
+
 namespace App\Http\Admin\Models;
 
-use think\model\Pivot;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * 分类模型

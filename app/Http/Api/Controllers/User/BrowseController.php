@@ -46,4 +46,32 @@ class BrowseController extends Controller
 
         return Hint::result($data);
     }
+
+    /**
+     * 删除历史记录
+     * @return mixed
+     */
+    public function delete()
+    {
+        $id = (int)$this->request->input('id');
+        $userId = $this->request->userId();
+
+        Browse::query()->where('user_id', $userId)->where('id', $id)->delete();
+
+        return Hint::success("删除成功！");
+    }
+
+    /**
+     * 清空历史记录
+     * @return mixed
+     */
+    public function clear()
+    {
+        $topicType = $this->request->param('topic_type');
+        $userId = $this->request->userId();
+
+        Browse::query()->where('user_id', $userId)->where('topic_type', $topicType)->delete();
+
+        return Hint::success("清除成功！");
+    }
 }

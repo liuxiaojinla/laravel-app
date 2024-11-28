@@ -21,8 +21,10 @@ class VideoController extends Controller
      */
     public function index()
     {
+        $search = $this->request->query();
+
         $data = Video::search($search)
-            ->order('id desc')
+            ->orderByDesc('id')
             ->paginate($this->request->paginate());
 
         $data->each(function ($item) {

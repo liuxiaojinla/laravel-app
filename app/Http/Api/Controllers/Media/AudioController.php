@@ -19,9 +19,9 @@ class AudioController extends Controller
      */
     public function index()
     {
-        $search = $this->request->get();
+        $search = $this->request->query();
         $data = Audio::search($search)
-            ->order('id desc')
+            ->orderByDesc('id')
             ->paginate($this->request->paginate());
 
         return Hint::result($data);

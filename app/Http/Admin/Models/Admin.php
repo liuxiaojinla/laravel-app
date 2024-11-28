@@ -1,8 +1,12 @@
 <?php
+
 namespace App\Http\Admin\Models;
 
-use app\common\model\Model;
-use think\exception\ValidateException;
+use App\Exceptions\Error;
+use App\Models\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 /**
  * @property-read int $id
@@ -10,7 +14,7 @@ use think\exception\ValidateException;
  * @property int $status
  * @property string $status_text
  * @property bool $is_admin
- * @property \think\Collection $roles
+ * @property Collection $roles
  * @property-read int $login_count
  * @property string $login_ip
  */
@@ -22,7 +26,7 @@ class Admin extends Model
      */
     protected $type = [
         'login_count' => 'int',
-        'login_time' => 'timestamp',
+        'login_time'  => 'timestamp',
     ];
 
     /**
@@ -42,19 +46,20 @@ class Admin extends Model
      * 检查是否更新了超级管理员
      * @param array $ids
      * @return void
+     * @throws ValidationException
      */
     public static function checkIsUpdateAdmin($ids)
     {
         $adminId = array_search(self::adminId(), $ids, true);
         if (!empty($adminId)) {
-            throw new ValidateException("不允许删除超级管理员");
+            throw Error::validate("不允许删除超级管理员");
         }
     }
 
     /**
      * 关联角色模型
      *
-     * @return \think\model\relation\BelongsToMany
+     * @return BelongsToMany
      */
     public function roles()
     {
@@ -68,7 +73,7 @@ class Admin extends Model
      * @param int $ip
      * @return string
      */
-    protected function getLoginIpAttr($ip)
+    protected function getLoginIpAttribute($ip)
     {
         return long2ip($ip);
     }
@@ -79,7 +84,7 @@ class Admin extends Model
      * @param string $ip
      * @return false|int
      */
-    protected function setLoginIpAttr($ip)
+    protected function setLoginIpAttribute($ip)
     {
         return ip2long($ip);
     }
@@ -87,9 +92,9 @@ class Admin extends Model
     /**
      * @return mixed|string
      */
-    protected function getStatusTextAttr()
+    protected function getStatusTextAttribute()
     {
-        $status = $this->getData('status');
+        $status = $this->getAttribute('status');
 
         return self::$STATUS_TEXT_MAP[$status] ?? '未知';
     }
@@ -101,7 +106,7 @@ class Admin extends Model
      */
     protected function getIsAdminAttr()
     {
-        $id = $this->getData('id');
+        $id = $this->getAttribute('id');
 
         return self::checkAdmin($id);
     }
@@ -113,7 +118,7 @@ class Admin extends Model
      */
     public function isAdministrator()
     {
-        return $this->getAttr('is_admin');
+        return $this->getAttribute('is_admin');
     }
 
     /**
@@ -152,10 +157,11 @@ class Admin extends Model
             return [];
         }
 
-        $result = AdminAccess::where([
+        $result = AdminAccess::query()->where([
             'type' => 'menu',
-        ])->whereIn('role_id', $this->roles->column('id'))
-            ->column('target_id');
+        ])
+            ->whereIn('role_id', $this->roles->pluck('id'))
+            ->pluck('target_id')->toArray();
 
         $result = array_unique($result);
 

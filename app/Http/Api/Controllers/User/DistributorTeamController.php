@@ -9,7 +9,9 @@ namespace App\Http\Api\Controllers\User;
 
 use App\Http\Api\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 class DistributorTeamController extends Controller
 {
@@ -17,7 +19,8 @@ class DistributorTeamController extends Controller
     /**
      * 获取我邀请的列表
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
+     * @throws ValidationException
      */
     public function invitedList()
     {
@@ -29,7 +32,7 @@ class DistributorTeamController extends Controller
             $map[] = ['nickname', 'like', $keywords];
         }
 
-        $data = User::where($map)->order('id desc')->paginate($this->request->paginate());
+        $data = User::query()->where($map)->orderByDesc('id')->paginate($this->request->paginate());
 
         return Hint::result($data);
     }
@@ -37,7 +40,8 @@ class DistributorTeamController extends Controller
     /**
      * 我邀请的人详情
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
+     * @throws ValidationException
      */
     public function invitedDetail()
     {
@@ -46,7 +50,7 @@ class DistributorTeamController extends Controller
         $targetUserId = $this->request->validId();
         $userId = $this->request->userId();
 
-        $info = User::where('id', $targetUserId)->findOrFail();
+        $info = User::query()->where('id', $targetUserId)->firstOrFail();
         if ($info->belong_distributor_id != $distributorId) {
             return Hint::error("成员不存在！");
         }
@@ -58,12 +62,13 @@ class DistributorTeamController extends Controller
      * 分销商ID
      *
      * @return int
+     * @throws ValidationException
      */
     protected function distributorId()
     {
         $distributorId = $this->request->user('distributor_id');
         if ($distributorId < 1) {
-            throw new ValidateException("无权限！");
+            ValidationException::throwException("无权限！");
         }
 
         return $distributorId;

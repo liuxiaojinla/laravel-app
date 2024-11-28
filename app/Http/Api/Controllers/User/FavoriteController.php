@@ -100,6 +100,19 @@ class FavoriteController extends Controller
     }
 
     /**
+     * @return mixed
+     */
+    public function clear()
+    {
+        $topicType = $this->request->param('topic_type');
+        $userId = $this->request->userId();
+
+        Favorite::query()->where('user_id', $userId)->where('topic_type', $topicType)->delete();
+
+        return Hint::success("清除收藏成功！");
+    }
+
+    /**
      * 触发事件
      * @param string $topicType
      * @param int $topicId

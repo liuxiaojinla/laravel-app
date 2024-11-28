@@ -36,9 +36,7 @@ class MenuController extends Controller
             $item['level'] = $level;
         }));
 
-        return view('menu.index', [
-            'data' => $data,
-        ]);
+        return Hint::result($data);
     }
 
     /**
@@ -61,28 +59,6 @@ class MenuController extends Controller
     }
 
     /**
-     * 创建数据
-     * @return View
-     */
-    public function create(Request $request)
-    {
-        $id = (int)$request->input('id', 0);
-        $copy = 0;
-        $info = null;
-
-        if ($id > 0) {
-            $copy = 1;
-            $info = AdminMenu::query()->where('id', $id)->first();
-            $this->assignTreeNodes();
-        }
-
-        return view('menu.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
-    }
-
-    /**
      * 数据创建
      * @param AdminMenuRequest $request
      * @return Response
@@ -99,34 +75,15 @@ class MenuController extends Controller
     /**
      * 数据展示
      * @param Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return Response
      */
-    public function show(Request $request)
+    public function info(Request $request)
     {
         $id = $request->validId();
 
         $info = AdminMenu::query()->where('id', $id)->firstOrFail();
 
-        return view('agreement.show', [
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = AdminMenu::query()->where('id', $id)->firstOrFail();
-        $this->assignTreeNodes();
-
-        return view('agreement.edit', [
-            'info' => $info,
-        ]);
+        return Hint::result($info);
     }
 
     /**
@@ -227,7 +184,7 @@ class MenuController extends Controller
                 foreach ($group['childs'] as $kc => $childIds) {
                     if (AdminMenu::where('id', $childIds)->update([
                             'sort' => $kc,
-                            'pid' => $group['root'],
+                            'pid'  => $group['root'],
                         ]) === false) {
                         return Hint::error("保存排序失败！");
                     }
@@ -263,9 +220,7 @@ class MenuController extends Controller
             }
         }
 
-        $this->assign('menus', $data);
-
-        return $this->fetch();
+        return Hint::result($data);
     }
 
 }

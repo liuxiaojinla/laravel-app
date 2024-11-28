@@ -42,10 +42,6 @@ class SettingController extends Controller
         }
 
         return Hint::result($data);
-
-        return view('setting.index', [
-            'data' => $data,
-        ]);
     }
 
     /**
@@ -94,7 +90,7 @@ class SettingController extends Controller
      * @return View
      * @throws NotFountSettingItemException
      */
-    public function show(Request $request)
+    public function info(Request $request)
     {
         $key = $request->validString('key');
 

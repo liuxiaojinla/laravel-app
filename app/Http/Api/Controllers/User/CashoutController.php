@@ -10,7 +10,13 @@ namespace App\Http\Api\Controllers\User;
 use App\Http\Api\Controllers\Controller;
 use App\Models\User;
 use App\Models\User\Cashout as UserCashout;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 class CashoutController extends Controller
 {
@@ -25,11 +31,11 @@ class CashoutController extends Controller
         $userId = $this->request->userId();
         $date = $this->request->param('date', '', 'trim');
 
-        $data = UserCashout::where([
+        $data = UserCashout::query()->where([
             'user_id' => $userId,
-        ])->when(strtotime($date), function (Query $query) use ($date) {
+        ])->when(strtotime($date), function (Builder $query) use ($date) {
             $query->whereMonth('create_time', $date);
-        })->order('id desc')->paginate($this->request->paginate());
+        })->orderByDesc('id')->paginate($this->request->paginate());
 
         return Hint::result($data);
     }
@@ -45,9 +51,9 @@ class CashoutController extends Controller
         $userId = $this->request->userId();
 
         /** @var UserCashout $info */
-        $info = UserCashout::where('id', $id)->findOrFail();
+        $info = UserCashout::query()->where('id', $id)->firstOrFail();
         if ($info->user_id != $userId) {
-            throw new ModelNotFoundException("数据不存在！", UserCashout::class);
+            throw (new ModelNotFoundException("数据不存在！"))->setModel(UserCashout::class, [$id]);
         }
 
         return Hint::result($info);
@@ -74,8 +80,8 @@ class CashoutController extends Controller
     /**
      * 申请提现
      *
-     * @return \Illuminate\Http\Response
-     * @throws \Xin\Auth\AuthenticationException
+     * @return Response
+     * @throws ValidationException
      */
     public function apply()
     {
@@ -88,18 +94,18 @@ class CashoutController extends Controller
 
         $cashAmount = User::where('id', $userId)->value('cash_amount');
         if ($cashAmount < $data['apply_money']) {
-            throw new ValidateException('可提现金额不足！');
+            ValidationException::throwException('可提现金额不足！');
         }
 
         $data = array_merge($data, [
-            'app_id' => $this->request->appId(),
-            'user_id' => $userId,
-            'realname' => '',//todo
-            'mobile' => '',// todo
+            'app_id'       => $this->request->appId(),
+            'user_id'      => $userId,
+            'realname'     => '',//todo
+            'mobile'       => '',// todo
             'service_rate' => bcdiv(Config::get('web.user_service_charge'), 100, 4),
         ]);
 
-        Db::transaction(static function () use ($user, $data) {
+        DB::transaction(static function () use ($user, $data) {
             $cashoutLog = UserCashout::fastCreate($data);
 
             $flag = $user->dec('cash_amount', $data['apply_money'])->update([]);
@@ -128,7 +134,7 @@ class CashoutController extends Controller
         return $this->request->validate([
             'apply_money',
         ], [
-            'rules' => [
+            'rules'  => [
                 'apply_money' => 'require|float|egt:0.3',
             ],
             'fields' => [

@@ -30,20 +30,6 @@ class ItemController extends Controller
         return Hint::result($data, [
             'advertisement' => $advertisement,
         ]);
-
-        //        $this->assign('advertisement', $advertisement);
-        //        $this->assign('data', $data);
-        //        $this->assign('showDataAddBtnArgs', [
-        //            'advertisement_id' => $advertisement->id,
-        //        ]);
-        //
-        //        return view('advertisement.item.index', [
-        //            'advertisement'      => $advertisement,
-        //            'data'               => $data,
-        //            'showDataAddBtnArgs' => [
-        //                'advertisement_id' => $advertisement->id,
-        //            ],
-        //        ]);
     }
 
     /**
@@ -98,30 +84,6 @@ class ItemController extends Controller
         ])->where('id', $id)->firstOrFail();
 
         return Hint::result($info);
-        //        $this->assign('advertisement', $info->advertisement);
-        //        $this->assignAdvertisements();
-        //
-        //        return view('advertisement.item.show', [
-        //            'info' => $info,
-        //        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = AdvertisementItem::query()->where('id', $id)->firstOrFail();
-        $this->assign('advertisement', $info->advertisement);
-        $this->assignAdvertisements();
-
-        return view('advertisement.item.edit', [
-            'info' => $info,
-        ]);
     }
 
     /**
@@ -181,14 +143,6 @@ class ItemController extends Controller
         $advertisementId = $this->advertisementId();
         $info = AdvertisementPosition::query()->where('id', $advertisementId)->firstOrFail();
         return with($info);
-    }
-
-    protected function assignAdvertisements()
-    {
-        $data = AdvertisementPosition::query()->where('status', AdvertisementPosition::STATUS_ENABLED)->orderByDesc('id')->get();
-        $this->assign('advertisements', $data);
-
-        return $data;
     }
 
     /**

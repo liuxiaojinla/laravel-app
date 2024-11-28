@@ -4,6 +4,7 @@ namespace App\Http\Admin\Controllers\Statistics;
 
 use App\Http\Admin\Controllers\Controller;
 use App\Models\User;
+use Xin\Hint\Facades\Hint;
 
 class UserController extends Controller
 {
@@ -17,14 +18,14 @@ class UserController extends Controller
     {
         $totalCount = User::query()->count();
 
-        $todayCount = User::query()->whereDay('create_time')->count();
-        $yesterdayCount = User::query()->whereDay('create_time', 'yesterday')->count();
+        $todayCount = User::query()->whereDay('created_at', now())->count();
+        $yesterdayCount = User::query()->whereDay('created_at', now()->subDay())->count();
 
-        $weekCount = User::query()->whereWeek('create_time')->count();
-        $lastWeekCount = User::query()->whereWeek('create_time', 'last week')->count();
+        $weekCount = User::query()->where('created_at', '>=', now()->week())->count();
+        $lastWeekCount = User::query()->whereBetween('created_at', [now()->subWeek(), now()])->count();
 
-        $monthCount = User::query()->whereMonth('create_time')->count();
-        $lastMonthCount = User::query()->whereMonth('create_time', 'last month')->count();
+        $monthCount = User::query()->whereMonth('created_at', now())->count();
+        $lastMonthCount = User::query()->whereBetween('created_at', [now()->subMonth(), now()])->count();
 
         $cityCounts = User::query()->selectRaw('province,count(id) as count')
             ->groupBy('province')->orderByDesc('count')->get()
@@ -34,26 +35,24 @@ class UserController extends Controller
 
                 return $item;
             });
-        $cityCountAvg = $cityCounts->count() ? (int)(array_sum($cityCounts->column('count')) / $cityCounts->count()) : 0;
+        $cityCountAvg = $cityCounts->count() ? (int)(array_sum($cityCounts->pluck('count')->toArray()) / $cityCounts->count()) : 0;
 
-        $this->assign([
+        return Hint::result([
             'totalCount' => $totalCount,
 
-            'todayCount' => $todayCount,
+            'todayCount'     => $todayCount,
             'yesterdayCount' => $yesterdayCount,
 
-            'weekCount' => $weekCount,
+            'weekCount'     => $weekCount,
             'lastWeekCount' => $lastWeekCount,
 
-            'monthCount' => $monthCount,
+            'monthCount'     => $monthCount,
             'lastMonthCount' => $lastMonthCount,
 
-            'cityCounts' => $cityCounts,
-            'cityCountAvg' => $cityCountAvg,
+            'cityCounts'     => $cityCounts,
+            'cityCountAvg'   => $cityCountAvg,
             'cityCountsData' => $this->toChartCityData($cityCounts->all()),
         ]);
-
-        return $this->fetch();
     }
 
     /**

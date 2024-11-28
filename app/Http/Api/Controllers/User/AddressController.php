@@ -10,6 +10,7 @@ namespace App\Http\Api\Controllers\User;
 use App\Http\Api\Controllers\Controller;
 use App\Models\User\Address;
 use Xin\Hint\Facades\Hint;
+use Xin\Http\Response;
 
 class AddressController extends Controller
 {
@@ -40,7 +41,7 @@ class AddressController extends Controller
         $userId = $this->auth->getUserId();
 
         $info = Address::where([
-            'id' => $id,
+            'id'      => $id,
             'user_id' => $userId,
         ])->findOrFail();
 
@@ -77,9 +78,6 @@ class AddressController extends Controller
      * 更新地址
      *
      * @return Response
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
     public function update()
     {
@@ -92,10 +90,10 @@ class AddressController extends Controller
         }
         $data = Address::optimizeWithRelationId($data);
 
-        $info = Address::where([
-            'id' => $id,
+        $info = Address::query()->where([
+            'id'      => $id,
             'user_id' => $userId,
-        ])->findOrFail();
+        ])->firstOrFail();
 
         $info->save($data);
 
@@ -131,7 +129,7 @@ class AddressController extends Controller
         $userId = $this->auth->getUserId();
 
         $info = Address::where([
-            'id' => $id,
+            'id'      => $id,
             'user_id' => $userId,
         ])->findOrFail();
 
@@ -168,21 +166,21 @@ class AddressController extends Controller
             'name', 'phone', 'province', 'city',
             'district', 'address', 'is_default',
         ], [
-            'rules' => [
-                'name' => 'require|length:2,15',
-                'phone' => 'require|phone',
+            'rules'  => [
+                'name'     => 'require|length:2,15',
+                'phone'    => 'require|phone',
                 'province' => 'require',
-                'city' => 'require',
+                'city'     => 'require',
                 'district' => 'require',
-                'address' => 'require|length:2,255',
+                'address'  => 'require|length:2,255',
             ],
             'fields' => [
-                'name' => '收货人姓名',
-                'phone' => '收货人手机号',
+                'name'     => '收货人姓名',
+                'phone'    => '收货人手机号',
                 'province' => '省',
-                'city' => '市',
+                'city'     => '市',
                 'district' => '县/区',
-                'address' => '详细地址',
+                'address'  => '详细地址',
             ],
         ]);
     }

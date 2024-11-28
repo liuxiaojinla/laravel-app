@@ -40,9 +40,9 @@ class IdentityController extends Controller
         $userId = $this->request->userId();
 
         /** @var Identity $info */
-        $info = Identity::where([
+        $info = Identity::query()->where([
             'user_id' => $userId,
-        ])->find();
+        ])->first();
         if ($info && $info->status != 2) {
             if ($info->status == 0) {
                 return Hint::error('正在审核中，请勿重复提交！');

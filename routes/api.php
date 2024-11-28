@@ -4,8 +4,11 @@ use App\Http\Api\Controllers\BannerController;
 use App\Http\Api\Controllers\FeedbackController;
 use App\Http\Api\Controllers\IndexController;
 use App\Http\Api\Controllers\LanguageController;
+use App\Http\Api\Controllers\LoginController;
 use App\Http\Api\Controllers\NoticeController;
+use App\Http\Api\Controllers\RegisterController;
 use App\Http\Api\Controllers\TestController;
+use App\Http\Api\Controllers\VerifyCodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::get('/test', [TestController::class, 'index']);
+
 Route::controller(IndexController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/config', 'config');
@@ -29,11 +34,10 @@ Route::controller(IndexController::class)->group(function () {
 
 Route::get('/notices', [NoticeController::class, 'index']);
 Route::get('/banners', [BannerController::class, 'index']);
-Route::apiResource('/feedback', FeedbackController::class)->only(['index', 'store']);
 Route::get('/languages', [LanguageController::class, 'index']);
+Route::apiResource('/feedback', FeedbackController::class)->only(['index', 'store']);
 
-Route::get('/test', [TestController::class, 'index']);
+Route::post('/verify_code', [VerifyCodeController::class, 'index']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+require __DIR__ . '/api/article.php';
+require __DIR__ . '/api/media.php';

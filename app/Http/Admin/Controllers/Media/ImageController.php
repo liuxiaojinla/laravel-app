@@ -23,13 +23,6 @@ class ImageController extends Controller
             ->orderByDesc('id')
             ->paginate();
 
-        if ($request->isAjax()) {
-            return Hint::result($data);
-
-        }
-
-        return view('media.image.index', [
-            'data' => $data,
-        ]);
+        return Hint::result($data);
     }
 }

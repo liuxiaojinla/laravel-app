@@ -4,6 +4,7 @@ namespace App\Http\Api\Controllers;
 
 use App\Models\Feedback;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 class FeedbackController extends Controller
 {

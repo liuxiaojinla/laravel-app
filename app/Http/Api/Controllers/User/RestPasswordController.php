@@ -4,6 +4,7 @@ namespace App\Http\Api\Controllers\User;
 
 use App\Http\Api\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Xin\Hint\Facades\Hint;
 
 class RestPasswordController extends Controller
@@ -58,7 +59,7 @@ class RestPasswordController extends Controller
     {
         $encryptPassword = Hash::make($password);
 
-        User::where('id', $userId)->update([
+        User::query()->where('id', $userId)->update([
             'password' => $encryptPassword,
         ]);
 

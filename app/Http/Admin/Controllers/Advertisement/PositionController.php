@@ -28,32 +28,6 @@ class PositionController extends Controller
             ->search($search)->orderByDesc('id')->paginate();
 
         return Hint::result($data);
-//        return view('advertisement.position.index', [
-//            'data' => $data,
-//        ]);
-    }
-
-
-    /**
-     * 数据创建表单
-     * @param Request $request
-     * @return View
-     */
-    public function create(Request $request)
-    {
-        $id = (int)$request->input('id', 0);
-        $copy = 0;
-        $info = null;
-
-        if ($id > 0) {
-            $copy = 1;
-            $info = AdvertisementPosition::query()->where('id', $id)->first();
-        }
-
-        return view('advertisement.position.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
     }
 
     /**
@@ -82,25 +56,6 @@ class PositionController extends Controller
         $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
 
         return Hint::result($info);
-//        return view('advertisement.position.show', [
-//            'info' => $info,
-//        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
-
-        return view('advertisement.position.edit', [
-            'info' => $info,
-        ]);
     }
 
     /**
@@ -113,7 +68,6 @@ class PositionController extends Controller
         $id = $request->validId();
 
         $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
-
         $data = $request->validated();
 
         if (!$info->save($data)) {

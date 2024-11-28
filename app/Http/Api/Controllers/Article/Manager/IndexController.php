@@ -2,9 +2,9 @@
 
 namespace App\Http\Api\Controllers\Article\Manager;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\article\Article;
 use App\Models\Model;
-use app\common\validate\article\ArticleValidate;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Arr;
 
@@ -16,13 +16,13 @@ class IndexController extends Controller
     public function index()
     {
         $userId = $this->request->userId();
-        $search = $this->request->get();
+        $search = $this->request->query();
         $search = Arr::except($search, [
             'user_id',
         ]);
         $data = Article::simple()->search($search)
             ->where('user_id', $userId)
-            ->order('id desc')
+            ->orderByDesc('id')
             ->paginate($this->request->paginate());
 
         return Hint::result($data);

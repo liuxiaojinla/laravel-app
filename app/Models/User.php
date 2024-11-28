@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Xin\Laravel\Strengthen\Model\Modelable;
+use Xin\LaravelFortify\Model\Modelable;
 
+/**
+ * @property int $status
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, Modelable;
@@ -42,7 +45,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password'          => 'hashed',
     ];
 
     public function chirps(): HasMany

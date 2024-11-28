@@ -4,7 +4,6 @@ namespace App\Http\Admin\Controllers;
 
 use App\Models\LeaveMessage;
 use App\Models\Model;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
@@ -14,7 +13,7 @@ class LeaveMessageController extends Controller
     /**
      * 数据列表
      * @param Request $request
-     * @return View
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -28,9 +27,7 @@ class LeaveMessageController extends Controller
             ->orderByDesc('id')
             ->paginate();
 
-        return view('leave_message.index', [
-            'data' => $data,
-        ]);
+        return Hint::result($data);
     }
 
     /**

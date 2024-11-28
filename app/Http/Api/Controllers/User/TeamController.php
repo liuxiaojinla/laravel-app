@@ -46,7 +46,7 @@ class TeamController extends Controller
         $targetUserId = $this->request->validId();
         $userId = $this->request->userId();
 
-        $info = User::where('id', $targetUserId)->findOrFail();
+        $info = User::query()->where('id', $targetUserId)->firstOrFail();
         if ($info->parent_user_id != $userId) {
             return Hint::error("成员不存在！");
         }

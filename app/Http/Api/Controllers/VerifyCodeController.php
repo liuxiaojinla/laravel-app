@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Validation\Rules\MobileRule;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 class VerifyCodeController extends BaseController
 {
@@ -14,7 +15,8 @@ class VerifyCodeController extends BaseController
      * @var array
      */
     protected $typeList = [
-        'login', 'register',
+        'login',
+        'register',
         'repassword',
     ];
 

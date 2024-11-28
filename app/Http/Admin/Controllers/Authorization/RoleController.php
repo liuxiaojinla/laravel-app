@@ -7,15 +7,12 @@
 
 namespace App\Http\Admin\Controllers\Authorization;
 
-use app\admin\Controller;
-use app\admin\model\Admin;
-use app\admin\model\AdminAccess;
-use app\admin\model\AdminMenu;
-use app\admin\model\AdminRole;
-use app\admin\validate\AdminRoleValidate;
-use app\common\model\Model;
+
+use App\Http\Admin\Controllers\Controller;
+use App\Http\Admin\Models\Admin;
+use App\Http\Admin\Models\AdminRole;
+use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
-use Xin\Support\Arr;
 
 class RoleController extends Controller
 {
@@ -23,28 +20,35 @@ class RoleController extends Controller
     /**
      * 数据列表
      * @return string
-     * @throws \think\db\exception\DbException
      */
-    public function index()
+    public function index(Request $request)
     {
-        $search = $request->get();
+        $search = $request->query();
         $data = AdminRole::simple()->search($search)
-            ->order('id desc')
+            ->orderByDesc('id')
             ->paginate();
 
-        $this->assign('data', $data);
+        return Hint::result($data);
+    }
 
-        return $this->fetch();
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return mixed
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = AdminRole::query()->with([
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
     }
 
     /**
      * 创建数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return string
      */
-    public function create()
+    public function create(Request $request)
     {
         $id = $request->param('id/d', 0);
 
@@ -67,11 +71,9 @@ class RoleController extends Controller
 
     /**
      * 更新数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return string
      */
-    public function update()
+    public function update(Request $request)
     {
         $id = $request->validId();
         $info = AdminRole::where('id', $id)->findOrFail();
@@ -93,9 +95,6 @@ class RoleController extends Controller
     /**
      * 删除数据
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function delete()
     {
@@ -112,9 +111,6 @@ class RoleController extends Controller
     /**
      * 更新数据
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function setValue()
     {
@@ -131,8 +127,6 @@ class RoleController extends Controller
      * 分配权限
      *
      * @return string
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function access()
     {
@@ -151,8 +145,8 @@ class RoleController extends Controller
 
         return $this->fetch($viewPath, [
             'roleId' => $info->id,
-            'role' => $info,
-            'type' => $type,
+            'role'   => $info,
+            'type'   => $type,
         ]);
     }
 
@@ -161,9 +155,6 @@ class RoleController extends Controller
      *
      * @param AdminRole $info
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     protected function accessMenu($info)
     {
@@ -183,7 +174,7 @@ class RoleController extends Controller
         }
 
         $saveIdList = AdminAccess::where([
-            'type' => 'menu',
+            'type'    => 'menu',
             'role_id' => $info->id,
         ])->column('target_id');
         $data = AdminMenu::select()->each(function ($item) use ($saveIdList) {
@@ -216,7 +207,6 @@ class RoleController extends Controller
      *
      * @param AdminRole $info
      * @return \Illuminate\Http\Response|void
-     * @throws \think\db\exception\DbException
      * @throws \Exception
      */
     protected function accessUser($info)
@@ -244,11 +234,11 @@ class RoleController extends Controller
         $keywords = $request->keywordsSql();
         $data = Admin::with('roles')->when(!empty($keywords), [
             ['username', 'like', $keywords],
-        ])->where('id', '<>', 1)->order('id desc')->paginate([
-            'page' => $request->page(),
+        ])->where('id', '<>', 1)->orderByDesc('id')->paginate([
+            'page'  => $request->page(),
             'query' => $request->get(),
         ])->each(function (Admin $admin) use ($info) {
-            $admin['isOwn'] = in_array($info->id, $admin->roles->column('id'), true);
+            $admin['isOwn'] = in_array($info->id, $admin->roles->pluck('id')->toArray(), true);
         });
 
         $this->assign('data', $data);

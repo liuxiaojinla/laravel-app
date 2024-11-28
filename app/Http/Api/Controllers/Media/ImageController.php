@@ -21,9 +21,9 @@ class ImageController extends Controller
      */
     public function index()
     {
-        $search = $this->request->get();
+        $search = $this->request->query();
         $data = Image::search($search)
-            ->order('id desc')
+            ->orderByDesc('id')
             ->paginate($this->request->paginate());
 
         return Hint::result($data);

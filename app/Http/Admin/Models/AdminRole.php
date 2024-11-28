@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Http\Admin\Models;
 
-use app\common\model\Model;
+
+use App\Models\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * 分类模型
@@ -21,7 +24,7 @@ class AdminRole extends Model
     /**
      * 关联菜单模型
      *
-     * @return \think\model\relation\BelongsToMany
+     * @return BelongsToMany
      */
     public function menus()
     {
@@ -32,7 +35,7 @@ class AdminRole extends Model
     /**
      * 关联管理员账号
      *
-     * @return \think\model\relation\BelongsToMany
+     * @return BelongsToMany
      */
     public function admins()
     {

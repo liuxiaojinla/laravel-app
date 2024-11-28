@@ -23,13 +23,6 @@ class AudioController extends Controller
             ->orderByDesc('id')
             ->paginate();
 
-        if ($request->isAjax()) {
-            return Hint::result($data);
-
-        }
-
-        return view('media.audio.index', [
-            'data' => $data,
-        ]);
+        return Hint::result($data);
     }
 }

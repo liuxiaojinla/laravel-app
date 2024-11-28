@@ -2,7 +2,7 @@
 
 namespace App\Http\Admin\Models;
 
-use Xin\Laravel\Strengthen\Model\Modelable;
+use Xin\LaravelFortify\Model\Modelable;
 use Xin\Setting\Laravel\DatabaseSetting;
 
 class Setting extends DatabaseSetting

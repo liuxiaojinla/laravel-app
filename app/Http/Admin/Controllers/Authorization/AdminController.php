@@ -22,11 +22,25 @@ class AdminController extends Controller
     {
         $search = $request->query();
 
-        $data = Admin::simple()->search($search)->order('id desc')->paginate();
+        $data = Admin::simple()->search($search)->orderByDesc('id')->paginate();
 
-        $this->assign('data', $data);
+        return Hint::result($data);
 
-        return $this->fetch();
+        //        $this->assign('data', $data);
+        //        return $this->fetch();
+    }
+
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return mixed
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = Admin::query()->with([
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
     }
 
     /**

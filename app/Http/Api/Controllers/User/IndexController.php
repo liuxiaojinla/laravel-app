@@ -72,7 +72,7 @@ class IndexController extends Controller
 
         /** @var User $origin */
         $origin = $this->auth->getUser();
-        $origin->setAttrs($data);
+        $origin->fill($data);
         $this->auth->temporaryUser($origin);
 
         return Hint::success("已更新！", null, $origin);
