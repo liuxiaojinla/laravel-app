@@ -5,15 +5,8 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\admin\controller\article;
+namespace App\Http\Admin\Controllers\Article;
 
-use app\admin\concern\InteractsArticleCategory;
-use app\admin\Controller;
-use app\common\validate\article\CategoryValidate;
-use App\Models\Article\Article;
-use App\Models\Article\Category;
-use Xin\Hint\Facades\Hint;
-use Xin\Support\Arr;
 
 /**
  * 分类管理

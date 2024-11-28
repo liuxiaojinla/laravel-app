@@ -2,7 +2,6 @@
 
 namespace App\Http\Api\Controllers;
 
-use App\Exceptions\ValidationException;
 use App\Models\Feedback;
 use Xin\Hint\Facades\Hint;
 

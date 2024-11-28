@@ -7,14 +7,10 @@
 
 namespace App\Http\Api\Controllers\User;
 
-use app\common\event\FavoriteEvent;
+use App\Http\Api\Controllers\Controller;
 use App\Models\User\Favorite;
 use LogicException;
-use think\facade\Db;
-use think\facade\Event;
-use think\facade\Log;
 use Xin\Hint\Facades\Hint;
-use Xin\ThinkPHP\Model\MorphMaker;
 
 class FavoriteController extends Controller
 {
@@ -23,7 +19,6 @@ class FavoriteController extends Controller
      * 收藏列表
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {
@@ -52,9 +47,6 @@ class FavoriteController extends Controller
      * 收藏
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function favorite()
     {

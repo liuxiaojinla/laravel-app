@@ -27,7 +27,7 @@
         "xin/robot": "@dev",
         "xin/setting": "@dev",
         "xin/menu": "@dev",
-        "xin/laravel-strengthen": "@dev",
+        "xin/laravel-fortify": "@dev",
         "yansongda/pay": "^3.5"
     },
     "require-dev": {
@@ -41,20 +41,20 @@
         "phpunit/phpunit": "^10.1",
         "spatie/laravel-ignition": "^2.0"
     },
-    "repositories": [
-        {
+    "repositories": {
+        "xin/php-setting": {
             "type": "path",
             "url": "../../Projects/PhpProjects/php-setting"
         },
-        {
+        "xin/php-menu": {
             "type": "path",
             "url": "../../Projects/PhpProjects/php-menu"
         },
-        {
+        "xin/php-laravel-fortify": {
             "type": "path",
             "url": "../../Projects/PhpProjects/php-laravel-fortify"
         }
-    ],
+    },
     "autoload": {
         "psr-4": {
             "App\\": "app/",

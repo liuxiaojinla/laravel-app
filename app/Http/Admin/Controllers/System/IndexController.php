@@ -3,6 +3,7 @@
 namespace App\Http\Admin\Controllers\System;
 
 
+use App\Http\Admin\Controllers\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Xin\Hint\Facades\Hint;

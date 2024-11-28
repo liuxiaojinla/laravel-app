@@ -7,6 +7,7 @@
 
 namespace App\Http\Api\Controllers\User;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\User\Identity;
 use Xin\Hint\Facades\Hint;
 
@@ -17,9 +18,6 @@ class IdentityController extends Controller
      * 获取认证信息
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function index()
     {
@@ -36,9 +34,6 @@ class IdentityController extends Controller
      * 提交申请
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function apply()
     {

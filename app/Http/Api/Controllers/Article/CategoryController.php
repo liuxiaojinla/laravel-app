@@ -7,10 +7,10 @@
 
 namespace App\Http\Api\Controllers\Article;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\Article\Article;
 use App\Models\Article\Category;
 use App\Models\User\Favorite;
-use Xin\Auth\Contracts\AuthVerifyType;
 use Xin\Hint\Facades\Hint;
 
 class CategoryController extends Controller
@@ -20,7 +20,6 @@ class CategoryController extends Controller
      * 获取分类列表
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {
@@ -59,7 +58,6 @@ class CategoryController extends Controller
      * 获取分类详细信息
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function detail()
     {

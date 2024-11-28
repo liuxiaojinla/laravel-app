@@ -7,8 +7,8 @@
 
 namespace App\Http\Api\Controllers\User;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\User;
-use think\exception\ValidateException;
 use Xin\Hint\Facades\Hint;
 
 class DistributorTeamController extends Controller
@@ -18,7 +18,6 @@ class DistributorTeamController extends Controller
      * 获取我邀请的列表
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function invitedList()
     {
@@ -39,9 +38,6 @@ class DistributorTeamController extends Controller
      * 我邀请的人详情
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function invitedDetail()
     {

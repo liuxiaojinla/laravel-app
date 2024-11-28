@@ -67,9 +67,6 @@ class WechatAuthorizeController extends Controller
      * 公众号授权登录
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function official()
     {

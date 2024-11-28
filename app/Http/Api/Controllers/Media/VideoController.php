@@ -7,6 +7,7 @@
 
 namespace App\Http\Api\Controllers\Media;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\media\Video;
 use Xin\Hint\Facades\Hint;
 
@@ -17,7 +18,6 @@ class VideoController extends Controller
      * 视频管理
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {

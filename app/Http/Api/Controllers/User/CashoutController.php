@@ -7,13 +7,9 @@
 
 namespace App\Http\Api\Controllers\User;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\User;
 use App\Models\User\Cashout as UserCashout;
-use think\db\exception\ModelNotFoundException;
-use think\db\Query;
-use think\exception\ValidateException;
-use think\facade\Config;
-use think\facade\Db;
 use Xin\Hint\Facades\Hint;
 
 class CashoutController extends Controller
@@ -23,7 +19,6 @@ class CashoutController extends Controller
      * 提现记录
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {
@@ -43,8 +38,6 @@ class CashoutController extends Controller
      * 提现记录详情
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function detail()
     {
@@ -64,9 +57,6 @@ class CashoutController extends Controller
      * 获取预提现配置数据
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function getApplyInfo()
     {

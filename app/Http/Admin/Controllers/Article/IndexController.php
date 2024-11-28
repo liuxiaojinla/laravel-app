@@ -5,16 +5,8 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\admin\controller\article;
+namespace App\Http\Admin\Controllers\Article;
 
-use app\admin\concern\InteractsArticleCategory;
-use app\admin\Controller;
-use app\common\model\Model;
-use app\common\validate\article\ArticleValidate;
-use App\Models\Article\Article;
-use App\Models\Article\Category;
-use think\exception\ValidateException;
-use Xin\Hint\Facades\Hint;
 
 class IndexController extends Controller
 {
@@ -148,7 +140,7 @@ class IndexController extends Controller
         }
 
         Article::withTrashed()->whereIn('id', $ids)->update([
-            'category_id' => $targetId
+            'category_id' => $targetId,
         ]);
 
         return Hint::success('已移动！', null, $ids);

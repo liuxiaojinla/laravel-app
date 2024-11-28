@@ -5,13 +5,11 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\admin\controller\authorization;
+namespace App\Http\Admin\Controllers\Authorization;
 
-use app\admin\Controller;
-use app\admin\model\Admin;
-use app\admin\validate\AdminValidate;
-use app\common\model\Model;
-use think\exception\ValidateException;
+use App\Http\Admin\Controllers\Controller;
+use App\Http\Admin\Models\Admin;
+use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
 
 class AdminController extends Controller
@@ -19,12 +17,10 @@ class AdminController extends Controller
 
     /**
      * 管理员列表
-     *
-     * @throws \think\db\exception\DbException
      */
-    public function index()
+    public function index(Request $request)
     {
-        $search = $request->get();
+        $search = $request->query();
 
         $data = Admin::simple()->search($search)->order('id desc')->paginate();
 
@@ -35,12 +31,8 @@ class AdminController extends Controller
 
     /**
      * 创建数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function create()
+    public function create(Request $request)
     {
         $id = $request->param('id/d', 0);
 
@@ -64,11 +56,8 @@ class AdminController extends Controller
 
     /**
      * 更新数据
-     * @return string|\think\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function update()
+    public function update(Request $request)
     {
         $id = $request->validId();
         /** @var Admin $info */
@@ -99,11 +88,8 @@ class AdminController extends Controller
     /**
      * 删除数据
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function delete()
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
         $isForce = $request->param('force/d', 0);
@@ -119,12 +105,8 @@ class AdminController extends Controller
 
     /**
      * 更新数据
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function setValue()
+    public function setValue(Request $request)
     {
         $ids = $request->validIds();
         $field = $request->validString('field');

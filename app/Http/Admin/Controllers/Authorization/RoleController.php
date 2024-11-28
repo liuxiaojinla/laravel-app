@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace app\admin\controller\authorization;
+namespace App\Http\Admin\Controllers\Authorization;
 
 use app\admin\Controller;
 use app\admin\model\Admin;

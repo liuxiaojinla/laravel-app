@@ -7,11 +7,8 @@
 
 namespace App\Http\Api\Controllers\User;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\User\Address;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\Response;
 use Xin\Hint\Facades\Hint;
 
 class AddressController extends Controller
@@ -21,7 +18,6 @@ class AddressController extends Controller
      * 收货地址列表
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {
@@ -37,8 +33,6 @@ class AddressController extends Controller
      * 获取地址详情信息
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function detail()
     {
@@ -130,8 +124,6 @@ class AddressController extends Controller
      * 设置默认地址
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function setDefault()
     {

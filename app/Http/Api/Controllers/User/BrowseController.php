@@ -7,9 +7,9 @@
 
 namespace App\Http\Api\Controllers\User;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\User\Browse;
 use Xin\Hint\Facades\Hint;
-use Xin\ThinkPHP\Model\MorphMaker;
 
 class BrowseController extends Controller
 {
@@ -18,7 +18,6 @@ class BrowseController extends Controller
      * 浏览列表
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {

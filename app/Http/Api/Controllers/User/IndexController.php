@@ -7,6 +7,7 @@
 
 namespace App\Http\Api\Controllers\User;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\User;
 use Xin\Hint\Facades\Hint;
 

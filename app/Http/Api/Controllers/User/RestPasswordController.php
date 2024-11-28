@@ -2,12 +2,11 @@
 
 namespace App\Http\Api\Controllers\User;
 
-use app\BaseController;
+use App\Http\Api\Controllers\Controller;
 use App\Models\User;
 use Xin\Hint\Facades\Hint;
-use Xin\Thinkphp\Facade\Hash;
 
-class RestPasswordController extends BaseController
+class RestPasswordController extends Controller
 {
     /**
      * @return \Illuminate\Http\Response
@@ -37,12 +36,12 @@ class RestPasswordController extends BaseController
         $data = $this->request->validate([
             'password', 'repassword',
         ], [
-            'rules' => [
-                'password' => 'require|password',
+            'rules'  => [
+                'password'   => 'require|password',
                 'repassword' => 'require|confirm:password',
             ],
             'fields' => [
-                'password' => '密码',
+                'password'   => '密码',
                 'repassword' => '重复密码',
             ],
         ]);

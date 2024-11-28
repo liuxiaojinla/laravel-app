@@ -7,10 +7,10 @@
 
 namespace App\Http\Api\Controllers\Article;
 
+use App\Http\Api\Controllers\Controller;
 use App\Models\article\Article;
 use App\Models\article\Category;
 use App\Models\User\Favorite;
-use think\db\exception\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;
 
 /**
@@ -23,7 +23,6 @@ class IndexController extends Controller
      * 文章列表
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {
@@ -49,9 +48,6 @@ class IndexController extends Controller
      * 获取文章详情信息
      *
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function detail()
     {

@@ -12,9 +12,6 @@ class IndexController extends Controller
 {
     /**
      * 数据列表
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\db\exception\DbException
      */
     public function index()
     {
@@ -53,9 +50,6 @@ class IndexController extends Controller
     /**
      * 更新数据
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function update()
     {
@@ -80,9 +74,6 @@ class IndexController extends Controller
     /**
      * 删除数据
      * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function delete()
     {
