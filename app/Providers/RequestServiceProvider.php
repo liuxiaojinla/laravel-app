@@ -163,7 +163,7 @@ class RequestServiceProvider extends ServiceProvider
             /** @var $this Request */
             $id = (int)$this->input("{$field}");
             if ($id < 1) {
-                throw Error::validate("param {$field} invalid.");
+                throw Error::validationException("param {$field} invalid.");
             }
 
             return $id;
@@ -179,7 +179,7 @@ class RequestServiceProvider extends ServiceProvider
             /** @var $this Request */
             $ids = $this->ids($field, $format);
             if (empty($ids)) {
-                throw Error::validate("param {$field} invalid.");
+                throw Error::validationException("param {$field} invalid.");
             }
 
             return $ids;
@@ -201,7 +201,7 @@ class RequestServiceProvider extends ServiceProvider
             }
             $value = (int)$value;
             if (!in_array($value, $values, true)) {
-                throw Error::validate("param {$field} invalid.");
+                throw Error::validationException("param {$field} invalid.");
             }
 
             return $value;
@@ -223,7 +223,7 @@ class RequestServiceProvider extends ServiceProvider
             }
 
             if (empty($value)) {
-                throw Error::validate("param {$field} invalid.");
+                throw Error::validationException("param {$field} invalid.");
             }
 
             return $value;

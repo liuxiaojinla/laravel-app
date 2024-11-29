@@ -147,7 +147,7 @@ class IndexController extends Controller
         $targetId = $request->validId('category_id');
 
         if (!Category::query()->where('id', $targetId)->count()) {
-            throw Error::validate("所选分类不存在！");
+            throw Error::validationException("所选分类不存在！");
         }
 
         Article::withTrashed()->whereIn('id', $ids)->update([

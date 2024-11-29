@@ -147,7 +147,7 @@ class MenuController extends Controller
 
         if (!empty($pidList)) {
             $titles = implode("、", AdminMenu::query()->select($pidList)->pluck("title")->toArray());
-            throw Error::validate("请先删除【{$titles}】下的子菜单！");
+            throw Error::validationException("请先删除【{$titles}】下的子菜单！");
         }
 
         AdminMenu::query()->whereIn('id', $ids)->where('system', '=', 0)->delete();

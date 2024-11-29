@@ -41,21 +41,16 @@ class RouteServiceProvider extends ServiceProvider
                 Route::middleware('api')
                     ->prefix('api')
                     ->name('api.')
-                    ->group(base_path('routes/api.php'));
+                    ->group(base_path('routes/api/index.php'));
             } elseif ($module === 'admin') {
                 Route::middleware('admin')
                     ->prefix('admin')
                     ->name('admin.')
-                    ->group(base_path('routes/admin.php'));
-            } elseif ($module === 'notify') {
-                Route::middleware('notify')
-                    ->prefix('notify')
-                    ->name('notify.')
-                    ->group(base_path('routes/notify.php'));
+                    ->group(base_path('routes/admin/index.php'));
             } else {
                 Route::middleware('web')
                     ->namespace($this->namespace)
-                    ->group(base_path('routes/web.php'));
+                    ->group(base_path('routes/web/index.php'));
             }
 
         });

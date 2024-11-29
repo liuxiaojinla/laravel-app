@@ -15,7 +15,7 @@ class Error
      * @param string $message
      * @return ValidationException
      */
-    public static function validate($message)
+    public static function validationException($message)
     {
         return ValidationException::withMessages([
             'default' => $message,
@@ -27,9 +27,20 @@ class Error
      * @param array $messages
      * @return ValidationException
      */
-    public static function validateWithMessages($messages)
+    public static function validationExceptionWithMessages($messages)
     {
         return ValidationException::withMessages($messages);
+    }
+
+    /**
+     * 抛出验证错误
+     * @param string $message
+     * @return mixed
+     * @throws ValidationException
+     */
+    public static function throwValidateException($message)
+    {
+        throw self::validationException($message);
     }
 
     /**

@@ -52,7 +52,7 @@ class Admin extends Model
     {
         $adminId = array_search(self::adminId(), $ids, true);
         if (!empty($adminId)) {
-            throw Error::validate("不允许删除超级管理员");
+            throw Error::validationException("不允许删除超级管理员");
         }
     }
 

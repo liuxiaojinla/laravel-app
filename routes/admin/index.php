@@ -17,10 +17,11 @@ use Xin\Hint\Facades\Hint;
 
 Route::get('/', [IndexController::class, 'index']);
 
-require __DIR__ . '/admin/authorization.php';
-require __DIR__ . '/admin/advertisement.php';
-require __DIR__ . '/admin/article.php';
-require __DIR__ . '/admin/setting.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/authorization.php';
+require __DIR__ . '/advertisement.php';
+require __DIR__ . '/article.php';
+require __DIR__ . '/setting.php';
 
 Route::fallback(function () {
     return Hint::error("404 Not Found");
