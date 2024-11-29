@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\User;
 use App\Models\User\Cashout as UserCashout;
 use Illuminate\Database\Eloquent\Builder;

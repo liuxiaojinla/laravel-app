@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers\Media;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\media\Audio;
 use Xin\Hint\Facades\Hint;
 

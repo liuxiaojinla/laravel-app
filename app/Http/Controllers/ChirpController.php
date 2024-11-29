@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controller;
 use App\Models\Chirp;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Redis;
 use Xin\Hint\Facades\Hint;
 
 class ChirpController extends Controller
@@ -16,18 +14,8 @@ class ChirpController extends Controller
      */
     public function index()
     {
-        Redis::mixin();
         $data = Chirp::query()->paginate();
-        return view('chirps.index');
         return Hint::result($data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
-    {
-        return view('chirps.index');
     }
 
     /**
@@ -42,6 +30,14 @@ class ChirpController extends Controller
         $request->user()->chirps()->create($validated);
 
         return redirect(route('chirps.index'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(Request $request)
+    {
+        return view('chirps.index');
     }
 
     /**

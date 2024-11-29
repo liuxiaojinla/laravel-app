@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Article;
 
 use App\Http\Api\Controllers\Article\ModelNotFoundException;
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\article\Article;
 use App\Models\article\Category;
 use App\Models\User\Favorite;

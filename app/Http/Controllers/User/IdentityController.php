@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\User\Identity;
 use Xin\Hint\Facades\Hint;
 
@@ -56,13 +56,13 @@ class IdentityController extends Controller
         $data = $this->request->validate([
             'realname', 'card_no', 'card_back', 'card_front',
         ], [
-            'rules' => [
+            'rules'  => [
                 'realname' => 'require|length:2,12',
-                'card_no' => 'require|idCard',
+                'card_no'  => 'require|idCard',
             ],
             'fields' => [
                 'realname' => '真实姓名',
-                'card_no' => '身份证号',
+                'card_no'  => '身份证号',
             ],
         ]);
 

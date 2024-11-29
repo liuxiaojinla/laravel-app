@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 
 class TestController extends Controller
 {

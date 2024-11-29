@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
@@ -38,6 +38,22 @@ class DistributorTeamController extends Controller
     }
 
     /**
+     * 分销商ID
+     *
+     * @return int
+     * @throws ValidationException
+     */
+    protected function distributorId()
+    {
+        $distributorId = $this->request->user('distributor_id');
+        if ($distributorId < 1) {
+            ValidationException::throwException("无权限！");
+        }
+
+        return $distributorId;
+    }
+
+    /**
      * 我邀请的人详情
      *
      * @return Response
@@ -56,22 +72,6 @@ class DistributorTeamController extends Controller
         }
 
         return Hint::result($info);
-    }
-
-    /**
-     * 分销商ID
-     *
-     * @return int
-     * @throws ValidationException
-     */
-    protected function distributorId()
-    {
-        $distributorId = $this->request->user('distributor_id');
-        if ($distributorId < 1) {
-            ValidationException::throwException("无权限！");
-        }
-
-        return $distributorId;
     }
 
 }

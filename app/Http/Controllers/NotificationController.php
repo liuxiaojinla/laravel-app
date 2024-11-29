@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;

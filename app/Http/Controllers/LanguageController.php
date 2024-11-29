@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Translation\Translator;
 use Xin\Hint\Facades\Hint;

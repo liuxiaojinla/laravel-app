@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers\Wechat;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use EasyWeChat\Kernel\Exceptions\DecryptException;
 use think\facade\Log;
 use Xin\Hint\Facades\Hint;

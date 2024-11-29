@@ -7,8 +7,8 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\Controller;
 use App\Http\Api\Controllers\User\MorphMaker;
+use App\Http\Controller;
 use App\Models\User\Browse;
 use Xin\Hint\Facades\Hint;
 

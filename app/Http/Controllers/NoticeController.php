@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\Notice;
 use Xin\Hint\Facades\Hint;
 

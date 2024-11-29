@@ -7,7 +7,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\Advertisement\Item as AdvertisementItem;
 use App\Models\Advertisement\Position as AdvertisementPosition;
 use App\Models\Agreement;
@@ -50,7 +50,7 @@ class IndexController extends Controller
             ])->oldest('sort')->latest('id')->get();
         }
 
-//        adv_event('ApiIndex', $data);
+        //        adv_event('ApiIndex', $data);
 
         return Hint::result($data);
     }

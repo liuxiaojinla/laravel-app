@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Article;
 
 use App\Http\Api\Controllers\Article\AuthVerifyType;
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\Article\Article;
 use App\Models\Article\Category;
 use App\Models\User\Favorite;
@@ -37,7 +37,7 @@ class CategoryController extends Controller
             ->when($isGood, [['good_time', '>', 0]])
             ->order($order)
             ->select()
-//            ->paginate($this->request->paginate())
+            //            ->paginate($this->request->paginate())
             ->each(function (Category $item) use ($needStatisticData, $needFollowUsersData) {
                 if ($needStatisticData) {
                     $item->append(['article_count', 'article_view_count']);
@@ -78,7 +78,7 @@ class CategoryController extends Controller
 
         // 获取第一页数据文章数据
         $info['article_list'] = Article::where([
-            'status' => 1,
+            'status'      => 1,
             'category_id' => $info->id,
         ])->order('id desc')
             ->paginate($this->request->paginate());

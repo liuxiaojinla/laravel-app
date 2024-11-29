@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,8 +19,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
-
-Route::get('/demo', [DemoController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -40,5 +41,3 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::get('/lists', [NotificationController::class, 'lists'])->name('lists');
     Route::post('/read', [NotificationController::class, 'read'])->name('read');
 });
-
-require __DIR__ . '/auth.php';

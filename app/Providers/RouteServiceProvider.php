@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\ModuleBootstrapServiceProvider as ApiModuleBootstrapServiceProvider;
+use App\Admin\ModuleBootstrapServiceProvider as AdminModuleBootstrapServiceProvider;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,11 +44,13 @@ class RouteServiceProvider extends ServiceProvider
                     ->prefix('api')
                     ->name('api.')
                     ->group(base_path('routes/api/index.php'));
+                $this->app->register(ApiModuleBootstrapServiceProvider::class);
             } elseif ($module === 'admin') {
                 Route::middleware('admin')
                     ->prefix('admin')
                     ->name('admin.')
                     ->group(base_path('routes/admin/index.php'));
+                $this->app->register(AdminModuleBootstrapServiceProvider::class);
             } else {
                 Route::middleware('web')
                     ->namespace($this->namespace)

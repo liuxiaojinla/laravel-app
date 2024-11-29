@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
@@ -44,9 +45,6 @@ class AppServiceProvider extends ServiceProvider
         // 数据模型映射
         Relation::enforceMorphMap(config('database.morph_mapping'));
 
-        // 加载站点配置到系统配置中
-        //        $this->app['setting']->loadToSystemConfig();
-
         if ($this->app->runningInConsole()) {
             $this->bootInConsole();
         } else {
@@ -54,15 +52,21 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * @return void
+     */
     private function bootInConsole()
     {
     }
 
+    /**
+     * @return void
+     */
     private function bootInWebServer(): void
     {
         // 增加Hint数据处理器
         $this->app['hint']->hint('api')->setDataPreprocessor(function ($data) {
-            if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+            if ($data instanceof LengthAwarePaginator) {
                 return [
                     'current_page' => $data->currentPage(),
                     'data'         => $data->items(),

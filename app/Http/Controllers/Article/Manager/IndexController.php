@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Article\Manager;
 
 use App\Http\Api\Controllers\Article\Manager\ArticleValidate;
-use App\Http\Api\Controllers\Controller;
+use App\Http\Controller;
 use App\Models\article\Article;
 use App\Models\Model;
 use Xin\Hint\Facades\Hint;

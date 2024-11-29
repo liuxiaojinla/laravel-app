@@ -60,6 +60,18 @@ class RegisterController extends BaseController
     }
 
     /**
+     * @param string $code
+     * @return bool
+     */
+    protected function validateCode($mobile, $code)
+    {
+        /** @var VerifyCodeManager $verifyManager */
+        $verifyManager = $this->app->make(VerifyCodeManager::class);
+
+        return $verifyManager->verify($mobile, $code, 'register');
+    }
+
+    /**
      * 检查手机号
      * @param string $mobile
      * @throws ValidationException
@@ -112,18 +124,6 @@ class RegisterController extends BaseController
         event(new Registered($user));
 
         return $user;
-    }
-
-    /**
-     * @param string $code
-     * @return bool
-     */
-    protected function validateCode($mobile, $code)
-    {
-        /** @var VerifyCodeManager $verifyManager */
-        $verifyManager = $this->app->make(VerifyCodeManager::class);
-
-        return $verifyManager->verify($mobile, $code, 'register');
     }
 
 }

@@ -27,18 +27,18 @@ class LoginController extends BaseController
         $data = $this->request->validate([
             'account', 'password',
         ], [
-            'rules' => [
-                'account' => 'require|mobile',
+            'rules'  => [
+                'account'  => 'require|mobile',
                 'password' => 'require|password',
             ],
             'fields' => [
-                'account' => '手机号',
+                'account'  => '手机号',
                 'password' => '密码',
             ],
         ]);
 
         $isLoginSuccess = $this->auth->attemptWhen([
-            'mobile' => $data['account'],
+            'mobile'   => $data['account'],
             'password' => $data['password'],
         ], function (User $user) {
             /** @var \App\Models\User $user */

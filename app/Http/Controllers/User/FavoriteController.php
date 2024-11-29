@@ -7,12 +7,12 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\Controller;
 use App\Http\Api\Controllers\User\Db;
 use App\Http\Api\Controllers\User\Event;
 use App\Http\Api\Controllers\User\FavoriteEvent;
 use App\Http\Api\Controllers\User\Log;
 use App\Http\Api\Controllers\User\MorphMaker;
+use App\Http\Controller;
 use App\Models\User\Favorite;
 use LogicException;
 use Xin\Hint\Facades\Hint;
@@ -80,6 +80,23 @@ class FavoriteController extends Controller
     }
 
     /**
+     * 触发事件
+     * @param string $topicType
+     * @param int $topicId
+     * @param bool $isFavorite
+     * @return void
+     */
+    protected function trigger($topicType, $topicId, $isFavorite)
+    {
+        try {
+            $event = new FavoriteEvent($topicType, $topicId, $isFavorite);
+            Event::trigger($event);
+        } catch (\Exception $e) {
+            Log::error("收藏失败：" . $e->getMessage() . ':' . json_encode([$topicType, $topicId, $isFavorite]));
+        }
+    }
+
+    /**
      * 取消收藏
      *
      * @return \Illuminate\Http\Response
@@ -115,23 +132,6 @@ class FavoriteController extends Controller
         Favorite::query()->where('user_id', $userId)->where('topic_type', $topicType)->delete();
 
         return Hint::success("清除收藏成功！");
-    }
-
-    /**
-     * 触发事件
-     * @param string $topicType
-     * @param int $topicId
-     * @param bool $isFavorite
-     * @return void
-     */
-    protected function trigger($topicType, $topicId, $isFavorite)
-    {
-        try {
-            $event = new FavoriteEvent($topicType, $topicId, $isFavorite);
-            Event::trigger($event);
-        } catch (\Exception $e) {
-            Log::error("收藏失败：" . $e->getMessage() . ':' . json_encode([$topicType, $topicId, $isFavorite]));
-        }
     }
 
 }

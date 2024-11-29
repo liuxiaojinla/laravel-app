@@ -36,7 +36,7 @@ Route::apiResource('/feedback', FeedbackController::class)->only(['index', 'stor
 
 Route::post('/verify_code', [VerifyCodeController::class, 'index']);
 
-require __DIR__ . '/api/auth.php';
-require __DIR__ . '/api/article.php';
-require __DIR__ . '/api/media.php';
-require __DIR__ . '/api/wechat.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/article.php';
+require __DIR__ . '/media.php';
+require __DIR__ . '/wechat.php';

@@ -5,9 +5,13 @@ namespace App\Admin;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
 
-class ModuleBootstrap
+class ModuleBootstrapServiceProvider extends ServiceProvider
 {
+    /**
+     * @return void
+     */
     public function register()
     {
         RateLimiter::for('admin', function (Request $request) {
