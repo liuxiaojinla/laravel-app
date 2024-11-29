@@ -1,7 +1,13 @@
 <?php
 
+use App\Http\Api\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Api\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Api\Controllers\Auth\LoginController;
+use App\Http\Api\Controllers\Auth\NewPasswordController;
+use App\Http\Api\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Api\Controllers\Auth\RegisterController;
+use App\Http\Api\Controllers\Auth\RegisteredUserController;
+use App\Http\Api\Controllers\Auth\VerifyEmailController;
 use App\Http\Api\Controllers\User\BrowseController;
 use App\Http\Api\Controllers\User\CashoutController;
 use App\Http\Api\Controllers\User\DistributorTeamController;
@@ -12,8 +18,35 @@ use App\Http\Api\Controllers\User\RestPasswordController;
 use App\Http\Api\Controllers\User\TeamController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [LoginController::class, 'index'])->name('login');
-Route::post('/register', [RegisterController::class, 'index'])->name('register');
+//Route::post('/login', [LoginController::class, 'index'])->name('login');
+//Route::post('/register', [RegisterController::class, 'index'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware('guest')
+    ->name('register');
+
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('guest')
+    ->name('login');
+
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.email');
+
+Route::post('/reset-password', [NewPasswordController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.store');
+
+Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['auth', 'signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
 
 // 基本信息
 Route::middleware(['auth:sanctum'])->prefix('user')->name('user.')->group(function () {

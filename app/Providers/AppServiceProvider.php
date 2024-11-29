@@ -2,11 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator;
@@ -22,12 +19,6 @@ class AppServiceProvider extends ServiceProvider
     {
         // 验证器
         $this->resolvingValidation();
-
-        // 注册模块加载器
-        $this->registerModuleManager();
-
-        // 注册站点配置
-        $this->registerSetting();
     }
 
     /**
@@ -46,39 +37,6 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * 注册模块加载器
-     * @return void
-     */
-    protected function registerModuleManager(): void
-    {
-        //        $moduleManager = new ModuleManager(
-        //            config('module', [])
-        //        );
-        //        $moduleManager->setContainer($this->app);
-        //        $this->app->instance('module', $moduleManager);
-        //        $this->app->alias('module', ModuleManager::class);
-        //
-        //        // 加载模块路
-        //        $this->app->booted(function () use ($moduleManager) {
-        //            $moduleManager->run($this->app['request']);
-        //        });
-    }
-
-    /**
-     * 注册站点配置
-     * @return void
-     */
-    protected function registerSetting()
-    {
-        //        $this->app->singleton(SettingStore::class, function () {
-        //            return new SettingDatabaseStore(
-        //                $this->app['cache']
-        //            );
-        //        });
-        //        $this->app->alias(SettingStore::class, 'setting');
-    }
-
-    /**
      * Bootstrap any application services.
      */
     public function boot(): void
@@ -93,14 +51,6 @@ class AppServiceProvider extends ServiceProvider
             $this->bootInConsole();
         } else {
             $this->bootInWebServer();
-            /** @var \Illuminate\Auth\RequestGuard $guard */
-            $guard = $this->app['auth']->guard('sanctum');
-            Auth::resolved(function (AuthManager $auth) {
-                $auth->forgetGuards();
-                $auth->viaRequest('sanctum', function ($request) {
-                    return User::query()->first();
-                });
-            });
         }
     }
 

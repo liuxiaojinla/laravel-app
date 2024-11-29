@@ -11,7 +11,7 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * @var string[]
      */
-    protected static $allowModuleList = ['api', 'admin', 'notify'];
+    protected static $allowModuleList = ['api', 'admin', 'web'];
 
     /**
      * @var string
