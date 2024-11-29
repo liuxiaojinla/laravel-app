@@ -142,7 +142,7 @@ class MenuController extends Controller
         $ids = $request->validIds();
 
         //检查是否有子分类 计算两个数组交集
-        $pidList = AdminMenu::query()->where('pid', 'in', $ids)->column('pid');
+        $pidList = AdminMenu::query()->where('pid', 'in', $ids)->pluck('pid');
         $pidList = array_intersect($pidList, $ids);
 
         if (!empty($pidList)) {

@@ -124,7 +124,7 @@ class SinglePageController extends Controller
     public function destroy(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = (int)$request->input('force/d', 0);
+        $isForce = (int)$request->integer('force', 0);
 
         SinglePage::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
             if ($isForce) {

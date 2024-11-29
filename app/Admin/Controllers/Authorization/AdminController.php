@@ -10,8 +10,12 @@ namespace App\Admin\Controllers\Authorization;
 use App\Admin\Controller;
 use App\Admin\Models\Admin;
 use App\Admin\Requests\AdminRequest;
+use App\Exceptions\Error;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 class AdminController extends Controller
 {
@@ -62,19 +66,13 @@ class AdminController extends Controller
         /** @var Admin $info */
         $info = Admin::query()->where('id', $id)->firstOrFail();
 
-        if ($request->isGet()) {
-            $this->assign('info', $info);
-
-            return $this->fetch('edit');
-        }
-
         if ($info->is_admin) {
             throw Error::validationException("不允许修改超级管理员");
         }
 
-        $data = $request->validate(null, AdminValidate::class);
+        $data = $request->validated();
         if (isset($data['password'])) {
-            $data['password'] = app('hash')->make($data['password']);
+            $data['password'] = Hash::make($data['password']);
         }
 
         if (!$info->save($data)) {
@@ -86,16 +84,18 @@ class AdminController extends Controller
 
     /**
      * 删除数据
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
+     * @throws ValidationException
      */
     public function delete(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = $request->input('force/d', 0);
+        $isForce = $request->integer('force', 0);
 
         Admin::checkIsUpdateAdmin($ids);
 
-        Admin::query()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
+        Admin::query()->whereIn('id', $ids)->get()->each(function (Admin $item) use ($isForce) {
             if ($isForce) {
                 $item->forceDelete();
             } else {

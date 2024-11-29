@@ -3,6 +3,9 @@
 use App\Admin\Controllers\AgreementController;
 use App\Admin\Controllers\FeedbackController;
 use App\Admin\Controllers\LeaveMessageController;
+use App\Admin\Controllers\Media\AudioController;
+use App\Admin\Controllers\Media\ImageController;
+use App\Admin\Controllers\Media\VideoController;
 use App\Admin\Controllers\NoticeController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,4 +41,17 @@ Route::middleware([])->prefix('notice')->name('notice.')->group(function () {
     Route::post('/create', [NoticeController::class, 'store'])->name('store');
     Route::put('/update', [NoticeController::class, 'update'])->name('update');
     Route::delete('/delete', [NoticeController::class, 'delete'])->name('delete');
+});
+
+// 资源库
+Route::middleware([])->prefix('media')->name('media.')->group(function () {
+    Route::prefix('audio')->name('audio.')->group(function () {
+        Route::get('/lists', [AudioController::class, 'index'])->name('lists');
+    });
+    Route::prefix('video')->name('video.')->group(function () {
+        Route::get('/lists', [VideoController::class, 'index'])->name('lists');
+    });
+    Route::prefix('image')->name('image.')->group(function () {
+        Route::get('/lists', [ImageController::class, 'index'])->name('lists');
+    });
 });

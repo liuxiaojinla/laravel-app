@@ -39,7 +39,7 @@ class LeaveMessageController extends Controller
     public function destroy(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = $request->input('force/d', 0);
+        $isForce = $request->integer('force', 0);
 
         LeaveMessage::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
             if ($isForce) {

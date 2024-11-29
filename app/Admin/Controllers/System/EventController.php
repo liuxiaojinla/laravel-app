@@ -5,9 +5,6 @@ namespace App\Admin\Controllers\System;
 use App\Admin\Controller;
 use App\Admin\Models\Event;
 use App\Admin\Requests\EventRequest;
-use App\Http\Admin\Controllers\System\DatabasePlugin;
-use App\Http\Admin\Controllers\System\DataNotFoundException;
-use App\Http\Admin\Controllers\System\ModelNotFoundException;
 use App\Models\Agreement;
 use App\Models\Model;
 use Illuminate\Contracts\View\View;
@@ -189,7 +186,7 @@ class EventController extends Controller
 
         $addons = [];
         if (!empty($info->addons)) {
-            $data = DatabasePlugin::query()->where('name', 'in', $info->addons)->column('title', 'name');
+            $data = DatabasePlugin::query()->where('name', 'in', $info->addons)->pluck('title', 'name');
             foreach ($info->addons as $addon) {
                 if (isset($data[$addon])) {
                     $addons[] = [

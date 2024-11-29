@@ -2,8 +2,6 @@
 
 namespace App\Admin\Models;
 
-
-use App\Http\Admin\Models\DatabaseEvent;
 use Xin\LaravelFortify\Model\Modelable;
 
 class Event extends DatabaseEvent

@@ -522,7 +522,7 @@ class PluginController extends Controller
         ];
         $events = [];
         if (!empty($data['events'])) {
-            $events = DatabaseEvent::query()->where('name', 'in', $data['events'])->column('type', 'name');
+            $events = DatabaseEvent::query()->where('name', 'in', $data['events'])->pluck('type', 'name');
             $eventTypes = array_unique(array_values($events));
             foreach ($eventDirs as $key => $dir) {
                 if (in_array($key, $eventTypes, true)) {
@@ -873,7 +873,7 @@ class IndexController extends Controller{
 	public function delete()
 	{
 		\$ids = \$request->validIds();
-		\$isForce = \$request->input('force/d', 0);
+		\$isForce = \$request->integer('force', 0);
 
 		{$className}::query()->whereIn('id', \$ids)->select()->each(function (Model \$item) use (\$isForce) {
 			\$item->force(\$isForce)->delete();

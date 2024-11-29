@@ -4,12 +4,11 @@ namespace App\Admin\Controllers\System;
 
 
 use App\Admin\Controller;
-use App\Http\Admin\Controllers\System\DatabaseEvent;
-use App\Http\Admin\Controllers\System\QueueUtil;
-use App\Http\Admin\Controllers\System\Setting;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
+use Psr\SimpleCache\InvalidArgumentException;
 use Xin\Hint\Facades\Hint;
+use Xin\Setting\Facades\Setting;
 
 class IndexController extends Controller
 {
@@ -44,10 +43,11 @@ class IndexController extends Controller
 
     /**
      * @return void
+     * @throws InvalidArgumentException
      */
     protected function refreshSettingCache()
     {
-        Setting::refreshCache();
+        Setting::clearCache();
         DatabaseEvent::refreshCache();
         QueueUtil::restart();
     }
@@ -69,7 +69,7 @@ class IndexController extends Controller
      */
     protected function refreshMenuCache()
     {
-//        app()->invoke([MenuController::class, 'sync']);
+        //        app()->invoke([MenuController::class, 'sync']);
         app()->invoke([PluginController::class, 'refreshMenus']);
     }
 }

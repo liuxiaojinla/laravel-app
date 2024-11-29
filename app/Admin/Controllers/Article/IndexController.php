@@ -89,7 +89,7 @@ class IndexController extends Controller
     public function delete(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = $request->input('force/d', 0);
+        $isForce = $request->integer('force', 0);
 
         Article::withTrashed()->whereIn('id', $ids)->select()->each(function (Article $item) use ($isForce) {
             if ($isForce) {
