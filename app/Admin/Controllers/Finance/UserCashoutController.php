@@ -42,7 +42,7 @@ class UserCashoutController extends Controller
         $id = $request->validId();
 
         /** @var Cashout $info */
-        $info = Cashout::query()->where('id', $id)->findOrFail();
+        $info = Cashout::query()->where('id', $id)->firstOrFail();
         if (!$request->isPost()) {
             $this->assign('info', $info);
 
@@ -103,7 +103,7 @@ class UserCashoutController extends Controller
         if ($type == Cashout::TYPE_BANK) {
         } else {
             /** @var User $user */
-            $openid = User::where('id', $info->user_id)->value('openid');
+            $openid = User::query()->where('id', $info->user_id)->value('openid');
 
             $amount = $info->money * 100;
             /** @var \Xin\Payment\Contracts\Factory $payment */

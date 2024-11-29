@@ -28,7 +28,7 @@ class FavoriteController extends Controller
     public function index()
     {
         $topicType = $this->request->param('topic_type');
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         MorphMaker::maker(Favorite::class);
 
@@ -57,7 +57,7 @@ class FavoriteController extends Controller
     {
         $topicType = $this->request->param('topic_type');
         $topicId = $this->request->validId('topic_id');
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         if (Favorite::isFavorite($topicType, $topicId, $userId)) {
             return Hint::success('已收藏！');
@@ -105,7 +105,7 @@ class FavoriteController extends Controller
     {
         $topicType = $this->request->param('topic_type');
         $topicId = $this->request->validId('topic_id');
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         try {
             // 开启事务
@@ -127,7 +127,7 @@ class FavoriteController extends Controller
     public function clear()
     {
         $topicType = $this->request->param('topic_type');
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         Favorite::query()->where('user_id', $userId)->where('topic_type', $topicType)->delete();
 

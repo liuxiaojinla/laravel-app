@@ -17,7 +17,7 @@ trait InteractsEvent
      */
     protected function assignEvents()
     {
-        $events = DatabaseEvent::where('status', 1)->order('id desc')->select();
+        $events = DatabaseEvent::query()->where('status', 1)->order('id desc')->select();
         $this->assign('events', $events);
     }
 }

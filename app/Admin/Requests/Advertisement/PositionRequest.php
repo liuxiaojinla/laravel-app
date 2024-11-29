@@ -2,7 +2,8 @@
 
 namespace App\Admin\Requests\Advertisement;
 
-use Xin\Laravel\Strengthen\Request\FormRequest;
+
+use Xin\LaravelFortify\Request\FormRequest;
 
 class PositionRequest extends FormRequest
 {
@@ -12,8 +13,8 @@ class PositionRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title' => 'require|length:2,48',
-        'name' => 'alphaDash|length:3,48|unique:advertisement',
+        'title' => 'required|length:2,48',
+        'name'  => 'alphaDash|length:3,48|unique:advertisement',
     ];
 
     /**
@@ -23,7 +24,7 @@ class PositionRequest extends FormRequest
      */
     protected $field = [
         'title' => '广告位名称',
-        'name' => '唯一标识',
+        'name'  => '唯一标识',
     ];
 
     /**

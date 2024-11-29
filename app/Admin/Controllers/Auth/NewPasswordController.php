@@ -3,7 +3,7 @@
 namespace App\Admin\Controllers\Auth;
 
 use App\Exceptions\Error;
-use App\Http\Controllers\Controller;
+use App\Http\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

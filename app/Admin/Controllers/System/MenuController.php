@@ -142,7 +142,7 @@ class MenuController extends Controller
         $ids = $request->validIds();
 
         //检查是否有子分类 计算两个数组交集
-        $pidList = AdminMenu::where('pid', 'in', $ids)->column('pid');
+        $pidList = AdminMenu::query()->where('pid', 'in', $ids)->column('pid');
         $pidList = array_intersect($pidList, $ids);
 
         if (!empty($pidList)) {
@@ -162,7 +162,7 @@ class MenuController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         AdminMenu::setManyValue($ids, $field, $value);
 
@@ -182,7 +182,7 @@ class MenuController extends Controller
 
                 $group['childs'] = isset($group['childs']) ? Str::explode($group['childs']) : [];
                 foreach ($group['childs'] as $kc => $childIds) {
-                    if (AdminMenu::where('id', $childIds)->update([
+                    if (AdminMenu::query()->where('id', $childIds)->update([
                             'sort' => $kc,
                             'pid'  => $group['root'],
                         ]) === false) {

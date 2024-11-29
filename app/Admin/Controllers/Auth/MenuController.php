@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Controllers\Authorization;
+namespace App\Admin\Controllers\Auth;
 
 use App\Admin\Controller;
 use Xin\Hint\Facades\Hint;

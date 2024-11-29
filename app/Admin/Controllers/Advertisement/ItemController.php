@@ -33,30 +33,6 @@ class ItemController extends Controller
     }
 
     /**
-     * 创建数据
-     * @return View
-     */
-    public function create(Request $request)
-    {
-        $id = (int)$request->input('id', 0);
-        $advertisement = $this->advertisementPosition();
-        $copy = 0;
-        $info = null;
-
-        if ($id > 0) {
-            $copy = 1;
-            $info = AdvertisementItem::query()->where('id', $id)->first();
-            $this->assignAdvertisements();
-        }
-
-        return view('advertisement.item.edit', [
-            'copy'          => $copy,
-            'info'          => $info,
-            'advertisement' => $advertisement,
-        ]);
-    }
-
-    /**
      * 数据创建
      * @param AdvertisementItemRequest $request
      * @return Response
@@ -153,7 +129,7 @@ class ItemController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         AdvertisementItem::setManyValue($ids, $field, $value);
 

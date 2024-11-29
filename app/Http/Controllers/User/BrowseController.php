@@ -23,7 +23,7 @@ class BrowseController extends Controller
     public function index()
     {
         $topicType = $this->request->param('topic_type');
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
         $withUser = $this->request->param('with_user');
 
         MorphMaker::maker(Browse::class);
@@ -55,7 +55,7 @@ class BrowseController extends Controller
     public function delete()
     {
         $id = (int)$this->request->input('id');
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         Browse::query()->where('user_id', $userId)->where('id', $id)->delete();
 
@@ -69,7 +69,7 @@ class BrowseController extends Controller
     public function clear()
     {
         $topicType = $this->request->param('topic_type');
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         Browse::query()->where('user_id', $userId)->where('topic_type', $topicType)->delete();
 

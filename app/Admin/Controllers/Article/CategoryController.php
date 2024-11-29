@@ -9,22 +9,18 @@ namespace App\Admin\Controllers\Article;
 
 
 use App\Admin\Controller;
-use App\Admin\Controllers\Concerns\InteractsArticleCategory;
-use App\Http\Admin\Controllers\Article\CategoryValidate;
+use App\Admin\Requests\Article\CategoryRequest;
 use App\Models\Article\Article;
 use App\Models\Article\Category;
 use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Arr;
-use function App\Http\Admin\Controllers\Article\plugin_url;
 
 /**
  * 分类管理
  */
 class CategoryController extends Controller
 {
-    use InteractsArticleCategory;
-
     /**
      * 分类管理
      *
@@ -35,19 +31,16 @@ class CategoryController extends Controller
         $data = Category::query()->withCount([
             'articles',
         ])
-            ->orderBy('sort', 'asc')->get()
+            ->orderByDesc('sort')->get()
             ->append([
                 'cover_small',
-            ], true)->toArray();
+            ])->toArray();
 
         $data = Arr::treeToList(Arr::tree($data, static function ($level, &$item) {
             $item['level'] = $level;
         }));
 
         return Hint::result($data);
-
-        //        $this->assign("data", $data);
-        //        return $this->fetch();
     }
 
     /**
@@ -67,51 +60,29 @@ class CategoryController extends Controller
      * 创建数据
      * @return string
      */
-    public function create(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $id = $request->param('id/d', 0);
-
-        if ($request->isGet()) {
-            if ($id > 0) {
-                $info = Category::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            $this->assignTreeArticleCategories();
-
-            return $this->fetch('edit');
-        }
-
-
-        $data = $request->validate(null, CategoryValidate::class);
+        $data = $request->validated();
         $info = Category::create($data);
 
-        return Hint::success("创建成功！", (string)plugin_url('index'), $info);
+        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
      * 更新数据
      * @return string
      */
-    public function update(Request $request)
+    public function update(CategoryRequest $request)
     {
         $id = $request->validId();
-        $info = Category::where('id', $id)->findOrFail();
+        $info = Category::query()->where('id', $id)->firstOrFail();
 
-        if ($request->isGet()) {
-            $this->assign('info', $info);
-            $this->assignTreeArticleCategories();
-
-            return $this->fetch('edit');
-        }
-
-        $data = $request->validate(null, CategoryValidate::class);
+        $data = $request->validated();
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
 
-        return Hint::success("更新成功！", (string)plugin_url('index'), $info);
+        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
     /**
@@ -149,7 +120,7 @@ class CategoryController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         Category::setManyValue($ids, $field, $value);
 

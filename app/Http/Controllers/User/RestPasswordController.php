@@ -15,7 +15,7 @@ class RestPasswordController extends Controller
      */
     public function rest()
     {
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
         $credential = $this->getCredential();
         $password = $credential['password'];
 

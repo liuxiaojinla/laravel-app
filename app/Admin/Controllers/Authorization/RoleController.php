@@ -55,11 +55,11 @@ class RoleController extends Controller
      */
     public function create(Request $request)
     {
-        $id = $request->param('id/d', 0);
+        $id = $request->input('id/d', 0);
 
         if ($request->isGet()) {
             if ($id > 0) {
-                $info = AdminRole::where('id', $id)->find();
+                $info = AdminRole::query()->where('id', $id)->find();
                 $this->assign('copy', 1);
                 $this->assign('info', $info);
             }
@@ -81,7 +81,7 @@ class RoleController extends Controller
     public function update(Request $request)
     {
         $id = $request->validId();
-        $info = AdminRole::where('id', $id)->findOrFail();
+        $info = AdminRole::query()->where('id', $id)->firstOrFail();
 
         if ($request->isGet()) {
             $this->assign('info', $info);
@@ -104,10 +104,14 @@ class RoleController extends Controller
     public function delete()
     {
         $ids = $request->validIds();
-        $isForce = $request->param('force/d', 0);
+        $isForce = $request->input('force/d', 0);
 
-        AdminRole::whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        AdminRole::query()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
+                        if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
@@ -121,7 +125,7 @@ class RoleController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         AdminRole::setManyValue($ids, $field, $value);
 
@@ -137,8 +141,8 @@ class RoleController extends Controller
     {
         $id = $request->validId();
         /** @var AdminRole $info */
-        $info = AdminRole::where('id', $id)->findOrFail();
-        $type = $request->param('type', 'menu', 'trim');
+        $info = AdminRole::query()->where('id', $id)->firstOrFail();
+        $type = $request->input('type', 'menu', 'trim');
 
         $method = "access{$type}";
         $response = $this->$method($info);
@@ -178,7 +182,7 @@ class RoleController extends Controller
             return Hint::success('已分配！');
         }
 
-        $saveIdList = AdminAccess::where([
+        $saveIdList = AdminAccess::query()->where([
             'type'    => 'menu',
             'role_id' => $info->id,
         ])->column('target_id');
@@ -217,7 +221,7 @@ class RoleController extends Controller
     protected function accessUser($info)
     {
         if ($request->isPost()) {
-            $subType = $request->param('sub_type/d', 0);
+            $subType = $request->input('sub_type/d', 0);
             $adminIds = $request->validIds();
 
             if ($subType) {
@@ -259,12 +263,12 @@ class RoleController extends Controller
     //	 */
     //	protected function syncAccess($roleId, $type, $ids, $isDeleting = false){
     //		if($isDeleting){
-    //			AdminAccess::where([
+    //			AdminAccess::query()->where([
     //				['type', '=', $type,],
     //				['target_id', 'in', $ids,],
     //			])->delete();
     //		}else{
-    //			$existIds = AdminAccess::where([
+    //			$existIds = AdminAccess::query()->where([
     //				['type', '=', $type,],
     //				['target_id', 'in', $ids,],
     //			])->column('target_id');

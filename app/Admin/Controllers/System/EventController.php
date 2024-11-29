@@ -180,7 +180,7 @@ class EventController extends Controller
         $info = $this->findIsEmptyAssert();
 
         if ($request->isPost()) {
-            $addons = $request->param('addons/a');
+            $addons = $request->input('addons/a');
             $info->addons = $addons;
             $info->save();
 
@@ -189,7 +189,7 @@ class EventController extends Controller
 
         $addons = [];
         if (!empty($info->addons)) {
-            $data = DatabasePlugin::where('name', 'in', $info->addons)->column('title', 'name');
+            $data = DatabasePlugin::query()->where('name', 'in', $info->addons)->column('title', 'name');
             foreach ($info->addons as $addon) {
                 if (isset($data[$addon])) {
                     $addons[] = [
@@ -221,7 +221,7 @@ class EventController extends Controller
         }
 
         if ($request->has('name')) {
-            return Event::where('name', $request->validString('name'))->findOrFail($id);
+            return Event::query()->where('name', $request->validString('name'))->findOrFail($id);
         }
 
         return Event::findOrFail($request->validId());

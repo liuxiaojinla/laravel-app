@@ -55,7 +55,7 @@ abstract class Controller
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->request = $this->app->request;
+        $this->request = $this->app['request'];
         $this->auth = $this->app['auth']->guard();
 
         // 控制器初始化

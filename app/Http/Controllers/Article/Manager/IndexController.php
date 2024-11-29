@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Article\Manager;
 
-use App\Http\Api\Controllers\Article\Manager\ArticleValidate;
 use App\Http\Controller;
 use App\Models\article\Article;
 use App\Models\Model;
@@ -16,7 +15,7 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
         $search = $this->request->query();
         $search = Arr::except($search, [
             'user_id',
@@ -35,11 +34,7 @@ class IndexController extends Controller
      */
     public function create()
     {
-        $userId = $this->request->userId();
-
-        if ($this->request->isGet()) {
-            return Hint::result();
-        }
+        $userId = $this->auth->id();
 
         $data = $this->request->validate(null, ArticleValidate::class);
         $data['user_id'] = $userId;
@@ -55,7 +50,7 @@ class IndexController extends Controller
     public function update()
     {
         $id = $this->request->validId();
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         $info = Article::where('id', $id)->findOrFail();
 
@@ -80,7 +75,7 @@ class IndexController extends Controller
     {
         $ids = $this->request->validIds();
         $isForce = $this->request->param('force/d', 0);
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         Article::withTrashed()->whereIn('id', $ids)->where('user_id', $userId)->select()
             ->each(function (Model $item) use ($isForce) {

@@ -1,7 +1,7 @@
 <?php
 namespace App\Admin\Requests;
 
-use Xin\Laravel\Strengthen\Request\FormRequest;
+use Xin\LaravelFortify\Request\FormRequest;
 
 /**
  * 公告验证器

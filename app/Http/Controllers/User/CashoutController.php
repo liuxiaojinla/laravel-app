@@ -28,7 +28,7 @@ class CashoutController extends Controller
      */
     public function index()
     {
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
         $date = $this->request->param('date', '', 'trim');
 
         $data = UserCashout::query()->where([
@@ -48,7 +48,7 @@ class CashoutController extends Controller
     public function detail()
     {
         $id = $this->request->validId();
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         /** @var UserCashout $info */
         $info = UserCashout::query()->where('id', $id)->firstOrFail();
@@ -66,7 +66,7 @@ class CashoutController extends Controller
      */
     public function getApplyInfo()
     {
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         $field = 'status,cash_amount,cashout_amount';
         $result = User::field($field)->where('id', $userId)->find()->toArray();

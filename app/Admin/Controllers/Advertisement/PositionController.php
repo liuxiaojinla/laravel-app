@@ -107,7 +107,7 @@ class PositionController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         AdvertisementPosition::setManyValue($ids, $field, $value);
 

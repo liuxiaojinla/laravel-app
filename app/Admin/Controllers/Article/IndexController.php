@@ -10,6 +10,7 @@ namespace App\Admin\Controllers\Article;
 
 use App\Admin\Controller;
 use App\Admin\Controllers\Concerns\InteractsArticleCategory;
+use App\Admin\Requests\Article\ArticleRequest;
 use App\Exceptions\Error;
 use App\Http\Admin\Controllers\Article\ArticleValidate;
 use App\Http\Admin\Controllers\Article\Model;
@@ -35,10 +36,6 @@ class IndexController extends Controller
             ->paginate();
 
         return Hint::result($data);
-
-        //        $this->assign('data', $data);
-        //        $this->assignTreeArticleCategories();
-        //        return $this->fetch();
     }
 
     /**
@@ -60,23 +57,9 @@ class IndexController extends Controller
      * 创建数据
      * @return string
      */
-    public function create(Request $request)
+    public function store(ArticleRequest $request)
     {
-        $id = $request->param('id/d', 0);
-
-        if ($request->isGet()) {
-            if ($id > 0) {
-                $info = Article::query()->where('id', $id)->firstOrFail();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            $this->assignTreeArticleCategories();
-
-            return $this->fetch('edit');
-        }
-
-        $data = $request->validate(null, ArticleValidate::class);
+        $data = $request->validated();
         $info = Article::create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
@@ -86,19 +69,12 @@ class IndexController extends Controller
      * 更新数据
      * @return string
      */
-    public function update(Request $request)
+    public function update(ArticleRequest $request)
     {
         $id = $request->validId();
-        $info = Article::where('id', $id)->findOrFail();
+        $info = Article::query()->where('id', $id)->firstOrFail();
 
-        if ($request->isGet()) {
-            $this->assign('info', $info);
-            $this->assignTreeArticleCategories();
-
-            return $this->fetch('edit');
-        }
-
-        $data = $request->validate(null, ArticleValidate::class);
+        $data = $request->validated();
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }
@@ -113,10 +89,14 @@ class IndexController extends Controller
     public function delete(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = $request->param('force/d', 0);
+        $isForce = $request->input('force/d', 0);
 
-        Article::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        Article::withTrashed()->whereIn('id', $ids)->select()->each(function (Article $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
@@ -130,7 +110,7 @@ class IndexController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         Article::setManyValue($ids, $field, $value);
 

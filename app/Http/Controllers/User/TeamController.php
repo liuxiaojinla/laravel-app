@@ -21,7 +21,7 @@ class TeamController extends Controller
      */
     public function invitedList()
     {
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
         $keywords = $this->request->keywordsSql();
 
         $map = [['parent_user_id', '=', $userId,],];
@@ -44,7 +44,7 @@ class TeamController extends Controller
     public function invitedDetail()
     {
         $targetUserId = $this->request->validId();
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         $info = User::query()->where('id', $targetUserId)->firstOrFail();
         if ($info->parent_user_id != $userId) {

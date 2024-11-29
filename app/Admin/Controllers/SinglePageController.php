@@ -148,7 +148,7 @@ class SinglePageController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         SinglePage::setManyValue($ids, $field, $value);
 

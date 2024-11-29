@@ -2,7 +2,8 @@
 
 namespace App\Admin\Requests\Advertisement;
 
-use Xin\Laravel\Strengthen\Request\FormRequest;
+
+use Xin\LaravelFortify\Request\FormRequest;
 
 /**
  * 广告位验证器
@@ -16,11 +17,11 @@ class ItemRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'advertisement_id' => 'require',
-        'cover' => 'require',
-        'url' => 'max:255',
-        'begin_time' => 'require|date',
-        'end_time' => 'require|date|afterWith:begin_time',
+        'advertisement_id' => 'required',
+        'cover'            => 'required',
+        'url'              => 'max:255',
+        'begin_time'       => 'required|date',
+        'end_time'         => 'required|date|afterWith:begin_time',
     ];
 
     /**
@@ -30,10 +31,10 @@ class ItemRequest extends FormRequest
      */
     protected $field = [
         'advertisement_id' => '广告位',
-        'cover' => '封面',
-        'url' => '链接地址',
-        'begin_time' => '开始时间',
-        'end_time' => '结束时间',
+        'cover'            => '封面',
+        'url'              => '链接地址',
+        'begin_time'       => '开始时间',
+        'end_time'         => '结束时间',
     ];
 
     /**

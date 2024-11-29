@@ -373,7 +373,7 @@ class PluginController extends Controller
             return $this->fetch();
         }
 
-        $config = $request->param('config/a', []);
+        $config = $request->input('config/a', []);
         foreach ($pluginInfo->getConfigTypeList() as $key => $type) {
             if (!isset($config[$key])) {
                 continue;
@@ -411,7 +411,7 @@ class PluginController extends Controller
         }
 
         if ($request->has('name')) {
-            return Plugin::where('name', $request->validString('name'))->findOrFail($id);
+            return Plugin::query()->where('name', $request->validString('name'))->findOrFail($id);
         }
 
         return Plugin::findOrFail($request->validId());
@@ -428,14 +428,14 @@ class PluginController extends Controller
      */
     public function refreshMenus(Request $request)
     {
-        $plugin = $request->param('plugin', '', 'trim');
+        $plugin = $request->input('plugin', '', 'trim');
 
         $menuGuards = array_keys($this->app->config->get('menu.menus'));
         foreach ($menuGuards as $guard) {
             Menu::menu($guard)->refresh($plugin);
         }
 
-        DatabasePlugin::where([
+        DatabasePlugin::query()->where([
             'install' => 1,
             'status' => 1,
         ])->when($plugin, ['name' => $plugin])
@@ -522,7 +522,7 @@ class PluginController extends Controller
         ];
         $events = [];
         if (!empty($data['events'])) {
-            $events = DatabaseEvent::where('name', 'in', $data['events'])->column('type', 'name');
+            $events = DatabaseEvent::query()->where('name', 'in', $data['events'])->column('type', 'name');
             $eventTypes = array_unique(array_values($events));
             foreach ($eventDirs as $key => $dir) {
                 if (in_array($key, $eventTypes, true)) {
@@ -818,12 +818,12 @@ class IndexController extends Controller{
 	 */
 	public function create()
 	{
-		\$isCopy = \$request->param('copy', 0);
-		\$id = \$request->param('id/d', 0);
+		\$isCopy = \$request->input('copy', 0);
+		\$id = \$request->input('id/d', 0);
 
 		if (\$request->isGet()) {
 			if (\$isCopy && \$id > 0) {
-				\$info = {$className}::where('id', \$id)->find();
+				\$info = {$className}::query()->where('id', \$id)->find();
 				\$this->assign('info', \$info);
 			}
 
@@ -847,7 +847,7 @@ class IndexController extends Controller{
 	public function update()
 	{
 		\$id = \$request->validId();
-		\$info = {$className}::where('id', \$id)->findOrFail();
+		\$info = {$className}::query()->where('id', \$id)->firstOrFail();
 
 		if (\$request->isGet()) {
 			\$this->assign('info', \$info);
@@ -873,9 +873,9 @@ class IndexController extends Controller{
 	public function delete()
 	{
 		\$ids = \$request->validIds();
-		\$isForce = \$request->param('force/d', 0);
+		\$isForce = \$request->input('force/d', 0);
 
-		{$className}::whereIn('id', \$ids)->select()->each(function (Model \$item) use (\$isForce) {
+		{$className}::query()->whereIn('id', \$ids)->select()->each(function (Model \$item) use (\$isForce) {
 			\$item->force(\$isForce)->delete();
 		});
 

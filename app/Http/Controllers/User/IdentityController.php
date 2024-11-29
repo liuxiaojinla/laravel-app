@@ -21,7 +21,7 @@ class IdentityController extends Controller
      */
     public function index()
     {
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         $info = Identity::where([
             'user_id' => $userId,
@@ -37,7 +37,7 @@ class IdentityController extends Controller
      */
     public function apply()
     {
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         /** @var Identity $info */
         $info = Identity::query()->where([

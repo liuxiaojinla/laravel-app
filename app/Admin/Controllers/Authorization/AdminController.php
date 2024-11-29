@@ -9,9 +9,7 @@ namespace App\Admin\Controllers\Authorization;
 
 use App\Admin\Controller;
 use App\Admin\Models\Admin;
-use App\Http\Admin\Controllers\Authorization\AdminValidate;
-use App\Http\Admin\Controllers\Authorization\Model;
-use App\Http\Admin\Controllers\Authorization\ValidateException;
+use App\Admin\Requests\AdminRequest;
 use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
 
@@ -28,9 +26,6 @@ class AdminController extends Controller
         $data = Admin::simple()->search($search)->orderByDesc('id')->paginate();
 
         return Hint::result($data);
-
-        //        $this->assign('data', $data);
-        //        return $this->fetch();
     }
 
     /**
@@ -49,22 +44,9 @@ class AdminController extends Controller
     /**
      * 创建数据
      */
-    public function create(Request $request)
+    public function store(AdminRequest $request)
     {
-        $id = $request->param('id/d', 0);
-
-        if ($request->isGet()) {
-            if ($id > 0) {
-                $info = Admin::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            return $this->fetch('edit');
-        }
-
-
-        $data = $request->validate(null, AdminValidate::class . ".create");
+        $data = $request->validated();
         $data['password'] = app('hash')->make($data['password']);
         $info = Admin::create($data);
 
@@ -74,11 +56,11 @@ class AdminController extends Controller
     /**
      * 更新数据
      */
-    public function update(Request $request)
+    public function update(AdminRequest $request)
     {
         $id = $request->validId();
         /** @var Admin $info */
-        $info = Admin::where('id', $id)->findOrFail();
+        $info = Admin::query()->where('id', $id)->firstOrFail();
 
         if ($request->isGet()) {
             $this->assign('info', $info);
@@ -87,7 +69,7 @@ class AdminController extends Controller
         }
 
         if ($info->is_admin) {
-            throw new ValidateException("不允许修改超级管理员");
+            throw Error::validationException("不允许修改超级管理员");
         }
 
         $data = $request->validate(null, AdminValidate::class);
@@ -109,12 +91,16 @@ class AdminController extends Controller
     public function delete(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = $request->param('force/d', 0);
+        $isForce = $request->input('force/d', 0);
 
         Admin::checkIsUpdateAdmin($ids);
 
-        Admin::whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        Admin::query()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
@@ -127,7 +113,7 @@ class AdminController extends Controller
     {
         $ids = $request->validIds();
         $field = $request->validString('field');
-        $value = $request->param($field);
+        $value = $request->input($field);
 
         Admin::setManyValue($ids, $field, $value);
 

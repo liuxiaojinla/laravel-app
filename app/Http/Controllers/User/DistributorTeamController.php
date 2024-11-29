@@ -64,7 +64,7 @@ class DistributorTeamController extends Controller
         $distributorId = $this->distributorId();
 
         $targetUserId = $this->request->validId();
-        $userId = $this->request->userId();
+        $userId = $this->auth->id();
 
         $info = User::query()->where('id', $targetUserId)->firstOrFail();
         if ($info->belong_distributor_id != $distributorId) {

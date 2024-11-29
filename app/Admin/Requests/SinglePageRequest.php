@@ -2,7 +2,7 @@
 
 namespace App\Admin\Requests;
 
-use Xin\Laravel\Strengthen\Request\FormRequest;
+use Xin\LaravelFortify\Request\FormRequest;
 
 /**
  * 单页验证器
