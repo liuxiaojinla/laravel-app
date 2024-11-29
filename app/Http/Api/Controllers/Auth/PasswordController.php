@@ -7,20 +7,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\View\View;
+use Xin\Hint\Facades\Hint;
 
 class PasswordController extends Controller
 {
-    /**
-     * @param Request $request
-     * @return View
-     */
-    public function show(Request $request): View
-    {
-        return view('auth.update-password', [
-            'user' => $request->user(),
-        ]);
-    }
 
     /**
      * Update the user's password.
@@ -29,13 +19,13 @@ class PasswordController extends Controller
     {
         $validated = $request->validateWithBag('updatePassword', [
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'password'         => ['required', Password::defaults(), 'confirmed'],
         ]);
 
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
 
-        return back()->with('status', 'password-updated');
+        return Hint::success(__('passwords.updated'));
     }
 }

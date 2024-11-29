@@ -3,30 +3,23 @@
 namespace App\Http\Api\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Xin\Hint\Facades\Hint;
 
 class ConfirmablePasswordController extends Controller
 {
-    /**
-     * Show the confirm password view.
-     */
-    public function show(): View
-    {
-        return view('auth.confirm-password');
-    }
 
     /**
      * Confirm the user's password.
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
-        if (! Auth::guard('web')->validate([
-            'email' => $request->user()->email,
+        if (!Auth::guard('admin')->validate([
+            'account'  => $request->user()->account,
             'password' => $request->password,
         ])) {
             throw ValidationException::withMessages([
@@ -36,6 +29,6 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return Hint::success("确认成功！");
     }
 }

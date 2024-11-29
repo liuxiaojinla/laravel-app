@@ -2,6 +2,7 @@
 
 namespace App\Http\Api\Controllers\Auth;
 
+use App\Exceptions\Error;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
@@ -11,19 +12,20 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
+use Xin\Hint\Facades\Hint;
 
 class NewPasswordController extends Controller
 {
     /**
      * Handle an incoming new password request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
+            'token'    => ['required'],
+            'account'  => ['required', 'string'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -31,10 +33,10 @@ class NewPasswordController extends Controller
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            $request->only('account', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
                 $user->forceFill([
-                    'password' => Hash::make($request->password),
+                    'password'       => Hash::make($request->password),
                     'remember_token' => Str::random(60),
                 ])->save();
 
@@ -43,11 +45,9 @@ class NewPasswordController extends Controller
         );
 
         if ($status != Password::PASSWORD_RESET) {
-            throw ValidationException::withMessages([
-                'email' => [__($status)],
-            ]);
+            throw Error::validationException(__($status));
         }
 
-        return response()->json(['status' => __($status)]);
+        return Hint::success(__('passwords.reset'), null, ['status' => __($status)]);
     }
 }
