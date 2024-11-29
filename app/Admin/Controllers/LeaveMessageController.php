@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Controller;
 use App\Models\LeaveMessage;
 use App\Models\Model;
 use Illuminate\Http\Request;

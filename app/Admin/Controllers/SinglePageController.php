@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Controller;
 use App\Admin\Requests\SinglePageRequest;
 use App\Models\Model;
 use App\Models\SinglePage;

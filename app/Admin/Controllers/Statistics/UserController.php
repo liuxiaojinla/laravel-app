@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers\Statistics;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Models\User;
 use Xin\Hint\Facades\Hint;
 

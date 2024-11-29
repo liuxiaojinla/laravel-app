@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Api\Controllers\Wechat\AuthorizeController;
-use App\Http\Api\Controllers\Wechat\OpenPlatformServerController;
-use App\Http\Api\Controllers\Wechat\WechatController;
+use App\Http\Controllers\Wechat\AuthorizeController;
+use App\Http\Controllers\Wechat\OpenPlatformServerController;
+use App\Http\Controllers\Wechat\WechatController;
 use Illuminate\Support\Facades\Route;
 
 //

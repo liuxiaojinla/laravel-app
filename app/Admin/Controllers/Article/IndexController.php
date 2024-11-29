@@ -8,8 +8,8 @@
 namespace App\Admin\Controllers\Article;
 
 
+use App\Admin\Controller;
 use App\Admin\Controllers\Concerns\InteractsArticleCategory;
-use App\Admin\Controllers\Controller;
 use App\Exceptions\Error;
 use App\Http\Admin\Controllers\Article\ArticleValidate;
 use App\Http\Admin\Controllers\Article\Model;

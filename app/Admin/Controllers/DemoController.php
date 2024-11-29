@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Controller;
 use Illuminate\Http\Request;
 
 class DemoController extends Controller

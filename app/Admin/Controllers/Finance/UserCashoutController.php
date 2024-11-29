@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers\Finance;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Models\User;
 use App\Models\User\Cashout;
 use Illuminate\Contracts\View\View;

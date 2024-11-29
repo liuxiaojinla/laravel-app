@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Controller;
 use App\Admin\Requests\AgreementRequest;
 use App\Admin\Requests\NoticeRequest;
 use App\Models\Model;

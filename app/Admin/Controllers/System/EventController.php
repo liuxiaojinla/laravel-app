@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers\System;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Admin\Models\Event;
 use App\Admin\Requests\EventRequest;
 use App\Http\Admin\Controllers\System\DatabasePlugin;

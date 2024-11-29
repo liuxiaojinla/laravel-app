@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers\Advertisement;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Admin\Requests\Advertisement\ItemRequest as AdvertisementItemRequest;
 use App\Models\Advertisement\Item as AdvertisementItem;
 use App\Models\Advertisement\Position as AdvertisementPosition;

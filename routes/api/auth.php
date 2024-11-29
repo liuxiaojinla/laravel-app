@@ -1,21 +1,21 @@
 <?php
 
-use App\Http\Api\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Api\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Api\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Api\Controllers\Auth\NewPasswordController;
-use App\Http\Api\Controllers\Auth\PasswordController;
-use App\Http\Api\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Api\Controllers\Auth\RegisteredUserController;
-use App\Http\Api\Controllers\Auth\VerifyEmailController;
-use App\Http\Api\Controllers\User\BrowseController;
-use App\Http\Api\Controllers\User\CashoutController;
-use App\Http\Api\Controllers\User\DistributorTeamController;
-use App\Http\Api\Controllers\User\FavoriteController;
-use App\Http\Api\Controllers\User\IdentityController;
-use App\Http\Api\Controllers\User\IndexController;
-use App\Http\Api\Controllers\User\RestPasswordController;
-use App\Http\Api\Controllers\User\TeamController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\User\BrowseController;
+use App\Http\Controllers\User\CashoutController;
+use App\Http\Controllers\User\DistributorTeamController;
+use App\Http\Controllers\User\FavoriteController;
+use App\Http\Controllers\User\IdentityController;
+use App\Http\Controllers\User\IndexController;
+use App\Http\Controllers\User\RestPasswordController;
+use App\Http\Controllers\User\TeamController;
 use Illuminate\Support\Facades\Route;
 
 // 未授权

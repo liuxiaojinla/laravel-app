@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use function App\Http\Admin\Controllers\adv_event;

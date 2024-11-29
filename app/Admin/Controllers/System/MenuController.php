@@ -7,7 +7,7 @@
 
 namespace App\Admin\Controllers\System;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Admin\Models\AdminMenu;
 use App\Admin\Requests\AdminMenuRequest;
 use App\Exceptions\Error;

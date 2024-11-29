@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers\Media;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Models\Media\Video;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;

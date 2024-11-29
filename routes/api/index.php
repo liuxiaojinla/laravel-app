@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Api\Controllers\BannerController;
-use App\Http\Api\Controllers\FeedbackController;
-use App\Http\Api\Controllers\IndexController;
-use App\Http\Api\Controllers\LanguageController;
-use App\Http\Api\Controllers\NoticeController;
-use App\Http\Api\Controllers\TestController;
-use App\Http\Api\Controllers\VerifyCodeController;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\VerifyCodeController;
 use Illuminate\Support\Facades\Route;
 
 /*

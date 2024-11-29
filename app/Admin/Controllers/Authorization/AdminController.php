@@ -7,7 +7,7 @@
 
 namespace App\Admin\Controllers\Authorization;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Admin\Models\Admin;
 use App\Http\Admin\Controllers\Authorization\AdminValidate;
 use App\Http\Admin\Controllers\Authorization\Model;

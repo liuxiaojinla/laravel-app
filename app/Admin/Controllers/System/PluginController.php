@@ -3,7 +3,7 @@
 namespace App\Admin\Controllers\System;
 
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Admin\Models\Plugin;
 use App\Admin\Requests\PluginRequest;
 use App\Http\Admin\Controllers\System\App;

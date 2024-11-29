@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers\Authorization;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use Xin\Hint\Facades\Hint;
 use Xin\Menu\Contracts\Factory as MenuFactory;
 

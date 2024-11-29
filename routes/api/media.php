@@ -1,8 +1,8 @@
 <?php
 // 文章
-use App\Http\Api\Controllers\Media\AudioController;
-use App\Http\Api\Controllers\Media\ImageController;
-use App\Http\Api\Controllers\Media\VideoController;
+use App\Http\Controllers\Media\AudioController;
+use App\Http\Controllers\Media\ImageController;
+use App\Http\Controllers\Media\VideoController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([])->prefix('media/audio')->name('media.audio.')->group(function () {

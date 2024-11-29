@@ -3,7 +3,7 @@
 namespace App\Admin\Controllers\System;
 
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use App\Http\Admin\Controllers\System\DatabaseEvent;
 use App\Http\Admin\Controllers\System\QueueUtil;
 use App\Http\Admin\Controllers\System\Setting;

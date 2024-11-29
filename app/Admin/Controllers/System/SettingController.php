@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers\System;
 
-use App\Admin\Controllers\Controller;
+use App\Admin\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

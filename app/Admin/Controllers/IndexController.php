@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Controller;
 use Qiniu\Http\Request;
 use Xin\Support\Arr;
 use function App\Http\Admin\Controllers\adv_event;

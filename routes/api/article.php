@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Api\Controllers\Article\CategoryController;
-use App\Http\Api\Controllers\Article\IndexController;
-use App\Http\Api\Controllers\Article\Manager\IndexController as ArticleManagerController;
+use App\Http\Controllers\Article\CategoryController;
+use App\Http\Controllers\Article\IndexController;
+use App\Http\Controllers\Article\Manager\IndexController as ArticleManagerController;
 use Illuminate\Support\Facades\Route;
 
 // 文章
