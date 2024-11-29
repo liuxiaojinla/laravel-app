@@ -11,7 +11,7 @@
 |
 */
 
-use App\Http\Admin\Controllers\IndexController;
+use App\Admin\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
 use Xin\Hint\Facades\Hint;
 

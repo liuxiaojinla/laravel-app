@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Admin\Controllers\Authorization\AdminController;
-use App\Http\Admin\Controllers\Authorization\MenuController;
-use App\Http\Admin\Controllers\Authorization\RoleController;
+use App\Admin\Controllers\Authorization\AdminController;
+use App\Admin\Controllers\Authorization\MenuController;
+use App\Admin\Controllers\Authorization\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([])->prefix('authorization/admin')->name('authorization.admin.')->group(function () {

@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Admin\Controllers\Advertisement\ItemController;
-use App\Http\Admin\Controllers\Advertisement\PositionController;
-use App\Http\Admin\Controllers\Article\CategoryController;
-use App\Http\Admin\Controllers\Article\IndexController;
+use App\Admin\Controllers\Article\CategoryController;
+use App\Admin\Controllers\Article\IndexController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([])->prefix('article/index')->name('article.index.')->group(function () {

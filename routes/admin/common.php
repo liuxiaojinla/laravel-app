@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Admin\Controllers\AgreementController;
-use App\Http\Admin\Controllers\FeedbackController;
-use App\Http\Admin\Controllers\LeaveMessageController;
-use App\Http\Admin\Controllers\NoticeController;
+use App\Admin\Controllers\AgreementController;
+use App\Admin\Controllers\FeedbackController;
+use App\Admin\Controllers\LeaveMessageController;
+use App\Admin\Controllers\NoticeController;
 use Illuminate\Support\Facades\Route;
 
 // 协议

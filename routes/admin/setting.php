@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Admin\Controllers\System\SettingController;
+use App\Admin\Controllers\System\SettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->prefix('system/setting')->name('system.setting.')->group(function () {

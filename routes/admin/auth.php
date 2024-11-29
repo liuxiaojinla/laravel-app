@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Admin\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Admin\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Admin\Controllers\Auth\NewPasswordController;
-use App\Http\Admin\Controllers\Auth\PasswordController;
-use App\Http\Admin\Controllers\Auth\PasswordResetLinkController;
+use App\Admin\Controllers\Auth\AuthenticatedSessionController;
+use App\Admin\Controllers\Auth\ConfirmablePasswordController;
+use App\Admin\Controllers\Auth\NewPasswordController;
+use App\Admin\Controllers\Auth\PasswordController;
+use App\Admin\Controllers\Auth\PasswordResetLinkController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {

@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Admin\Controllers\Advertisement\ItemController;
-use App\Http\Admin\Controllers\Advertisement\PositionController;
+use App\Admin\Controllers\Advertisement\ItemController;
+use App\Admin\Controllers\Advertisement\PositionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([])->prefix('advertisement/position')->name('advertisement.position.')->group(function () {
