@@ -44,7 +44,7 @@ trait HasBadge
      *
      * @return array
      */
-    protected function getBadgeListAttr()
+    protected function getBadgeListAttribute()
     {
         $badgeIds = $this->getRawOriginal('badge_id_list');
 

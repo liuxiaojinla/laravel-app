@@ -7,11 +7,7 @@
 
 namespace App\Http\Controllers\Wechat;
 
-use App\Http\Api\Controllers\Wechat\AuthorizeFailedException;
-use App\Http\Api\Controllers\Wechat\ValidateException;
-use App\Http\Api\Controllers\Wechat\WechatAuthenticatesUsers;
-use App\Http\Api\Controllers\Wechat\WechatFactory;
-use App\Http\Api\Controllers\Wechat\WechatResult;
+use App\Http\Concerns\WechatAuthenticatesUsers;
 use App\Http\Controller;
 use Xin\Hint\Facades\Hint;
 
@@ -24,6 +20,15 @@ class AuthorizeController extends Controller
      * @var WechatFactory
      */
     protected $wechatFactory;
+
+
+    /**
+     * @inheritDoc
+     */
+    protected function initialize()
+    {
+        $this->wechatFactory = $this->app->get('wechat');
+    }
 
     /**
      * 登录小程序
@@ -88,21 +93,13 @@ class AuthorizeController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function authorize()
+    public function officialAuthorize()
     {
-        $redirectUrl = $this->request->root(true) . "/wechat_authorize/official";
+        $redirectUrl = $this->request->root() . "/wechat_authorize/official";
 
         return $this->wechatFactory->officialAccount()
             ->oauth->scopes(['snsapi_userinfo'])
             ->redirect($redirectUrl);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function initialize()
-    {
-        $this->wechatFactory = $this->app->get('wechat');
     }
 
 }

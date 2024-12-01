@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Http\ModuleBootstrapServiceProvider as ApiModuleBootstrapServiceProvider;
 use App\Admin\ModuleBootstrapServiceProvider as AdminModuleBootstrapServiceProvider;
+use App\Http\ModuleBootstrapServiceProvider as ApiModuleBootstrapServiceProvider;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,32 +34,32 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->routes(function () {
-            [$module, $modulePath] = $this->moduleParse($this->app['request']->path());
-            $this->registerRequestModuleMacros($module, $modulePath);
+        [$module, $modulePath] = $this->moduleParse($this->app['request']->path());
+        $this->registerRequestModuleMacros($module, $modulePath);
 
+        $this->routes(function () use ($module, $modulePath) {
             // 加载全局路由文件
-            if ($module === 'api') {
+            if ($module === 'api' || app()->runningInConsole()) {
                 Route::middleware('api')
                     ->prefix('api')
                     ->name('api.')
                     ->group(base_path('routes/api/index.php'));
                 $this->app->register(ApiModuleBootstrapServiceProvider::class);
-            } elseif ($module === 'admin') {
+            }
+
+            if ($module === 'admin' || app()->runningInConsole()) {
                 Route::middleware('admin')
                     ->prefix('admin')
                     ->name('admin.')
                     ->group(base_path('routes/admin/index.php'));
                 $this->app->register(AdminModuleBootstrapServiceProvider::class);
-            } else {
-                Route::middleware('web')
-                    ->namespace($this->namespace)
-                    ->group(base_path('routes/web/index.php'));
             }
 
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web/index.php'));
         });
     }
-
 
     /**
      * 解析模块
@@ -106,5 +106,39 @@ class RouteServiceProvider extends ServiceProvider
         Request::macro('modulePath', function () use ($modulePath) {
             return $modulePath;
         });
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultModule(): string
+    {
+        return self::$defaultModule;
+    }
+
+    /**
+     * @param string $defaultModule
+     * @return void
+     */
+    public static function setDefaultModule(string $defaultModule): void
+    {
+        self::$defaultModule = $defaultModule;
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getAllowModuleList(): array
+    {
+        return self::$allowModuleList;
+    }
+
+    /**
+     * @param array $allowModuleList
+     * @return void
+     */
+    public static function setAllowModuleList(array $allowModuleList): void
+    {
+        self::$allowModuleList = $allowModuleList;
     }
 }

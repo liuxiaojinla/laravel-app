@@ -2,12 +2,15 @@
 
 namespace App\Admin\Controllers\Auth;
 
+use App\Admin\Requests\Auth\LoginRequest;
+use App\Admin\Services\AdminService;
 use App\Http\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Supports\WebServer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Xin\Hint\Facades\Hint;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -15,13 +18,30 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      * @throws ValidationException
      */
-    public function store(LoginRequest $request): Response
+    public function store(LoginRequest $request, AdminService $adminService)
     {
-        $request->authenticate();
+        $user = $request->authenticate();
+
+        // 更新数据
+        $user->forceFill([
+            'login_time'  => $this->request->time(),
+            'login_ip'    => $this->request->ip(),
+            'login_count' => $user->login_count + 1,
+        ])->save();
+        $adminService->updateCache($user);
 
         $request->session()->regenerate();
 
-        return response()->noContent();
+        return Hint::success(
+            __('auth.successful'),
+            null,
+            [
+                'info'  => $user->makeHidden([
+                    'password',
+                ])->toArray(),
+                'token' => WebServer::getEncryptSessionCookieValue(),
+            ]
+        );
     }
 
     /**
@@ -35,6 +55,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return Hint::success(
+            __('auth.successful'),
+            null,
+            [
+                'token' => WebServer::getEncryptSessionCookieValue(),
+            ]
+        );
     }
 }

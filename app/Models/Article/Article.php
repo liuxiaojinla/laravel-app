@@ -130,7 +130,7 @@ class Article extends Model
      *
      * @return string
      */
-    protected function getStatusTextAttr()
+    protected function getStatusTextAttribute()
     {
         $status = $this->getData('status');
 
@@ -142,7 +142,7 @@ class Article extends Model
      *
      * @return string
      */
-    protected function getStatusColorClassAttr()
+    protected function getStatusColorClassAttribute()
     {
         $status = $this->getData('status');
 
@@ -154,7 +154,7 @@ class Article extends Model
      *
      * @return string
      */
-    protected function getCoverUrlAttr()
+    protected function getCoverUrlAttribute()
     {
         return get_cover_path($this->cover);
     }
@@ -164,7 +164,7 @@ class Article extends Model
      *
      * @return string
      */
-    protected function getSimplyViewCountAttr()
+    protected function getSimplyViewCountAttribute()
     {
         $val = $this->getData('view_count');
 
@@ -176,7 +176,7 @@ class Article extends Model
      *
      * @return string
      */
-    protected function getSimplyCommentCountAttr()
+    protected function getSimplyCommentCountAttribute()
     {
         $val = $this->getData('comment_count');
 
@@ -188,7 +188,7 @@ class Article extends Model
      *
      * @return string
      */
-    protected function getSimplyCollectCountAttr()
+    protected function getSimplyCollectCountAttribute()
     {
         $val = $this->getData('collect_count');
 
@@ -200,7 +200,7 @@ class Article extends Model
      *
      * @return string
      */
-    protected function getSimplyUpdateTimeAttr()
+    protected function getSimplyUpdateTimeAttribute()
     {
         $val = $this->getData('update_time');
 

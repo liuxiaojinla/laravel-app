@@ -2,9 +2,12 @@
 
 namespace App\Exceptions;
 
+use App\Supports\WebServer;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 use Xin\Hint\Facades\Hint;
@@ -21,6 +24,17 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
+        });
+
+        $this->renderable(function (HttpResponseException $e, Request $request) {
+            if ($this->shouldReturnJson($request, $e)) {
+                $response = $e->getResponse();
+                if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                    return Hint::success($response->getContent());
+                } else {
+                    return Hint::error($response->getContent(), $response->getStatusCode());
+                }
+            }
         });
     }
 
@@ -63,10 +77,28 @@ class Handler extends ExceptionHandler
      */
     protected function shouldReturnJson($request, Throwable $e): bool
     {
-        return $request->expectsJson() || $request->is([
-                'api/*',
-                'admin/*',
-                'notify/*',
-            ]);
+        return WebServer::shouldReturnJson($request);
+    }
+
+    /**
+     * Convert the given exception to an array.
+     *
+     * @param \Throwable $e
+     * @return array
+     */
+    protected function convertExceptionToArray(Throwable $e): array
+    {
+        $code = $this->isHttpException($e) ? $e->getStatusCode() : 0;
+        return config('app.debug') ? [
+            'code'      => $code,
+            'msg'       => $e->getMessage(),
+            'exception' => get_class($e),
+            'file'      => $e->getFile(),
+            'line'      => $e->getLine(),
+            'trace'     => collect($e->getTrace())->map(fn($trace) => Arr::except($trace, ['args']))->all(),
+        ] : [
+            'code' => $code,
+            'msg'  => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
+        ];
     }
 }

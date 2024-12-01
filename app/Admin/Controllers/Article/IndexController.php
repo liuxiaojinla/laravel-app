@@ -9,11 +9,8 @@ namespace App\Admin\Controllers\Article;
 
 
 use App\Admin\Controller;
-use App\Admin\Controllers\Concerns\InteractsArticleCategory;
 use App\Admin\Requests\Article\ArticleRequest;
 use App\Exceptions\Error;
-use App\Http\Admin\Controllers\Article\ArticleValidate;
-use App\Http\Admin\Controllers\Article\Model;
 use App\Models\Article\Article;
 use App\Models\Article\Category;
 use Illuminate\Http\Request;
@@ -23,7 +20,6 @@ use Xin\LaravelFortify\Validation\ValidationException;
 
 class IndexController extends Controller
 {
-    use InteractsArticleCategory;
 
     /**
      * 数据列表

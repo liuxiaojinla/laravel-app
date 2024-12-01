@@ -8,8 +8,8 @@ use App\Admin\Controllers\Auth\PasswordController;
 use App\Admin\Controllers\Auth\PasswordResetLinkController;
 use Illuminate\Support\Facades\Route;
 
+Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login');
 Route::middleware(['guest'])->group(function () {
-    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.account');
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });

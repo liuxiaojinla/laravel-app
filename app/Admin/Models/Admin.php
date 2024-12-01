@@ -3,9 +3,11 @@
 namespace App\Admin\Models;
 
 use App\Exceptions\Error;
-use App\Models\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Xin\LaravelFortify\Model\Modelable;
 use Xin\LaravelFortify\Validation\ValidationException;
 
 /**
@@ -16,10 +18,13 @@ use Xin\LaravelFortify\Validation\ValidationException;
  * @property bool $is_admin
  * @property Collection $roles
  * @property-read int $login_count
- * @property string $login_ip
+ * @property-read string $login_ip
+ * @property-read string $login_time
+ * @property-read string $password
  */
-class Admin extends Model
+class Admin extends Authenticatable
 {
+    use  Notifiable, Modelable;
 
     /**
      * @var string[]
@@ -104,7 +109,7 @@ class Admin extends Model
      *
      * @return bool
      */
-    protected function getIsAdminAttr()
+    protected function getIsAdminAttribute()
     {
         $id = $this->getAttribute('id');
 

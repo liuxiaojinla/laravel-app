@@ -2,6 +2,8 @@
 
 namespace App\Admin\Requests\Auth;
 
+use App\Admin\Models\Admin;
+use App\Exceptions\Error;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +29,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'username' => 'required|string',
+            'password' => 'required|string',
         ];
     }
 
@@ -37,19 +39,33 @@ class LoginRequest extends FormRequest
      *
      * @throws ValidationException
      */
-    public function authenticate(): void
+    public function authenticate(): Admin
     {
-        $this->ensureIsNotRateLimited();
+        $credentials = $this->only(['username', 'password']);
+        $remember = $this->boolean('remember');
+        $account = $credentials['username'];
 
-        if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        $this->ensureIsNotRateLimited($account);
+
+        $user = null;
+        if (!Auth::attemptWhen($credentials, function (Admin $tempUser) use (&$user) {
+            $user = $tempUser;
+            return $user->status === 1;
+        }, $remember)) {
+            RateLimiter::hit($this->throttleKey($account));
+
+            if ($user->status !== 1) {
+                throw Error::validationException("用户" . $user->status_text);
+            }
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'default' => __('auth.failed'),
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        RateLimiter::clear($this->throttleKey($account));
+
+        return $user;
     }
 
     /**
@@ -57,18 +73,18 @@ class LoginRequest extends FormRequest
      *
      * @throws ValidationException
      */
-    public function ensureIsNotRateLimited(): void
+    public function ensureIsNotRateLimited($account): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey($account), 5)) {
             return;
         }
 
         event(new Lockout($this));
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+        $seconds = RateLimiter::availableIn($this->throttleKey($account));
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'default' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -78,8 +94,8 @@ class LoginRequest extends FormRequest
     /**
      * Get the rate limiting throttle key for the request.
      */
-    public function throttleKey(): string
+    public function throttleKey($account): string
     {
-        return Str::transliterate(Str::lower($this->input('email')) . '|' . $this->ip());
+        return Str::transliterate("admin|" . Str::lower($account) . '|' . $this->ip());
     }
 }

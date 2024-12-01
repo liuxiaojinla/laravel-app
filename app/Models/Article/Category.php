@@ -140,7 +140,7 @@ class Category extends Model
      * 获取真实文章数量
      * @return int
      */
-    protected function getRealArticleCountAttr()
+    protected function getRealArticleCountAttribute()
     {
         return Article::query()->where([
             'status'      => 1,
@@ -152,7 +152,7 @@ class Category extends Model
      * 获取文章数量
      * @return string
      */
-    protected function getArticleCountAttr()
+    protected function getArticleCountAttribute()
     {
         $realCount = $this->getAttribute('real_article_count');
         $virtualCount = $this->getAttribute('virtual_article_count');
@@ -164,7 +164,7 @@ class Category extends Model
      * 获取文章真实的浏览数量
      * @return float
      */
-    protected function getRealArticleViewCountAttr()
+    protected function getRealArticleViewCountAttribute()
     {
         return Article::query()->where([
             'status'      => 1,
@@ -176,7 +176,7 @@ class Category extends Model
      * 获取文章虚拟的浏览数量
      * @return float
      */
-    protected function getVirtualArticleViewCountAttr()
+    protected function getVirtualArticleViewCountAttribute()
     {
         return Article::query()->where([
             'status'      => 1,
@@ -188,7 +188,7 @@ class Category extends Model
      * 获取文章浏览数量
      * @return string
      */
-    protected function getArticleViewCountAttr()
+    protected function getArticleViewCountAttribute()
     {
         $realCount = $this->getAttribute('real_article_view_count');
         $virtualCount = $this->getAttribute('virtual_article_view_count');

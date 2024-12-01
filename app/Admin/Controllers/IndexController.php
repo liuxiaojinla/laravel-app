@@ -4,8 +4,8 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Controller;
 use Qiniu\Http\Request;
+use Xin\Hint\Facades\Hint;
 use Xin\Support\Arr;
-use function App\Http\Admin\Controllers\adv_event;
 
 class IndexController extends Controller
 {
@@ -15,7 +15,7 @@ class IndexController extends Controller
      */
     public function index()
     {
-        return view('index');
+        return Hint::success("Admin API.");
     }
 
     /**
