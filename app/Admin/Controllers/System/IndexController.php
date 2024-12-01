@@ -16,6 +16,7 @@ class IndexController extends Controller
      * 清除全部缓存
      *
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function clearCache()
     {
@@ -33,6 +34,7 @@ class IndexController extends Controller
      * 清除配置缓存
      *
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function clearSettingCache()
     {
@@ -49,7 +51,7 @@ class IndexController extends Controller
     {
         Setting::clearCache();
         DatabaseEvent::refreshCache();
-        QueueUtil::restart();
+        Artisan::call('queue:restart');
     }
 
     /**

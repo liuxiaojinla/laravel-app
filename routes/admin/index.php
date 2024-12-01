@@ -24,7 +24,7 @@ require __DIR__ . '/advertisement.php';
 require __DIR__ . '/article.php';
 require __DIR__ . '/finance.php';
 require __DIR__ . '/statistics.php';
-require __DIR__ . '/setting.php';
+require __DIR__ . '/system.php';
 
 Route::fallback(function () {
     return Hint::error("404 Not Found");
