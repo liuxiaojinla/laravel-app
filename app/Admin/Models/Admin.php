@@ -181,15 +181,4 @@ class Admin extends Authenticatable
         $this->allMenuIds = null;
     }
 
-    /**
-     * @return array
-     */
-    public function __serialize()
-    {
-        return [
-            'exists' => $this->isExists(),
-            'origin' => $this->getOrigin(),
-        ];
-    }
-
 }

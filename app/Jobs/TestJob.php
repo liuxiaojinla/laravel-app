@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use Xin\Laravel\Strengthen\Queue\Job;
+use Xin\LaravelFortify\Queue\Job;
 
 class TestJob extends Job
 {

@@ -3,9 +3,11 @@
 namespace App\Admin\Services;
 
 use App\Admin\Models\Admin;
+use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 
-class AdminService
+class AdminService extends EloquentUserProvider
 {
     /**
      * @var Cache
@@ -13,10 +15,12 @@ class AdminService
     protected $cache;
 
     /**
+     * @param HasherContract $hasher
      * @param Cache $cache
      */
-    public function __construct(Cache $cache)
+    public function __construct(HasherContract $hasher, Cache $cache)
     {
+        parent::__construct($hasher, Admin::class);
         $this->cache = $cache;
     }
 
@@ -31,7 +35,10 @@ class AdminService
             $this->getCacheKey($id),
             $this->getCacheExpired(),
             function () use ($id) {
-                return Admin::query()->findOrFail($id);
+                /** @var Admin $user */
+                $user = Admin::query()->findOrFail($id);
+
+                return $this->safetyHandling($user);
             }
         );
     }
@@ -58,7 +65,7 @@ class AdminService
     {
         return $this->cache->put(
             $this->getCacheKey($user->id),
-            $user,
+            $this->safetyHandling($user),
             $this->getCacheExpired()
         );
     }
@@ -80,5 +87,17 @@ class AdminService
     protected function getCacheExpired()
     {
         return now()->addDays();
+    }
+
+    /**
+     * 安全的处理模型
+     * @param Admin $user
+     * @return Admin
+     */
+    private function safetyHandling(Admin $user)
+    {
+        return $user->makeHidden([
+            'password',
+        ]);
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Admin;
 
+use App\Admin\Services\AdminService;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -22,7 +24,7 @@ class ModuleBootstrapServiceProvider extends ServiceProvider
             ], config('auth.guards.admin', [])),
 
             'auth.providers.admins' => array_merge([
-                'driver' => 'eloquent',
+                'driver' => 'admin',
                 'model'  => \App\Admin\Models\Admin::class,
             ], config('auth.providers.admins', [])),
         ]);
@@ -38,5 +40,10 @@ class ModuleBootstrapServiceProvider extends ServiceProvider
     public function boot()
     {
         Auth::shouldUse('admin');
+        Auth::provider('admin', function (Application $app, array $config) {
+            return $app->make(AdminService::class, [
+                'config' => $config,
+            ]);
+        });
     }
 }
