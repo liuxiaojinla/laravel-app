@@ -1,0 +1,26 @@
+{
+    "name": "nwidart/systeminfo",
+    "description": "",
+
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\SystemInfo\\": "",
+            "Plugins\\SystemInfo\\App\\": "app/",
+            "Plugins\\SystemInfo\\Database\\Factories\\": "database/factories/",
+            "Plugins\\SystemInfo\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Plugins\\SystemInfo\\Tests\\": "tests/"
+        }
+    }
+}

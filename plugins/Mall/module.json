@@ -1,0 +1,11 @@
+{
+    "name": "Mall",
+    "alias": "mall",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Plugins\\Mall\\app\\Providers\\MallServiceProvider"
+    ],
+    "files": []
+}

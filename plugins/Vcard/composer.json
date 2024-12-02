@@ -1,0 +1,26 @@
+{
+    "name": "nwidart/vcard",
+    "description": "",
+
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\VCard\\": "",
+            "Plugins\\VCard\\App\\": "app/",
+            "Plugins\\VCard\\Database\\Factories\\": "database/factories/",
+            "Plugins\\VCard\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Plugins\\VCard\\Tests\\": "tests/"
+        }
+    }
+}

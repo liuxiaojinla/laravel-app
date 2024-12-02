@@ -1,0 +1,11 @@
+{
+    "name": "Wechat",
+    "alias": "wechat",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Plugins\\Wechat\\app\\Providers\\WechatServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,11 @@
+{
+    "name": "SystemInfo",
+    "alias": "systeminfo",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Plugins\\SystemInfo\\app\\Providers\\SystemInfoServiceProvider"
+    ],
+    "files": []
+}

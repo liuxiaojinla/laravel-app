@@ -1,0 +1,33 @@
+{
+    "name": "plugins/wechat",
+    "description": "",
+    "authors": [
+        {
+            "name": "liuxiaojinla",
+            "email": "1540175452@qq.com"
+        }
+    ],
+    "require": {
+        "xin/wechat": "@dev"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Wechat\\": "",
+            "Plugins\\Wechat\\App\\": "app/",
+            "Plugins\\Wechat\\Database\\Factories\\": "database/factories/",
+            "Plugins\\Wechat\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Plugins\\Wechat\\Tests\\": "tests/"
+        }
+    }
+}

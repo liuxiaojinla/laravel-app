@@ -1,0 +1,11 @@
+{
+    "name": "Shop",
+    "alias": "shop",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Plugins\\Shop\\app\\Providers\\ShopServiceProvider"
+    ],
+    "files": []
+}

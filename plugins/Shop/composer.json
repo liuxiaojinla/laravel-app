@@ -1,0 +1,26 @@
+{
+    "name": "nwidart/shop",
+    "description": "",
+
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Shop\\": "",
+            "Plugins\\Shop\\App\\": "app/",
+            "Plugins\\Shop\\Database\\Factories\\": "database/factories/",
+            "Plugins\\Shop\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Plugins\\Shop\\Tests\\": "tests/"
+        }
+    }
+}

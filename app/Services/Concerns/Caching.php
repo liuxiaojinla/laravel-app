@@ -14,11 +14,6 @@ trait Caching
     protected $cache;
 
     /**
-     * @var string
-     */
-    protected $cachePrefix;
-
-    /**
      * 通过用户的唯一标识符检索数据。
      * @param mixed $identifier
      * @return Model
@@ -64,7 +59,11 @@ trait Caching
      */
     protected function getCacheKeyPrefix()
     {
-        return $this->cachePrefix ?: static::class;
+        if (property_exists($this, 'cachePrefix')) {
+            return $this->cachePrefix;
+        }
+
+        return static::class;
     }
 
     /**

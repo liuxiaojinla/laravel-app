@@ -1,0 +1,26 @@
+{
+    "name": "nwidart/activity",
+    "description": "",
+
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Activity\\": "",
+            "Plugins\\Activity\\App\\": "app/",
+            "Plugins\\Activity\\Database\\Factories\\": "database/factories/",
+            "Plugins\\Activity\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Plugins\\Activity\\Tests\\": "tests/"
+        }
+    }
+}

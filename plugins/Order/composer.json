@@ -1,0 +1,26 @@
+{
+    "name": "nwidart/order",
+    "description": "",
+
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Order\\": "",
+            "Plugins\\Order\\App\\": "app/",
+            "Plugins\\Order\\Database\\Factories\\": "database/factories/",
+            "Plugins\\Order\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Plugins\\Order\\Tests\\": "tests/"
+        }
+    }
+}
