@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 class NoticeController extends Controller
 {
@@ -28,33 +29,7 @@ class NoticeController extends Controller
             ->orderByDesc('id')
             ->paginate();
 
-        $this->assign('data', $data);
-
-        return view('notice.index', [
-            'data' => $data,
-        ]);
-    }
-
-    /**
-     * 数据创建表单
-     * @param Request $request
-     * @return View
-     */
-    public function create(Request $request)
-    {
-        $id = (int)$request->input('id', 0);
-        $copy = 0;
-        $info = null;
-
-        if ($id > 0) {
-            $copy = 1;
-            $info = Notice::query()->where('id', $id)->first();
-        }
-
-        return view('notice.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
+        return Hint::result($data);
     }
 
     /**
@@ -66,7 +41,7 @@ class NoticeController extends Controller
     {
         $data = $request->validated();
 
-        $info = Notice::create($data);
+        $info = Notice::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
@@ -82,9 +57,7 @@ class NoticeController extends Controller
 
         $info = Notice::query()->where('id', $id)->firstOrFail();
 
-        return view('notice.show', [
-            'info' => $info,
-        ]);
+        return Hint::result($info);
     }
 
     /**
@@ -131,7 +104,7 @@ class NoticeController extends Controller
     public function destroy(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = (int)$request->integer('force', 0);
+        $isForce = $request->integer('force', 0);
 
         Notice::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
             if ($isForce) {
@@ -146,10 +119,8 @@ class NoticeController extends Controller
 
     /**
      * 更新数据
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
+     * @throws ValidationException
      */
     public function setValue(Request $request)
     {

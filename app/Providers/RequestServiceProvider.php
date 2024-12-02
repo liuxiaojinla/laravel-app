@@ -249,5 +249,55 @@ class RequestServiceProvider extends ServiceProvider
             /** @var $this Request */
             return date('Y-m-d H:i:s', $this->time());
         });
+
+        /**
+         * 是否是GET请求
+         * @access public
+         * @return string
+         */
+        Request::macro('isGet', function () {
+            /** @var $this Request */
+            return strtoupper($this->method()) === 'GET';
+        });
+
+        /**
+         * 是否是POST请求
+         * @access public
+         * @return string
+         */
+        Request::macro('isPost', function () {
+            /** @var $this Request */
+            return strtoupper($this->method()) === 'POST';
+        });
+
+        /**
+         * 是否是PUT请求
+         * @access public
+         * @return string
+         */
+        Request::macro('isPut', function () {
+            /** @var $this Request */
+            return strtoupper($this->method()) === 'PUT';
+        });
+
+        /**
+         * 是否是DELETE请求
+         * @access public
+         * @return string
+         */
+        Request::macro('isDelete', function () {
+            /** @var $this Request */
+            return strtoupper($this->method()) === 'DELETE';
+        });
+
+        /**
+         * 是否是OPTIONS请求
+         * @access public
+         * @return string
+         */
+        Request::macro('isOptions', function () {
+            /** @var $this Request */
+            return strtoupper($this->method()) === 'OPTIONS';
+        });
     }
 }

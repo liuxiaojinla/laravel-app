@@ -13,7 +13,6 @@ use Xin\Support\Arr;
  * @property-read string $corp_id
  * @property-read \Illuminate\Support\Carbon $updated_at
  * @property-read \Illuminate\Support\Carbon $created_at
- * @method static create(array $attributes = []) static
  */
 class Model extends BaseModel
 {

@@ -10,41 +10,23 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 use Xin\Support\Str;
 
 class SinglePageController extends Controller
 {
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function index(Request $request)
     {
         $search = $request->query();
 
         $data = SinglePage::simple()->search($search)->orderByDesc('id')->paginate();
 
-        return view('single_page.index', [
-            'data' => $data,
-        ]);
-    }
-
-    /**
-     * 数据创建表单
-     * @param Request $request
-     * @return View
-     */
-    public function create(Request $request)
-    {
-        $id = (int)$request->input('id', 0);
-        $copy = 0;
-        $info = null;
-
-        if ($id > 0) {
-            $copy = 1;
-            $info = SinglePage::query()->where('id', $id)->first();
-        }
-
-        return view('single_page.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
+        return Hint::result($data);
     }
 
     /**
@@ -59,7 +41,7 @@ class SinglePageController extends Controller
             $data['name'] = Str::random();
         }
 
-        $info = SinglePage::create($data);
+        $info = SinglePage::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
@@ -75,25 +57,7 @@ class SinglePageController extends Controller
 
         $info = SinglePage::query()->where('id', $id)->firstOrFail();
 
-        return view('agreement.show', [
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = SinglePage::query()->where('id', $id)->firstOrFail();
-
-        return view('agreement.edit', [
-            'info' => $info,
-        ]);
+        return Hint::result($info);
     }
 
     /**
@@ -109,7 +73,7 @@ class SinglePageController extends Controller
 
         $data = $request->validated();
 
-        if (!$info->save($data)) {
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
@@ -119,12 +83,12 @@ class SinglePageController extends Controller
     /**
      * 数据删除
      * @param Request $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = (int)$request->integer('force', 0);
+        $isForce = $request->integer('force', 0);
 
         SinglePage::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
             if ($isForce) {
@@ -139,10 +103,8 @@ class SinglePageController extends Controller
 
     /**
      * 更新数据
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return Response
+     * @throws ValidationException
      */
     public function setValue(Request $request)
     {
@@ -158,7 +120,7 @@ class SinglePageController extends Controller
     /**
      * 关于我们
      *
-     * @return string|\think\Response
+     * @return string
      */
     public function about(Request $request)
     {

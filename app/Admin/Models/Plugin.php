@@ -3,7 +3,6 @@
 namespace App\Admin\Models;
 
 
-use App\Http\Admin\Models\DatabasePlugin;
 use Xin\LaravelFortify\Model\Modelable;
 
 class Plugin extends DatabasePlugin

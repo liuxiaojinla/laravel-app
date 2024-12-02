@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 
 class ItemController extends Controller
@@ -124,6 +125,7 @@ class ItemController extends Controller
     /**
      * 更新数据
      * @return Response
+     * @throws ValidationException
      */
     public function setValue(Request $request)
     {

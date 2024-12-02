@@ -4,6 +4,7 @@ namespace App\Admin\Controllers\System;
 
 use App\Admin\Controller;
 use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -20,10 +21,12 @@ class SettingController extends Controller
     private $settingManager;
 
     /**
+     * @param Application $app
      * @param SettingFactoryContract $factory
      */
-    public function __construct(SettingFactoryContract $factory)
+    public function __construct(Application $app, SettingFactoryContract $factory)
     {
+        parent::__construct($app);
         $this->settingManager = $factory;
     }
 
@@ -37,9 +40,6 @@ class SettingController extends Controller
         $search = $request->query();
 
         $data = $this->settingManager->paginate($search);
-        if ($request->ajax()){
-            return Hint::result($data);
-        }
 
         return Hint::result($data);
     }
@@ -144,7 +144,7 @@ class SettingController extends Controller
     public function set(Request $request)
     {
         $result = $this->settingManager->sets([
-            '1704955431' => 1,
+            '1704955431'                     => 1,
             'user_recharge_status1704955460' => 2,
             'user_recharge_status1704955473' => 3,
             'user_recharge_status1704955550' => 4,

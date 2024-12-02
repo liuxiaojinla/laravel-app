@@ -6,18 +6,10 @@ namespace App\Admin\Controllers\System;
 use App\Admin\Controller;
 use App\Admin\Models\Plugin;
 use App\Admin\Requests\PluginRequest;
-use App\Http\Admin\Controllers\System\App;
-use App\Http\Admin\Controllers\System\Arr;
-use App\Http\Admin\Controllers\System\DatabaseEvent;
-use App\Http\Admin\Controllers\System\DatabasePlugin;
-use App\Http\Admin\Controllers\System\InteractsEvent;
-use App\Http\Admin\Controllers\System\PluginInfoContract;
-use App\Http\Admin\Controllers\System\PluginManager;
-use App\Http\Admin\Controllers\System\PluginNotFoundException;
-use App\Http\Admin\Controllers\System\Str;
 use App\Models\Agreement;
 use App\Models\Model;
 use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +30,7 @@ class PluginController extends Controller
      * @param \think\App $app
      * @param PluginManager $pluginManager
      */
-    public function __construct(App $app, PluginManager $pluginManager)
+    public function __construct(Application $app, PluginManager $pluginManager)
     {
         parent::__construct($app);
         $this->pluginManager = $pluginManager;
@@ -53,41 +45,13 @@ class PluginController extends Controller
         $install = $request->input('install');
         $install = $install === '' ? null : (int)$install;
 
-        $search = $request->get();
+        $search = $request->query();
         $data = Plugin::simple()->search($search)
             ->orderByDesc('id')
             ->paginate();
 
 
-        return view('plugin.index', [
-            'install' => $install,
-            'data' => $data,
-        ]);
-    }
-
-    /**
-     * 快速创建视图
-     * @return View
-     */
-    public function create(Request $request)
-    {
-        $id = (int)$request->input('id', 0);
-        $copy = 0;
-        $info = null;
-
-        if ($id > 0) {
-            $copy = 1;
-            $info = Plugin::query()->where('id', $id)->first();
-            $this->assignEvents();
-            $this->assign('config_tpl', $this->buildConfigTplContent());
-        }
-
-        return view('plugin.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
-
-
+        return Hint::result($data);
     }
 
     /**

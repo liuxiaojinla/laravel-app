@@ -157,6 +157,7 @@ class MenuController extends Controller
 
     /**
      * 更新数据
+     * @throws \Xin\LaravelFortify\Validation\ValidationException
      */
     public function setValue(Request $request)
     {
@@ -191,7 +192,7 @@ class MenuController extends Controller
                 }
             }
 
-            return Hint::success("已更新排序！", $this->jumpUrl());
+            return Hint::success("已更新排序！");
         }
 
         $map = ['show' => 1];

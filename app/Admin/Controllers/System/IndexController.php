@@ -4,6 +4,7 @@ namespace App\Admin\Controllers\System;
 
 
 use App\Admin\Controller;
+use App\Admin\Models\Event;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -50,7 +51,7 @@ class IndexController extends Controller
     protected function refreshSettingCache()
     {
         Setting::clearCache();
-        DatabaseEvent::refreshCache();
+        Event::refreshCache();
         Artisan::call('queue:restart');
     }
 
