@@ -7,7 +7,7 @@
 
 namespace App\Admin\Middleware;
 
-use Xin\LaravelFortify\Http\Middleware\CheckForSafeVisit as Middleware;
+use Xin\LaravelFortify\Foundation\Middleware\CheckForSafeVisit as Middleware;
 
 class CheckForSafeVisit extends Middleware
 {

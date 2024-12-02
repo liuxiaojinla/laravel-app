@@ -31,7 +31,6 @@ trait Caching
             $this->getCacheKey($id),
             $this->getCacheExpired(),
             function () use ($id) {
-                /** @var Model $info */
                 $info = $this->retrieveById($id);
 
                 return $this->safetyHandling($info);
