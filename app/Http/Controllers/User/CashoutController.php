@@ -10,6 +10,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controller;
 use App\Models\User;
 use App\Models\User\Cashout as UserCashout;
+use App\Services\UserService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
@@ -24,7 +25,7 @@ class CashoutController extends Controller
     /**
      * 提现记录
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -43,7 +44,7 @@ class CashoutController extends Controller
     /**
      * 提现记录详情
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function detail()
     {
@@ -62,7 +63,7 @@ class CashoutController extends Controller
     /**
      * 获取预提现配置数据
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function getApplyInfo()
     {
@@ -83,7 +84,7 @@ class CashoutController extends Controller
      * @return Response
      * @throws ValidationException
      */
-    public function apply()
+    public function apply(UserService $userService)
     {
         $data = $this->validateApplyData();
 
@@ -92,7 +93,7 @@ class CashoutController extends Controller
         $user = $this->request->user();
         $userId = $user->id;
 
-        $cashAmount = User::where('id', $userId)->value('cash_amount');
+        $cashAmount = User::query()->where('id', $userId)->value('cash_amount');
         if ($cashAmount < $data['apply_money']) {
             ValidationException::throwException('可提现金额不足！');
         }
@@ -117,7 +118,7 @@ class CashoutController extends Controller
         });
 
         $newUser = $user->refresh();
-        $this->auth->temporaryUser($newUser);
+        $userService->updateCache($newUser);
 
         return Hint::success('已申请！', null, [
             'cash_amount' => $newUser->cash_amount,

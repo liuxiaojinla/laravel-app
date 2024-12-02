@@ -7,7 +7,6 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\User\MorphMaker;
 use App\Http\Controller;
 use App\Models\User\Browse;
 use Xin\Hint\Facades\Hint;
@@ -36,7 +35,7 @@ class BrowseController extends Controller
         }
         $data = Browse::with($withs)->where('user_id', $userId)
             ->when($topicType, ['topic_type' => $topicType])
-            ->order('id desc')->paginate($this->request->paginate())
+            ->orderByDesc('id')->paginate($this->request->paginate())
             ->each(function (Browse $item) {
                 if (empty($item->browseable)) {
                     $item->delete();

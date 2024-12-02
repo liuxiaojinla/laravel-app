@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Payment;
 
-use App\Http\Notify\Controllers\Controller;
+use App\Http\Controller;
 
 class WePayController extends Controller
 {

@@ -56,7 +56,7 @@ class IndexController extends Controller
         $userId = $this->auth->getUserId(false);
 
         /** @var Article $info */
-        $info = Article::with('category')->where('id', $id)->findOrFail();
+        $info = Article::with('category')->where('id', $id)->firstOrFail();
         if ($info->status == 0 && (!$userId || $info->user_id != $userId)) {
             throw new ModelNotFoundException("文章不存在！", 'Article');
         }

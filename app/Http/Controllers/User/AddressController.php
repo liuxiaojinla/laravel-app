@@ -7,9 +7,6 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\User\DataNotFoundException;
-use App\Http\Api\Controllers\User\DbException;
-use App\Http\Api\Controllers\User\ModelNotFoundException;
 use App\Http\Controller;
 use App\Models\User\Address;
 use Xin\Hint\Facades\Hint;
@@ -25,10 +22,10 @@ class AddressController extends Controller
      */
     public function index()
     {
-        $userId = $this->auth->getUserId();
-        $data = Address::where([
+        $userId = $this->auth->id();
+        $data = Address::query()->where([
             'user_id' => $userId,
-        ])->order('is_default desc')->paginate($this->request->paginate());
+        ])->orderByDesc('is_default')->paginate($this->request->paginate());
 
         return Hint::result($data);
     }
@@ -41,12 +38,12 @@ class AddressController extends Controller
     public function detail()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
-        $info = Address::where([
+        $info = Address::query()->where([
             'id'      => $id,
             'user_id' => $userId,
-        ])->findOrFail();
+        ])->firstOrFail();
 
         return Hint::result($info);
     }
@@ -55,13 +52,10 @@ class AddressController extends Controller
      * 创建收货地址
      *
      * @return Response
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
     public function create()
     {
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
         $data = $this->validateData();
         $data['user_id'] = $userId;
@@ -85,25 +79,19 @@ class AddressController extends Controller
     private function validateData()
     {
         return $this->request->validate([
-            'name', 'phone', 'province', 'city',
-            'district', 'address', 'is_default',
-        ], [
-            'rules'  => [
-                'name'     => 'require|length:2,15',
-                'phone'    => 'require|phone',
-                'province' => 'require',
-                'city'     => 'require',
-                'district' => 'require',
-                'address'  => 'require|length:2,255',
-            ],
-            'fields' => [
-                'name'     => '收货人姓名',
-                'phone'    => '收货人手机号',
-                'province' => '省',
-                'city'     => '市',
-                'district' => '县/区',
-                'address'  => '详细地址',
-            ],
+            'name'     => 'required|length:2,15',
+            'phone'    => 'required|phone',
+            'province' => 'required',
+            'city'     => 'required',
+            'district' => 'required',
+            'address'  => 'required|length:2,255',
+        ], [], [
+            'name'     => '收货人姓名',
+            'phone'    => '收货人手机号',
+            'province' => '省',
+            'city'     => '市',
+            'district' => '县/区',
+            'address'  => '详细地址',
         ]);
     }
 
@@ -112,10 +100,10 @@ class AddressController extends Controller
      */
     private function cancelDefault()
     {
-        $userId = $this->auth->getUserId();
-        Address::where([
+        $userId = $this->auth->id();
+        Address::query()->where([
             'user_id' => $userId,
-        ])->save([
+        ])->update([
             'is_default' => 0,
         ]);
     }
@@ -128,7 +116,7 @@ class AddressController extends Controller
     public function update()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
         $data = $this->validateData();
         if (isset($data['is_default']) && $data['is_default']) {
@@ -154,9 +142,9 @@ class AddressController extends Controller
     public function delete()
     {
         $ids = $this->request->validId();
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
-        Address::where([
+        Address::query()->where([
             ['id', 'in', $ids,],
             ['user_id', '=', $userId,],
         ])->delete();
@@ -172,12 +160,12 @@ class AddressController extends Controller
     public function setDefault()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
-        $info = Address::where([
+        $info = Address::query()->where([
             'id'      => $id,
             'user_id' => $userId,
-        ])->findOrFail();
+        ])->firstOrFail();
 
         $this->cancelDefault();
 

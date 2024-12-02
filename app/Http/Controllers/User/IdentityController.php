@@ -23,9 +23,9 @@ class IdentityController extends Controller
     {
         $userId = $this->auth->id();
 
-        $info = Identity::where([
+        $info = Identity::query()->where([
             'user_id' => $userId,
-        ])->findOrFail();
+        ])->firstOrFail();
 
         return Hint::result($info);
     }

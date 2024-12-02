@@ -17,11 +17,11 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
-    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
 Route::middleware(['auth'])->prefix('auth')->name('auth.')->group(function () {
+    Route::post('/password', [PasswordController::class, 'update'])->name('password.update');
     Route::get('/info', [ProfileController::class, 'info'])->name('info');
     Route::get('/menus', [MenuController::class, 'index'])->name('menus');
 });

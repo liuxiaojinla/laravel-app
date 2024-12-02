@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\CloudStorage;
 
-use App\Http\Notify\Controllers\Controller;
+
+use App\Http\Controller;
 
 class OSSController extends Controller
 {

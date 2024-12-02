@@ -7,13 +7,11 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Api\Controllers\User\Db;
-use App\Http\Api\Controllers\User\Event;
-use App\Http\Api\Controllers\User\FavoriteEvent;
-use App\Http\Api\Controllers\User\Log;
-use App\Http\Api\Controllers\User\MorphMaker;
 use App\Http\Controller;
 use App\Models\User\Favorite;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use LogicException;
 use Xin\Hint\Facades\Hint;
 
@@ -65,7 +63,7 @@ class FavoriteController extends Controller
 
         try {
             // 开启事务
-            $info = Db::transaction(static function () use ($topicType, $topicId, $userId) {
+            $info = DB::transaction(static function () use ($topicType, $topicId, $userId) {
                 return Favorite::favorite($topicType, $topicId, $userId);
             });
         } catch (LogicException $e) {
@@ -90,7 +88,7 @@ class FavoriteController extends Controller
     {
         try {
             $event = new FavoriteEvent($topicType, $topicId, $isFavorite);
-            Event::trigger($event);
+            Event::dispatch($event);
         } catch (\Exception $e) {
             Log::error("收藏失败：" . $e->getMessage() . ':' . json_encode([$topicType, $topicId, $isFavorite]));
         }

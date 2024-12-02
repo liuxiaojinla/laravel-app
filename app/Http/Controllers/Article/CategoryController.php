@@ -63,7 +63,7 @@ class CategoryController extends Controller
     public function detail()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
         /** @var Category $info */
         $info = Category::with([])->findOrFail($id);
@@ -77,7 +77,7 @@ class CategoryController extends Controller
         );
 
         // 获取第一页数据文章数据
-        $info['article_list'] = Article::where([
+        $info['article_list'] = Article::query()->where([
             'status'      => 1,
             'category_id' => $info->id,
         ])->order('id desc')

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Admin\Requests\Auth\LoginRequest;
 use App\Http\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Supports\WebServer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Xin\Hint\Facades\Hint;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -17,11 +19,20 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): Response
     {
-        $request->authenticate();
+        $user = $request->authenticate();
 
         $request->session()->regenerate();
 
-        return response()->noContent();
+        return Hint::success(
+            __('auth.successful'),
+            null,
+            [
+                'info'  => $user->makeHidden([
+                    'password',
+                ])->toArray(),
+                'token' => WebServer::getEncryptSessionCookieValue(),
+            ]
+        );
     }
 
     /**
@@ -29,12 +40,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        Auth::guard('admin')->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return Hint::success(__('auth.logged'),);
     }
 }

@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Admin\Services;
+namespace App\Services;
 
 use App\Admin\Models\Admin;
+use App\Models\User;
 use App\Services\Concerns\Caching;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 
-class AdminService extends EloquentUserProvider
+class UserService extends EloquentUserProvider
 {
     use Caching;
 
@@ -23,7 +24,7 @@ class AdminService extends EloquentUserProvider
      */
     public function __construct(HasherContract $hasher, Cache $cache)
     {
-        parent::__construct($hasher, Admin::class);
+        parent::__construct($hasher, User::class);
         $this->cache = $cache;
     }
 

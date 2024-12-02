@@ -29,9 +29,7 @@ class TeamController extends Controller
             $map[] = ['nickname', 'like', $keywords];
         }
 
-        $data = User::getPaginate($map, [
-            'order' => 'id desc',
-        ]);
+        $data = User::simple()->where($map)->orderByDesc('id')->paginate();
 
         return Hint::result($data);
     }
@@ -46,6 +44,7 @@ class TeamController extends Controller
         $targetUserId = $this->request->validId();
         $userId = $this->auth->id();
 
+        /** @var User $info */
         $info = User::query()->where('id', $targetUserId)->firstOrFail();
         if ($info->parent_user_id != $userId) {
             return Hint::error("成员不存在！");

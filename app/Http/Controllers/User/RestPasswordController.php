@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controller;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Xin\Hint\Facades\Hint;
 
@@ -11,9 +12,8 @@ class RestPasswordController extends Controller
 {
     /**
      * @return \Illuminate\Http\Response
-     * @throws \Xin\Auth\AuthenticationException
      */
-    public function rest()
+    public function rest(UserService $userService)
     {
         $userId = $this->auth->id();
         $credential = $this->getCredential();
@@ -24,7 +24,7 @@ class RestPasswordController extends Controller
         /** @var User $user */
         $user = $this->request->user();
         $user->refresh();
-        $this->auth->temporaryUser($user);
+        $userService->updateCache($user);
 
         return Hint::success("已修改！");
     }

@@ -52,7 +52,7 @@ class IndexController extends Controller
         $id = $this->request->validId();
         $userId = $this->auth->id();
 
-        $info = Article::where('id', $id)->findOrFail();
+        $info = Article::query()->where('id', $id)->firstOrFail();
 
         if ($this->request->isGet()) {
             return Hint::result();
