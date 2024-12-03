@@ -5,7 +5,7 @@ namespace App\Admin\Controllers\System;
 
 use App\Admin\Controller;
 use App\Admin\Models\Plugin;
-use App\Admin\Requests\PluginRequest;
+use App\Admin\Requests\System\PluginRequest;
 use App\Models\Agreement;
 use App\Models\Model;
 use Illuminate\Contracts\View\View;

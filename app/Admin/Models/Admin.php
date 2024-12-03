@@ -3,6 +3,7 @@
 namespace App\Admin\Models;
 
 use App\Exceptions\Error;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -44,6 +45,13 @@ class Admin extends Authenticatable
     /**
      * @var array
      */
+    protected $hidden = [
+        'password',
+    ];
+
+    /**
+     * @var array
+     */
     protected $allMenuIds = null;
 
     /**
@@ -80,26 +88,23 @@ class Admin extends Authenticatable
     }
 
     /**
-     * 获取登录IP地址
+     * 登录IP地址访问器修改器
      *
      * @param int $ip
-     * @return string
+     * @return Attribute
      */
-    protected function getLoginIpAttribute($ip)
+    protected function loginIp()
     {
-        return long2ip($ip);
+        return Attribute::make(
+            function ($ip) {
+                return long2ip($ip);
+            },
+            function ($ip) {
+                return ip2long($ip);
+            }
+        );
     }
 
-    /**
-     * 设置登录IP地址
-     *
-     * @param string $ip
-     * @return false|int
-     */
-    protected function setLoginIpAttribute($ip)
-    {
-        return ip2long($ip);
-    }
 
     /**
      * @return mixed|string

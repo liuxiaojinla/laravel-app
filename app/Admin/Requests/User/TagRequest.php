@@ -23,7 +23,7 @@ class TagRequest extends FormRequest
 	 * @var array
 	 */
 	protected $rule = [
-		'title' => 'required|length:2,24',
+		'title' => ['required','length:2,24'],
 	];
 
 	/**

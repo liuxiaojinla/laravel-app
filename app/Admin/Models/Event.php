@@ -10,14 +10,19 @@ class Event extends DatabaseEvent
     use Modelable;
 
     /**
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
      * @inerhitDoc
      */
     public static function getSimpleFields()
     {
         return [
-            'id', 'description', 'name', 'type', 'status',
-            'system',
-            'update_time', 'create_time',
+            'id', 'name', 'description',
+            'type', 'status', 'system',
+            'updated_at', 'created_at',
         ];
     }
 }

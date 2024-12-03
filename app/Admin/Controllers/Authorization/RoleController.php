@@ -13,7 +13,7 @@ use App\Admin\Models\Admin;
 use App\Admin\Models\AdminAccess;
 use App\Admin\Models\AdminMenu;
 use App\Admin\Models\AdminRole;
-use App\Admin\Requests\AdminRoleRequest;
+use App\Admin\Requests\Authorization\AdminRoleRequest;
 use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Validation\ValidationException;

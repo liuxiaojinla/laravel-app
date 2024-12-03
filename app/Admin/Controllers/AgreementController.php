@@ -6,7 +6,6 @@ use App\Admin\Controller;
 use App\Admin\Requests\AgreementRequest;
 use App\Models\Agreement;
 use App\Models\Model;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
@@ -65,12 +64,10 @@ class AgreementController extends Controller
     public function update(AgreementRequest $request)
     {
         $id = $request->validId();
-
-        $info = Agreement::query()->where('id', $id)->firstOrFail();
-
         $data = $request->validated();
 
-        if (!$info->save($data)) {
+        $info = Agreement::query()->where('id', $id)->firstOrFail();
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Requests;
+namespace App\Admin\Requests\Authorization;
 
 use App\Admin\Models\Admin;
 use Illuminate\Validation\Rule;
@@ -45,10 +45,11 @@ class AdminRequest extends FormRequest
      */
     public function rules()
     {
+        $id = $this->integer('id');
         $isCreateScene = $this->isCreateScene();
 
         return [
-            'username' => ['required', 'alpha_dash:ascii', 'between:3,48', 'unique:' . Admin::class],
+            'username' => ['required', 'alpha_dash:ascii', 'between:3,48', Rule::unique(Admin::class)->ignore($id)],
             'password' => ['sometimes', Rule::requiredIf($isCreateScene), Password::min(6)->max(16), 'confirmed'],
         ];
     }

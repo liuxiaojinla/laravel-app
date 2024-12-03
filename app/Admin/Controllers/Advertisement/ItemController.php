@@ -32,6 +32,22 @@ class ItemController extends Controller
     }
 
     /**
+     * 数据展示
+     * @param Request $request
+     * @return View
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = AdvertisementItem::query()->with([
+            'advertisement',
+        ])->where('id', $id)->firstOrFail();
+
+        return Hint::result($info);
+    }
+
+    /**
      * @return array
      */
     protected function validated()
@@ -67,34 +83,17 @@ class ItemController extends Controller
     }
 
     /**
-     * 数据展示
-     * @param Request $request
-     * @return View
-     */
-    public function info(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = AdvertisementItem::query()->with([
-            'advertisement',
-        ])->where('id', $id)->firstOrFail();
-
-        return Hint::result($info);
-    }
-
-    /**
      * 更新数据
      * @return Response
      */
     public function update()
     {
         $id = $this->request->validId();
+        $data = $this->validated();
 
         $info = AdvertisementItem::query()->where('id', $id)->firstOrFail();
-
-        $data = $this->validated();
         $advertisement = $this->advertisementPosition();
-        if (!$info->save($data)) {
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 

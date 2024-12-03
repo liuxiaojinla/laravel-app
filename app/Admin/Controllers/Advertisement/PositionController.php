@@ -7,6 +7,7 @@ use App\Models\Advertisement\Position as AdvertisementPosition;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Validation\ValidationException;
 
@@ -30,13 +31,28 @@ class PositionController extends Controller
     }
 
     /**
+     * 数据展示
+     * @param Request $request
+     * @return View
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
+
+        return Hint::result($info);
+    }
+
+    /**
      * @return array
      */
     protected function validated()
     {
+        $id = $this->request->integer('id');
         return $this->request->validate([
             'title' => ['required', 'between:2,48'],
-            'name'  => ['alphaDash', 'between:3,48', 'unique:' . AdvertisementPosition::class],
+            'name'  => ['alpha_dash:ascii', 'between:3,48', Rule::unique(AdvertisementPosition::class)->ignore($id)],
         ], [], [
             'title' => '广告位名称',
             'name'  => '唯一标识',
@@ -57,30 +73,15 @@ class PositionController extends Controller
     }
 
     /**
-     * 数据展示
-     * @param Request $request
-     * @return View
-     */
-    public function info(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
-
-        return Hint::result($info);
-    }
-
-    /**
      * 数据更新
      * @return Response
      */
     public function update()
     {
         $id = $this->request->validId();
-
-        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
         $data = $this->validated();
 
+        $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
         if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
@@ -114,7 +115,7 @@ class PositionController extends Controller
     /**
      * 更新数据
      * @return Response
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function setValue(Request $request)
     {

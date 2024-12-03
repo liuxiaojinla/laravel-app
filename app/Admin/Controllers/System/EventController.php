@@ -4,12 +4,11 @@ namespace App\Admin\Controllers\System;
 
 use App\Admin\Controller;
 use App\Admin\Models\Event;
-use App\Admin\Requests\EventRequest;
-use App\Models\Agreement;
+use App\Admin\Requests\System\EventRequest;
 use App\Models\Model;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Xin\Hint\Facades\Hint;
 
 class EventController extends Controller
@@ -17,7 +16,7 @@ class EventController extends Controller
     /**
      * 数据列表
      * @param Request $request
-     * @return View
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -26,34 +25,24 @@ class EventController extends Controller
         $search = $request->query();
 
         $data = Event::simple()->search($search)
-            ->orderByDesc('id desc')->paginate();
+            ->orderByDesc('id')->paginate();
 
-        return view('event.index', [
-            'data' => $data,
-            'type' => $type,
-        ]);
+        return Hint::result($data);
     }
 
     /**
-     * 数据创建表单
+     * 数据展示
      * @param Request $request
-     * @return View
+     * @return Response
      */
-    public function create(Request $request)
+    public function info(Request $request)
     {
-        $id = (int)$request->input('id', 0);
-        $copy = 0;
-        $info = null;
+        $id = $request->validId();
 
-        if ($id > 0) {
-            $copy = 1;
-            $info = Event::query()->where('id', $id)->first();
-        }
+        /** @var Event $info */
+        $info = Event::query()->where('id', $id)->firstOrFail();
 
-        return view('event.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
+        return Hint::result($info);
     }
 
     /**
@@ -68,41 +57,11 @@ class EventController extends Controller
             $data['addons'] = [];
         }
 
-        $info = Event::create($data);
+        /** @var Event $info */
+        $info = Event::query()->create($data);
+        $info->refresh();
 
         return Hint::success("创建成功！", (string)url('index'), $info);
-    }
-
-    /**
-     * 数据展示
-     * @param Request $request
-     * @return View
-     */
-    public function show(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = Event::query()->where('id', $id)->firstOrFail();
-
-        return view('event.show', [
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = Event::query()->where('id', $id)->firstOrFail();
-
-        return view('event.edit', [
-            'info' => $info,
-        ]);
     }
 
     /**
@@ -113,12 +72,11 @@ class EventController extends Controller
     public function update(EventRequest $request)
     {
         $id = $request->validId();
-
-        $info = Agreement::query()->where('id', $id)->firstOrFail();
-
         $data = $request->validated();
 
-        if (!$info->save($data)) {
+        /** @var Event $info */
+        $info = Event::query()->where('id', $id)->firstOrFail();
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
@@ -148,10 +106,9 @@ class EventController extends Controller
 
     /**
      * 更新数据
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @param Request $request
+     * @return Response
+     * @throws ValidationException
      */
     public function setValue(Request $request)
     {
@@ -168,8 +125,6 @@ class EventController extends Controller
      * 更新挂载插件顺序配置
      *
      * @return string|Response
-     * @throws DataNotFoundException
-     * @throws ModelNotFoundException
      */
     public function plugin(Request $request)
     {
@@ -190,37 +145,35 @@ class EventController extends Controller
             foreach ($info->addons as $addon) {
                 if (isset($data[$addon])) {
                     $addons[] = [
-                        'name' => $addon,
+                        'name'  => $addon,
                         'title' => $data[$addon],
                     ];
                 }
             }
         }
 
-        $this->assign('info', $info);
-        $this->assign('addons', $addons);
-
-        return $this->fetch();
+        return Hint::result([
+            'info'   => $info,
+            'addons' => $addons,
+        ]);
     }
 
     /**
      * 根据id获取数据，如果为空将中断执行
      *
      * @param int|null $id
-     * @return array|\think\Model
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return array|Event
      */
     protected function findIsEmptyAssert($id = null)
     {
         if ($id) {
-            return Event::findOrFail($id);
+            return Event::query()->findOrFail($id);
         }
 
-        if ($request->has('name')) {
-            return Event::query()->where('name', $request->validString('name'))->findOrFail($id);
+        if ($this->request->has('name')) {
+            return Event::query()->where('name', $this->request->validString('name'))->findOrFail($id);
         }
 
-        return Event::findOrFail($request->validId());
+        return Event::query()->findOrFail($this->request->validId());
     }
 }

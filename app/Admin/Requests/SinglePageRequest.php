@@ -2,6 +2,8 @@
 
 namespace App\Admin\Requests;
 
+use App\Models\SinglePage;
+use Illuminate\Validation\Rule;
 use Xin\LaravelFortify\Request\FormRequest;
 
 /**
@@ -13,13 +15,17 @@ class SinglePageRequest extends FormRequest
     /**
      * 验证规则
      *
-     * @var array
+     * @return array[]
      */
-    protected $rule = [
-        'title' => 'require|length:2,50',
-        'name' => 'alphaDash|length:3,48|unique:advertisement',
-//        'content' => 'require|length:2,255',
-    ];
+    public function rules()
+    {
+        $id = $this->integer('id');
+        return [
+            'title'   => ['required', 'between:2,50'],
+            'name'    => ['alpha_dash:ascii', 'between:3,48', Rule::unique(SinglePage::class)->ignore($id)],
+            'content' => ['required', 'between:2,255'],
+        ];
+    }
 
     /**
      * 字段信息
@@ -27,8 +33,8 @@ class SinglePageRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title' => '单页标题',
-        'name' => '唯一标识',
+        'title'   => '单页标题',
+        'name'    => '唯一标识',
         'content' => '单页内容',
     ];
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Admin\Controllers\System\EventController;
 use App\Admin\Controllers\System\IndexController;
 use App\Admin\Controllers\System\MenuController;
 use App\Admin\Controllers\System\SettingController;
@@ -21,12 +22,21 @@ Route::middleware(['auth'])->prefix('system/setting')->name('system.setting.')->
     Route::post('/set', [SettingController::class, 'set'])->name('set');
 });
 
+// 事件管理
+Route::middleware(['auth'])->prefix('system/event')->name('system.event.')->group(function () {
+    Route::get('/lists', [EventController::class, 'index'])->name('lists');
+    Route::get('/info', [EventController::class, 'info'])->name('info');
+    Route::post('/create', [EventController::class, 'store'])->name('create');
+    Route::post('/update', [EventController::class, 'update'])->name('update');
+    Route::post('/delete', [EventController::class, 'delete'])->name('delete');
+});
+
 // 菜单管理
 Route::middleware(['auth'])->prefix('system/menu')->name('system.menu.')->group(function () {
     Route::get('/lists', [MenuController::class, 'index'])->name('lists');
     Route::get('/info', [MenuController::class, 'info'])->name('info');
-    Route::post('/put', [MenuController::class, 'store'])->name('put');
+    Route::post('/create', [MenuController::class, 'store'])->name('create');
+    Route::post('/update', [MenuController::class, 'update'])->name('update');
     Route::post('/delete', [MenuController::class, 'delete'])->name('delete');
-    Route::post('/set', [MenuController::class, 'set'])->name('set');
     Route::post('/sync', [MenuController::class, 'sync'])->name('sync');
 });

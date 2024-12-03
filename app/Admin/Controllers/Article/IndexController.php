@@ -69,10 +69,10 @@ class IndexController extends Controller
     public function update(ArticleRequest $request)
     {
         $id = $request->validId();
-        $info = Article::query()->where('id', $id)->firstOrFail();
-
         $data = $request->validated();
-        if (!$info->save($data)) {
+
+        $info = Article::query()->where('id', $id)->firstOrFail();
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
@@ -102,6 +102,7 @@ class IndexController extends Controller
     /**
      * 更新数据
      * @return Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function setValue(Request $request)
     {

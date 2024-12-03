@@ -4,7 +4,7 @@ use App\Admin\Controllers\Article\CategoryController;
 use App\Admin\Controllers\Article\IndexController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware([])->prefix('article')->name('article.')->group(function () {
+Route::middleware(['auth'])->prefix('article')->name('article.')->group(function () {
     Route::get('/lists', [IndexController::class, 'index'])->name('lists');
     Route::get('/info', [IndexController::class, 'info'])->name('info');
     Route::post('/create', [IndexController::class, 'store'])->name('store');
@@ -13,7 +13,7 @@ Route::middleware([])->prefix('article')->name('article.')->group(function () {
 });
 
 
-Route::middleware([])->prefix('article/category')->name('article.category.')->group(function () {
+Route::middleware(['auth'])->prefix('article/category')->name('article.category.')->group(function () {
     Route::get('/lists', [CategoryController::class, 'index'])->name('lists');
     Route::get('/info', [CategoryController::class, 'info'])->name('info');
     Route::post('/create', [CategoryController::class, 'store'])->name('store');

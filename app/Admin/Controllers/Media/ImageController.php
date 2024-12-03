@@ -14,7 +14,7 @@ class ImageController extends Controller
 
     /**
      * 列表
-     * @return View|Response
+     * @return Response
      */
     public function index(Request $request)
     {

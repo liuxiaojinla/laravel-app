@@ -15,10 +15,10 @@ class NoticeRequest extends FormRequest
 	 * @var array
 	 */
 	protected $rule = [
-		'title' => 'required|between:2,50',
-		'content' => 'required|between:2,255',
-		'begin_time' => 'required|date',
-		'end_time' => 'required|date|after:begin_time',
+		'title' => ['required','between:2,50'],
+		'content' => ['required','between:2,255'],
+		'begin_time' => ['required','date'],
+		'end_time' => ['required', 'date', 'after:begin_time'],
 	];
 
 	/**

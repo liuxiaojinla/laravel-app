@@ -67,7 +67,7 @@ class MenuController extends Controller
     {
         $data = $request->validated();
 
-        $info = AdminMenu::create($data);
+        $info = AdminMenu::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }

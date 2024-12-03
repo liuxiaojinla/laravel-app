@@ -9,8 +9,9 @@ namespace App\Admin\Controllers\Authorization;
 
 use App\Admin\Controller;
 use App\Admin\Models\Admin;
-use App\Admin\Requests\AdminRequest;
+use App\Admin\Requests\Authorization\AdminRequest;
 use App\Exceptions\Error;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -53,6 +54,7 @@ class AdminController extends Controller
     {
         $data = $request->validated();
         $data['password'] = app('hash')->make($data['password']);
+
         $info = Admin::query()->forceCreate($data);
         $info->refresh();
 
@@ -66,19 +68,22 @@ class AdminController extends Controller
     public function update(AdminRequest $request)
     {
         $id = $request->validId();
+        $data = $request->validated();
+
         /** @var Admin $info */
         $info = Admin::query()->where('id', $id)->firstOrFail();
 
+        // 编辑的是否是超级管理员
         if ($info->is_admin) {
             throw Error::validationException("不允许修改超级管理员");
         }
 
-        $data = $request->validated();
+        // 密码是否存在
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
 
-        if (!$info->save($data)) {
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 

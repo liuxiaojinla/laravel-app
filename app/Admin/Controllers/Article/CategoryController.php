@@ -14,7 +14,6 @@ use App\Models\Article\Article;
 use App\Models\Article\Category;
 use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Support\SQL;
 use Xin\Support\Arr;
 
 /**
@@ -77,9 +76,9 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request)
     {
         $id = $request->validId();
-        $info = Category::query()->where('id', $id)->firstOrFail();
-
         $data = $request->validated();
+
+        $info = Category::query()->where('id', $id)->firstOrFail();
         if (!$info->save($data)) {
             return Hint::error("更新失败！");
         }

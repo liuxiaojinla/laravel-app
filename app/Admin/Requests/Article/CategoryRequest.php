@@ -29,7 +29,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'title' => ['required', 'between:2,48'],
-            //		'name'  =>'require|alphaDash|length:3,48|unique:category',
+            //		'name'  =>'require|alpha_dash:ascii|between:3,48|unique:category',
             'pid'   => [
                 // 验证父级是不是自己
                 function (string $attribute, $pid, Closure $fail, Validator $validator) {

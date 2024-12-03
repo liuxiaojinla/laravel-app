@@ -12,7 +12,7 @@ class AdminMenuRequest extends FormRequest
 	 * @var array
 	 */
 	protected $rule = [
-		'title' => 'require|max:12',
+		'title' => ['require','max:12'],
 	];
 
 	/**

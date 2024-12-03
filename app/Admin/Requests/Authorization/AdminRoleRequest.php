@@ -1,5 +1,5 @@
 <?php
-namespace App\Admin\Requests;
+namespace App\Admin\Requests\Authorization;
 
 use Xin\LaravelFortify\Request\FormRequest;
 
@@ -12,7 +12,7 @@ class AdminRoleRequest extends FormRequest
 	 * @var array
 	 */
 	protected $rule = [
-		'title' => 'required|max:12',
+		'title' => ['required','max:12'],
 	];
 
 	/**

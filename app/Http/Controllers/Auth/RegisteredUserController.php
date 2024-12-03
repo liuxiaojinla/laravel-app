@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Validation\Rules\MobileRule;
@@ -26,8 +27,8 @@ class RegisteredUserController extends Controller
     {
         $data = $request->validate([
             'code'     => ['required', 'string'],
-            'mobile'   => ['required', 'string', new MobileRule(), 'unique:' . User::class],
-            'email'    => ['string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'mobile'   => ['required', 'string', new MobileRule(), Rule::unique(User::class)],
+            'email'    => ['string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
