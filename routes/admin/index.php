@@ -11,11 +11,9 @@
 |
 */
 
-use App\Admin\Controllers\IndexController;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Xin\Hint\Facades\Hint;
-
-Route::get('/', [IndexController::class, 'index']);
 
 require __DIR__ . '/common.php';
 require __DIR__ . '/auth.php';
@@ -26,6 +24,8 @@ require __DIR__ . '/finance.php';
 require __DIR__ . '/statistics.php';
 require __DIR__ . '/system.php';
 
-Route::fallback(function () {
-    return Hint::error("404 Not Found");
+$fallback = Route::fallback(function () {
+    return Hint::error("404 Not Found", 404, request()->path())->setStatusCode(404);
 });
+$fallback->methods = Router::$verbs;
+Route::getRoutes()->add($fallback);

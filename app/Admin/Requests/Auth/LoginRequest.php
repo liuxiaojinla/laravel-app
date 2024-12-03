@@ -54,7 +54,7 @@ class LoginRequest extends FormRequest
         }, $remember)) {
             RateLimiter::hit($this->throttleKey($account));
 
-            if ($user->status !== 1) {
+            if ($user && $user->status !== 1) {
                 throw Error::validationException("用户" . $user->status_text);
             }
 

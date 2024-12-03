@@ -1,6 +1,6 @@
 <?php
 
-namespace App\StyleMappings;
+namespace App\Models\Concerns\StyleMappings;
 
 use Xin\Support\Arr;
 

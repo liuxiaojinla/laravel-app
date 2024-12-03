@@ -14,6 +14,3 @@ use Plugins\Wechat\app\Http\Controllers\WechatController;
 |
 */
 
-Route::group([], function () {
-    Route::resource('wechat', WechatController::class)->names('wechat');
-});

@@ -14,6 +14,4 @@ use Plugins\Activity\app\Http\Controllers\ActivityController;
 |
 */
 
-Route::group([], function () {
-    Route::resource('activity', ActivityController::class)->names('activity');
-});
+

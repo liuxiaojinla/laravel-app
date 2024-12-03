@@ -10,6 +10,9 @@
 
 namespace App\Admin\Requests\Article;
 
+use App\Models\Article\Category;
+use Closure;
+use Illuminate\Validation\Validator;
 use Xin\LaravelFortify\Request\FormRequest;
 
 /**
@@ -18,55 +21,55 @@ use Xin\LaravelFortify\Request\FormRequest;
 class CategoryRequest extends FormRequest
 {
 
-	/**
-	 * 验证规则
-	 *
-	 * @var array
-	 */
-	protected $rule = [
-		'title' => 'required|length:2,48',
-		//		'name'  =>'require|alphaDash|length:3,48|unique:category',
-		'pid' => 'checkOneself',
-	];
+    /**
+     * 验证规则
+     * @return string[]
+     */
+    public function rules()
+    {
+        return [
+            'title' => ['required', 'between:2,48'],
+            //		'name'  =>'require|alphaDash|length:3,48|unique:category',
+            'pid'   => [
+                // 验证父级是不是自己
+                function (string $attribute, $pid, Closure $fail, Validator $validator) {
+                    $id = $validator->getValue('id');
+                    if (empty($pid)) {
+                        return;
+                    }
 
-	/**
-	 * 字段信息
-	 *
-	 * @var array
-	 */
-	protected $field = [
-		'title' => '分类标题',
-		'pid' => '父级分类',
-	];
+                    if ($id == $pid) {
+                        $fail("父级分类不能是自己。");
+                    } elseif (!Category::query()->where('id', $pid)->exists()) {
+                        $fail("父级分类不存在。");
+                    }
+                },
+            ],
+        ];
+    }
 
-	/**
-	 * 验证消息
-	 *
-	 * @var array
-	 */
-	protected $message = [
-		'pid.checkOneself' => '父级分类不能是自己',
-		'pid.checkCategory' => '父级分类不存在',
-	];
+    /**
+     * 字段信息
+     *
+     * @var array
+     */
+    protected $field = [
+        'title' => '分类标题',
+        'pid'   => '父级分类',
+    ];
 
-	/**
-	 * 情景模式
-	 *
-	 * @var array
-	 */
-	protected $scene = [];
+    /**
+     * 验证消息
+     *
+     * @var array
+     */
+    protected $message = [];
 
-	/**
-	 * 验证父级是不是自己
-	 *
-	 * @param string $pid
-	 * @param mixed $rule
-	 * @param array $data
-	 * @return bool
-	 */
-	protected function checkOneself($pid, $rule, $data)
-	{
-		return isset($data['id']) ? $data['id'] == 0 || $data['id'] != $pid : true;
-	}
+    /**
+     * 情景模式
+     *
+     * @var array
+     */
+    protected $scene = [];
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Supports;
 
-class Image
+final class Image
 {
     /**
      * 缩略图

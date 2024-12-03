@@ -9,7 +9,7 @@ namespace App\Supports;
 
 use Xin\Support\Arr;
 
-class Tree
+final class Tree
 {
 
 	/**

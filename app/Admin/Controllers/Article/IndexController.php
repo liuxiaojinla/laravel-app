@@ -55,8 +55,9 @@ class IndexController extends Controller
      */
     public function store(ArticleRequest $request)
     {
-        $data = $request->validated();
-        $info = Article::create($data);
+        $data = $request->safe()->toArray();
+        $info = Article::query()->create($data);
+        $info->refresh();
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }

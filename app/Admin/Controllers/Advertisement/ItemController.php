@@ -3,7 +3,6 @@
 namespace App\Admin\Controllers\Advertisement;
 
 use App\Admin\Controller;
-use App\Admin\Requests\Advertisement\ItemRequest as AdvertisementItemRequest;
 use App\Models\Advertisement\Item as AdvertisementItem;
 use App\Models\Advertisement\Position as AdvertisementPosition;
 use App\Models\Model;
@@ -12,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Validation\ValidationException;
-
 
 class ItemController extends Controller
 {
@@ -34,13 +32,34 @@ class ItemController extends Controller
     }
 
     /**
+     * @return array
+     */
+    protected function validated()
+    {
+        return $this->request->validate([
+            'advertisement_id' => 'required',
+            'cover'            => 'required',
+            'url'              => 'max:255',
+            'begin_time'       => 'required|date',
+            'end_time'         => 'required|date|after:begin_time',
+        ], [
+            'end_time.after' => '结束时间必须大于开始时间',
+        ], [
+            'advertisement_id' => '广告位',
+            'cover'            => '封面',
+            'url'              => '链接地址',
+            'begin_time'       => '开始时间',
+            'end_time'         => '结束时间',
+        ]);
+    }
+
+    /**
      * 数据创建
-     * @param AdvertisementItemRequest $request
      * @return Response
      */
-    public function store(AdvertisementItemRequest $request)
+    public function store()
     {
-        $data = $request->validated();
+        $data = $this->validated();
 
         $info = AdvertisementItem::create($data);
 
@@ -67,13 +86,13 @@ class ItemController extends Controller
      * 更新数据
      * @return Response
      */
-    public function update(AdvertisementItemRequest $request)
+    public function update()
     {
-        $id = $request->validId();
+        $id = $this->request->validId();
 
         $info = AdvertisementItem::query()->where('id', $id)->firstOrFail();
 
-        $data = $request->validated();
+        $data = $this->validated();
         $advertisement = $this->advertisementPosition();
         if (!$info->save($data)) {
             return Hint::error("更新失败！");

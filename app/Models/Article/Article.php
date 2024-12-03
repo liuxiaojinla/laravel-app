@@ -88,6 +88,11 @@ class Article extends Model
     ];
 
     /**
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
      * 分类动态属性
      *
      * @return BelongsTo

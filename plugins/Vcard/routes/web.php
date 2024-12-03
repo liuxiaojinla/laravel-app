@@ -13,7 +13,3 @@ use Plugins\Vcard\app\Http\Controllers\VCardController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group([], function () {
-    Route::resource('vcard', VCardController::class)->names('vcard');
-});

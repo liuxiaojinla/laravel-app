@@ -2,12 +2,15 @@
 
 use App\Admin\Controllers\AgreementController;
 use App\Admin\Controllers\FeedbackController;
+use App\Admin\Controllers\IndexController;
 use App\Admin\Controllers\LeaveMessageController;
 use App\Admin\Controllers\Media\AudioController;
 use App\Admin\Controllers\Media\ImageController;
 use App\Admin\Controllers\Media\VideoController;
 use App\Admin\Controllers\NoticeController;
 use Illuminate\Support\Facades\Route;
+
+//Route::get('/', [IndexController::class, 'index']);
 
 // 协议
 Route::middleware([])->prefix('agreement')->name('agreement.')->group(function () {

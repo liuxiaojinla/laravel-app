@@ -28,8 +28,13 @@ class Item extends Model
      */
     protected $type = [
         'begin_time' => 'datetime',
-        'end_time' => 'datetime',
+        'end_time'   => 'datetime',
     ];
+
+    /**
+     * @var array
+     */
+    protected $guarded = [];
 
     /**
      * 关联广告位

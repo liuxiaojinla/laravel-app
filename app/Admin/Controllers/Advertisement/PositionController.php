@@ -3,9 +3,7 @@
 namespace App\Admin\Controllers\Advertisement;
 
 use App\Admin\Controller;
-use App\Admin\Requests\Advertisement\PositionRequest as AdvertisementPositionRequest;
 use App\Models\Advertisement\Position as AdvertisementPosition;
-use App\Models\Model;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -16,7 +14,7 @@ class PositionController extends Controller
 {
     /**
      * 数据列表
-     * @return View
+     * @return mixed
      */
     public function index(Request $request)
     {
@@ -32,15 +30,28 @@ class PositionController extends Controller
     }
 
     /**
+     * @return array
+     */
+    protected function validated()
+    {
+        return $this->request->validate([
+            'title' => ['required', 'between:2,48'],
+            'name'  => ['alphaDash', 'between:3,48', 'unique:' . AdvertisementPosition::class],
+        ], [], [
+            'title' => '广告位名称',
+            'name'  => '唯一标识',
+        ]);
+    }
+
+    /**
      * 数据创建
-     * @param AdvertisementPositionRequest $request
      * @return Response
      */
-    public function store(AdvertisementPositionRequest $request)
+    public function store()
     {
-        $data = $request->validated();
+        $data = $this->validated();
 
-        $info = AdvertisementPosition::create($data);
+        $info = AdvertisementPosition::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
@@ -61,17 +72,16 @@ class PositionController extends Controller
 
     /**
      * 数据更新
-     * @param AdvertisementPositionRequest $request
      * @return Response
      */
-    public function update(AdvertisementPositionRequest $request)
+    public function update()
     {
-        $id = $request->validId();
+        $id = $this->request->validId();
 
         $info = AdvertisementPosition::query()->where('id', $id)->firstOrFail();
-        $data = $request->validated();
+        $data = $this->validated();
 
-        if (!$info->save($data)) {
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
@@ -86,13 +96,14 @@ class PositionController extends Controller
     public function destroy(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = (int)$request->input('force', 0);
+        $isForce = $request->integer('force', 0);
 
-        AdvertisementPosition::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
-            $item->together(['items'])->force($isForce)->delete();
+        AdvertisementPosition::query()->whereIn('id', $ids)->get()->each(function (AdvertisementPosition $item) use ($isForce) {
             if ($isForce) {
+                $item->items()->forceDelete();
                 $item->forceDelete();
             } else {
+                $item->items()->delete();
                 $item->delete();
             }
         });

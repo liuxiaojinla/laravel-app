@@ -16,15 +16,14 @@ class UserService extends EloquentUserProvider
     /**
      * @var string
      */
-    protected $cachePrefix = 'admin';
+    protected $cachePrefix = 'user';
 
     /**
-     * @param HasherContract $hasher
      * @param Cache $cache
      */
-    public function __construct(HasherContract $hasher, Cache $cache)
+    public function __construct(Cache $cache)
     {
-        parent::__construct($hasher, User::class);
+        parent::__construct(app(HasherContract::class), User::class);
         $this->cache = $cache;
     }
 

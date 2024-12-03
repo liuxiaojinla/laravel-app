@@ -13,7 +13,3 @@ use Plugins\SystemInfo\app\Http\Controllers\SystemInfoController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group([], function () {
-    Route::resource('systeminfo', SystemInfoController::class)->names('systeminfo');
-});

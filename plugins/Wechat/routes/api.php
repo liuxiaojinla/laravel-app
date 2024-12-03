@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Plugins\Wechat\app\Http\Controllers\WechatController;
 
 /*
     |--------------------------------------------------------------------------
@@ -16,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::get('wechat', fn (Request $request) => $request->user())->name('wechat');
+});
+
+Route::group([], function () {
+    Route::resource('wechat', WechatController::class)->names('wechat');
 });

@@ -14,6 +14,7 @@ use App\Models\Article\Article;
 use App\Models\Article\Category;
 use Illuminate\Http\Request;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Support\SQL;
 use Xin\Support\Arr;
 
 /**
@@ -63,7 +64,8 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request)
     {
         $data = $request->validated();
-        $info = Category::create($data);
+        $info = Category::query()->create($data);
+        $info->refresh();
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
@@ -115,6 +117,7 @@ class CategoryController extends Controller
     /**
      * 更新数据
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function setValue(Request $request)
     {

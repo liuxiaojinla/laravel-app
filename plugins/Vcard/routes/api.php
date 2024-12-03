@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Plugins\Vcard\app\Http\Controllers\VCardController;
 
 /*
     |--------------------------------------------------------------------------
@@ -16,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::get('vcard', fn (Request $request) => $request->user())->name('vcard');
+});
+
+Route::group([], function () {
+    Route::resource('vcard', VCardController::class)->names('vcard');
 });

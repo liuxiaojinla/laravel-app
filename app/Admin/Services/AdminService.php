@@ -18,12 +18,11 @@ class AdminService extends EloquentUserProvider
     protected $cachePrefix = 'admin';
 
     /**
-     * @param HasherContract $hasher
      * @param Cache $cache
      */
-    public function __construct(HasherContract $hasher, Cache $cache)
+    public function __construct(Cache $cache)
     {
-        parent::__construct($hasher, Admin::class);
+        parent::__construct(app(HasherContract::class), Admin::class);
         $this->cache = $cache;
     }
 

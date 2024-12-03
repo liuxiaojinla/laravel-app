@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Plugins\Activity\app\Http\Controllers\ActivityController;
 
 /*
     |--------------------------------------------------------------------------
@@ -17,4 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['api', 'auth:sanctum'])->group(function () {
     Route::get('info', fn(Request $request) => $request->user())->name('activity');
 });
-Route::get('test', fn(Request $request) => $request->user())->name('activity');
+Route::group([], function () {
+    Route::resource('activity', ActivityController::class)->names('activity');
+});

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Plugins\SystemInfo\app\Http\Controllers\SystemInfoController;
 
 /*
     |--------------------------------------------------------------------------
@@ -15,5 +16,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::get('systeminfo', fn (Request $request) => $request->user())->name('systeminfo');
+    Route::get('systeminfo', fn(Request $request) => $request->user())->name('systeminfo');
+});
+
+Route::group([], function () {
+    Route::resource('systeminfo', SystemInfoController::class)->names('systeminfo');
 });

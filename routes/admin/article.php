@@ -4,12 +4,12 @@ use App\Admin\Controllers\Article\CategoryController;
 use App\Admin\Controllers\Article\IndexController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware([])->prefix('article/index')->name('article.index.')->group(function () {
+Route::middleware([])->prefix('article')->name('article.')->group(function () {
     Route::get('/lists', [IndexController::class, 'index'])->name('lists');
     Route::get('/info', [IndexController::class, 'info'])->name('info');
     Route::post('/create', [IndexController::class, 'store'])->name('store');
-    Route::put('/update', [IndexController::class, 'update'])->name('update');
-    Route::delete('/delete', [IndexController::class, 'delete'])->name('delete');
+    Route::post('/update', [IndexController::class, 'update'])->name('update');
+    Route::post('/delete', [IndexController::class, 'delete'])->name('delete');
 });
 
 
@@ -17,6 +17,6 @@ Route::middleware([])->prefix('article/category')->name('article.category.')->gr
     Route::get('/lists', [CategoryController::class, 'index'])->name('lists');
     Route::get('/info', [CategoryController::class, 'info'])->name('info');
     Route::post('/create', [CategoryController::class, 'store'])->name('store');
-    Route::put('/update', [CategoryController::class, 'update'])->name('update');
-    Route::delete('/delete', [CategoryController::class, 'delete'])->name('delete');
+    Route::post('/update', [CategoryController::class, 'update'])->name('update');
+    Route::post('/delete', [CategoryController::class, 'delete'])->name('delete');
 });

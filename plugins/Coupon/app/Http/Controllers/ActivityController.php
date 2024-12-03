@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Activity\app\Http\Controllers;
+namespace Plugins\Coupon\app\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\RedirectResponse;

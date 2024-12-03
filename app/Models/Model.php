@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\StyleMappings\DefaultStyle;
+use App\Models\Concerns\StyleMappings\DefaultStyle;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 use Xin\LaravelFortify\Model\Modelable;
 use Xin\Support\Arr;

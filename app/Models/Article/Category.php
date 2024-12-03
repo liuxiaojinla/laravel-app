@@ -70,6 +70,11 @@ class Category extends Model
     protected static $nameToIdCacheList = null;
 
     /**
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
      * 关联文章
      *
      * @return HasMany
@@ -89,7 +94,7 @@ class Category extends Model
         return $this->belongsToMany(User::class, Favorite::class, 'user_id', 'topic_id')
             ->select(array_map(function ($field) {
                 return "user.{$field}";
-            }, User::getPublicFields()))
+            }, User::getSimpleFields()))
             ->wherePivot('topic_type', 'article');
     }
 
@@ -113,7 +118,7 @@ class Category extends Model
         }
 
         $user = clone $user;
-        $user->visible(User::getPublicFields());
+        $user->makeVisible(User::getSimpleFields());
         /** @var User $user */
         foreach ($followUsers as $key => $followUser) {
             if ($user['id'] == $followUser['id']) {
@@ -124,7 +129,7 @@ class Category extends Model
             }
         }
 
-        $followUsers->unshift($user);
+        $followUsers->prepend($user);
 
         return $followUsers;
     }

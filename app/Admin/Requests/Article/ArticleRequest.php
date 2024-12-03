@@ -23,7 +23,7 @@ class ArticleRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'       => 'required|length:2,48',
+        'title'       => 'required|between:2,48',
         'content'     => 'required',
         'category_id' => 'required',
         'status'      => 'nullable|in:0,1,2,3',

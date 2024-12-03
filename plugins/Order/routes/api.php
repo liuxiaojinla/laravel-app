@@ -15,5 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::get('order', fn (Request $request) => $request->user())->name('order');
+    Route::get('order', fn(Request $request) => $request->user())->name('order');
+});
+
+
+Route::group([], function () {
+    Route::resource('order', OrderController::class)->names('order');
 });

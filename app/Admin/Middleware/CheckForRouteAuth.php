@@ -7,7 +7,7 @@ use App\Admin\Models\AdminMenu;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Xin\LaravelFortify\Http\Middleware\InteractsExcept;
+use Xin\LaravelFortify\Foundation\Middleware\InteractsExcept;
 
 class CheckForRouteAuth
 {
