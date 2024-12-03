@@ -15,13 +15,17 @@ namespace App\Models;
  */
 class Notice extends Model
 {
+    /**
+     * @var array
+     */
+    protected $guarded = [];
 
     /**
      * @var array
      */
     protected $type = [
         'begin_time' => 'timestamp',
-        'end_time' => 'timestamp',
+        'end_time'   => 'timestamp',
     ];
 
     /**
@@ -31,7 +35,7 @@ class Notice extends Model
     {
         return [
             'id', 'title', 'status', 'sort',
-            'begin_time', 'end_time', 'created_at'
+            'begin_time', 'end_time', 'created_at',
         ];
     }
 

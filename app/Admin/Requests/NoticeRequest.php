@@ -15,10 +15,10 @@ class NoticeRequest extends FormRequest
 	 * @var array
 	 */
 	protected $rule = [
-		'title' => 'require|length:2,50',
-		'content' => 'require|length:2,255',
-		'begin_time' => 'require|date',
-		'end_time' => 'require|date|afterWith:begin_time',
+		'title' => 'required|between:2,50',
+		'content' => 'required|between:2,255',
+		'begin_time' => 'required|date',
+		'end_time' => 'required|date|after:begin_time',
 	];
 
 	/**
@@ -39,7 +39,7 @@ class NoticeRequest extends FormRequest
 	 * @var array
 	 */
 	protected $message = [
-		'end_time.afterWith' => '结束时间必须大于开始时间',
+		'end_time.after' => '结束时间必须大于开始时间',
 	];
 
 	/**

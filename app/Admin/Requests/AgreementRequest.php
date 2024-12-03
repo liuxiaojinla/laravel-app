@@ -16,9 +16,9 @@ class AgreementRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title' => 'require|length:2,48',
-        'name' => 'require|alphaDash|length:3,48|unique:agreement',
-        'content' => 'require',
+        'title' => 'required|between:2,48',
+        'name' => 'required|alphaDash|between:3,48|unique:agreements',
+        'content' => 'required',
     ];
 
     /**

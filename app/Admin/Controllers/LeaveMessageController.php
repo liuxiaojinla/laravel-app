@@ -32,11 +32,25 @@ class LeaveMessageController extends Controller
     }
 
     /**
+     * 数据展示
+     * @param Request $request
+     * @return Response
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = LeaveMessage::query()->where('id', $id)->firstOrFail();
+
+        return Hint::result($info);
+    }
+
+    /**
      * 数据删除
      * @param Request $request
      * @return Response
      */
-    public function destroy(Request $request)
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
         $isForce = $request->integer('force', 0);

@@ -3,7 +3,9 @@
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
+use Xin\Hint\Facades\Hint;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,3 +43,9 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::get('/lists', [NotificationController::class, 'lists'])->name('lists');
     Route::post('/read', [NotificationController::class, 'read'])->name('read');
 });
+
+$fallback = Route::fallback(function () {
+    return Hint::error("404 Not Found", 404, request()->path())->setStatusCode(404);
+});
+$fallback->methods = Router::$verbs;
+Route::getRoutes()->add($fallback);

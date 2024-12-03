@@ -5,7 +5,6 @@ namespace App\Admin\Controllers;
 use App\Admin\Controller;
 use App\Models\Feedback;
 use App\Models\Model;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
@@ -16,7 +15,7 @@ class FeedbackController extends Controller
     /**
      * 数据列表
      * @param Request $request
-     * @return View
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -29,9 +28,21 @@ class FeedbackController extends Controller
             ->orderByDesc('id')
             ->paginate();
 
-        return view('feedback.index', [
-            'data' => $data,
-        ]);
+        return Hint::result($data);
+    }
+
+    /**
+     * 数据展示
+     * @param Request $request
+     * @return Response
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = Feedback::query()->where('id', $id)->firstOrFail();
+
+        return Hint::result($info);
     }
 
     /**
@@ -39,10 +50,10 @@ class FeedbackController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function destroy(Request $request)
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
-        $isForce = (int)$request->integer('force', 0);
+        $isForce = $request->integer('force', 0);
 
         Feedback::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
             if ($isForce) {

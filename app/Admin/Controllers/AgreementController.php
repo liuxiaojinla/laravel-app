@@ -16,7 +16,7 @@ class AgreementController extends Controller
     /**
      * 数据列表
      * @param Request $request
-     * @return View
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -24,31 +24,21 @@ class AgreementController extends Controller
 
         $data = Agreement::simple()->search($search)->orderByDesc('id')->paginate();
 
-        return view('agreement.index', [
-            'data' => $data,
-        ]);
+        return Hint::result($data);
     }
 
     /**
-     * 数据创建表单
+     * 数据展示
      * @param Request $request
-     * @return View
+     * @return Response
      */
-    public function create(Request $request)
+    public function info(Request $request)
     {
-        $id = (int)$request->input('id', 0);
-        $copy = 0;
-        $info = null;
+        $id = $request->validId();
 
-        if ($id > 0) {
-            $copy = 1;
-            $info = Agreement::query()->where('id', $id)->first();
-        }
+        $info = Agreement::query()->where('id', $id)->firstOrFail();
 
-        return view('agreement.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
+        return Hint::result($info);
     }
 
     /**
@@ -60,42 +50,12 @@ class AgreementController extends Controller
     {
         $data = $request->validated();
 
-        $info = Agreement::create($data);
+        $info = Agreement::query()->create($data);
+        $info->refresh();
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
-    /**
-     * 数据展示
-     * @param Request $request
-     * @return View
-     */
-    public function show(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = Agreement::query()->where('id', $id)->firstOrFail();
-
-        return view('agreement.show', [
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = Agreement::query()->where('id', $id)->firstOrFail();
-
-        return view('agreement.edit', [
-            'info' => $info,
-        ]);
-    }
 
     /**
      * 数据更新
@@ -122,7 +82,7 @@ class AgreementController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function destroy(Request $request)
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
         $isForce = (int)$request->input('force', 0);

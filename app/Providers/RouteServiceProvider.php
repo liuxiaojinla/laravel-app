@@ -47,7 +47,7 @@ class RouteServiceProvider extends ServiceProvider
                 $this->app->register(ApiModuleBootstrapServiceProvider::class);
             }
 
-            elseif ($module === 'admin' || app()->runningInConsole()) {
+            if ($module === 'admin' || app()->runningInConsole()) {
                 Route::middleware('admin')
                     ->prefix('admin')
                     ->name('admin.')

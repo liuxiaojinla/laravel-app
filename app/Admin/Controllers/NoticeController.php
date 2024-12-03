@@ -11,7 +11,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Validation\ValidationException;
 
 class NoticeController extends Controller
 {
@@ -33,25 +32,11 @@ class NoticeController extends Controller
     }
 
     /**
-     * 数据创建
-     * @param NoticeRequest $request
-     * @return Response
-     */
-    public function store(NoticeRequest $request)
-    {
-        $data = $request->validated();
-
-        $info = Notice::query()->create($data);
-
-        return Hint::success("创建成功！", (string)url('index'), $info);
-    }
-
-    /**
      * 数据展示
      * @param Request $request
      * @return View
      */
-    public function show(Request $request)
+    public function info(Request $request)
     {
         $id = $request->validId();
 
@@ -61,19 +46,18 @@ class NoticeController extends Controller
     }
 
     /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View
+     * 数据创建
+     * @param NoticeRequest $request
+     * @return Response
      */
-    public function edit(Request $request)
+    public function store(NoticeRequest $request)
     {
-        $id = $request->validId();
+        $data = $request->validated();
 
-        $info = Notice::query()->where('id', $id)->firstOrFail();
+        $info = Notice::query()->create($data);
+        $info->refresh();
 
-        return view('notice.edit', [
-            'info' => $info,
-        ]);
+        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
@@ -101,7 +85,7 @@ class NoticeController extends Controller
      * @param AgreementRequest $request
      * @return Response
      */
-    public function destroy(Request $request)
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
         $isForce = $request->integer('force', 0);
@@ -120,7 +104,7 @@ class NoticeController extends Controller
     /**
      * 更新数据
      * @return Response
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function setValue(Request $request)
     {
