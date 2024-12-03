@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Controllers\Auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\Error;
 use App\Http\Controller;
@@ -14,7 +14,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Xin\Hint\Facades\Hint;
 
-class NewPasswordController extends Controller
+class ResetPasswordController extends Controller
 {
     /**
      * Handle an incoming new password request.
@@ -25,7 +25,7 @@ class NewPasswordController extends Controller
     {
         $request->validate([
             'token'    => ['required'],
-            'account'  => ['required', 'string'],
+            'username'  => ['required', 'string'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -33,7 +33,7 @@ class NewPasswordController extends Controller
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
-            $request->only('account', 'password', 'password_confirmation', 'token'),
+            $request->only('username', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
                 $user->forceFill([
                     'password'       => Hash::make($request->password),

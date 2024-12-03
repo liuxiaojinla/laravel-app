@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Controllers\Auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\Error;
 use App\Http\Controller;
@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Xin\Hint\Facades\Hint;
 
-class PasswordResetLinkController extends Controller
+class ResetPasswordLinkController extends Controller
 {
     /**
      * Handle an incoming password reset link request.
@@ -19,14 +19,14 @@ class PasswordResetLinkController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'account' => ['required', 'string'],
+            'username' => ['required', 'string'],
         ]);
 
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.
         $status = Password::sendResetLink(
-            $request->only('account')
+            $request->only('username')
         );
 
         if ($status != Password::RESET_LINK_SENT) {

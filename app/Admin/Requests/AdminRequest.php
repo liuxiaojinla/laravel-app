@@ -1,49 +1,55 @@
 <?php
+
 namespace App\Admin\Requests;
 
+use App\Admin\Models\Admin;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Xin\LaravelFortify\Request\FormRequest;
 
 class AdminRequest extends FormRequest
 {
+    /**
+     * 字段信息
+     *
+     * @var array
+     */
+    protected $field = [
+        'username'              => '用户名',
+        'password'              => '密码',
+        'password_confirmation' => '确认密码',
+    ];
 
-	/**
-	 * 验证规则
-	 *
-	 * @var array
-	 */
-	protected $rule = [
-		'username' => 'require|alphaDash2|length:3,48|unique:admin',
-		'password' => 'password|length:6,16',
-		'confirm_password' => 'requireWith:password|confirm:password',
-	];
+    /**
+     * @var array
+     */
+    protected $message = [
+        'password.confirmed' => '两次密码不一致',
+    ];
 
-	/**
-	 * 字段信息
-	 *
-	 * @var array
-	 */
-	protected $field = [
-		'username' => '用户名',
-		'password' => '密码',
-		'confirm_password' => '确认密码',
-	];
+    /**
+     * 情景模式
+     *
+     * @var array
+     */
+    protected $scene = [
+        'create' => [
+            'username', 'password', 'password_confirmation',
+        ],
+    ];
 
-	/**
-	 * @var array
-	 */
-	protected $message = [
-		'confirm_password.confirm' => '两次密码不一致',
-	];
+    /**
+     * 验证规则
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        $isCreateScene = $this->isCreateScene();
 
-	/**
-	 * 情景模式
-	 *
-	 * @var array
-	 */
-	protected $scene = [
-		'create' => [
-			'username', 'password', 'confirm_password',
-		],
-	];
-
+        return [
+            'username' => ['required', 'alpha_dash:ascii', 'between:3,48', 'unique:' . Admin::class],
+            'password' => ['sometimes', Rule::requiredIf($isCreateScene), Password::min(6)->max(16), 'confirmed'],
+        ];
+    }
 }

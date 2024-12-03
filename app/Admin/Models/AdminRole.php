@@ -17,9 +17,9 @@ class AdminRole extends Model
 {
 
     /**
-     * @var int
+     * @var array
      */
-    protected $defaultSoftDelete = 0;
+    protected $guarded = [];
 
     /**
      * 关联菜单模型

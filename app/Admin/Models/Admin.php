@@ -24,7 +24,14 @@ use Xin\LaravelFortify\Validation\ValidationException;
  */
 class Admin extends Authenticatable
 {
-    use  Notifiable, Modelable;
+    use Notifiable, Modelable;
+
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'username',
+    ];
 
     /**
      * @var string[]

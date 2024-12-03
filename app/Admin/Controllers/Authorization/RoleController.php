@@ -53,10 +53,11 @@ class RoleController extends Controller
      * 创建数据
      * @return string
      */
-    public function create(AdminRoleRequest $request)
+    public function store(AdminRoleRequest $request)
     {
         $data = $request->validated();
-        $info = AdminRole::create($data);
+        $info = AdminRole::query()->create($data);
+        $info->refresh();
 
         return Hint::success("创建成功！", null, $info);
     }

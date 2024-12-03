@@ -40,8 +40,9 @@ class AdminController extends Controller
     public function info(Request $request)
     {
         $id = $request->validId();
-        $info = Admin::query()->with([
-        ])->where('id', $id)->firstOrFail();
+
+        $info = Admin::query()->with(['role'])->where('id', $id)->firstOrFail();
+
         return Hint::result($info);
     }
 
@@ -52,13 +53,15 @@ class AdminController extends Controller
     {
         $data = $request->validated();
         $data['password'] = app('hash')->make($data['password']);
-        $info = Admin::create($data);
+        $info = Admin::query()->forceCreate($data);
+        $info->refresh();
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
      * 更新数据
+     * @throws ValidationException
      */
     public function update(AdminRequest $request)
     {
@@ -108,6 +111,7 @@ class AdminController extends Controller
 
     /**
      * 更新数据
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function setValue(Request $request)
     {
