@@ -35,6 +35,6 @@ class NotificationController extends Controller
             $notification->markAsRead();
         }
 
-        return Hint::success();
+        return Hint::success("OK");
     }
 }

@@ -13,7 +13,3 @@ use Plugins\Mall\app\Http\Controllers\MallController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group([], function () {
-    Route::resource('mall', MallController::class)->names('mall');
-});

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Plugins\Shop\app\Http\Controllers\ShopController;
 
 /*
     |--------------------------------------------------------------------------
@@ -16,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::get('shop', fn (Request $request) => $request->user())->name('shop');
+});
+
+Route::group([], function () {
+    Route::resource('shop', ShopController::class)->names('shop');
 });

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Plugins\Mall\app\Http\Controllers\MallController;
 
 /*
     |--------------------------------------------------------------------------
@@ -16,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::get('mall', fn (Request $request) => $request->user())->name('mall');
+});
+
+Route::group([], function () {
+    Route::resource('mall', MallController::class)->names('mall');
 });

@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Xin\Hint\Facades\Hint;
@@ -30,19 +29,7 @@ Route::resource('chirps', ChirpController::class)
     ->only(['index', 'create', 'store'])
     ->middleware(['auth', 'verified']);
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/profile/update', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/profile/delete', [ProfileController::class, 'destroyShow'])->name('profile.destroy.show');
-    Route::delete('/profile/delete', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-// 通知
-Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
-    Route::get('/lists', [NotificationController::class, 'lists'])->name('lists');
-    Route::post('/read', [NotificationController::class, 'read'])->name('read');
-});
 
 $fallback = Route::fallback(function () {
     return Hint::error("404 Not Found", 404, request()->path())->setStatusCode(404);

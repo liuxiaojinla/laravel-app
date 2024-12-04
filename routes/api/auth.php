@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\User\BrowseController;
 use App\Http\Controllers\User\CashoutController;
 use App\Http\Controllers\User\DistributorTeamController;
@@ -86,4 +87,10 @@ Route::middleware(['auth:sanctum'])->prefix('user/distributor_team')->name('user
 Route::middleware(['auth:sanctum'])->prefix('user/team')->name('user.team.')->group(function () {
     Route::get('/invited_list', [TeamController::class, 'invitedList'])->name('invited_list');
     Route::get('/invited_detail', [TeamController::class, 'invitedDetail'])->name('invited_detail');
+});
+
+// 通知
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/lists', [NotificationController::class, 'lists'])->name('lists');
+    Route::post('/read', [NotificationController::class, 'read'])->name('read');
 });

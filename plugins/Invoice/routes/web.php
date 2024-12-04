@@ -13,7 +13,3 @@ use Plugins\Invoice\app\Http\Controllers\InvoiceController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group([], function () {
-    Route::resource('invoice', InvoiceController::class)->names('invoice');
-});
