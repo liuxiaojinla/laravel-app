@@ -11,30 +11,45 @@ use App\Admin\Controller;
 use App\Admin\Models\AdminMenu;
 use App\Admin\Requests\AdminMenuRequest;
 use App\Exceptions\Error;
-use App\Models\Agreement;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Xin\Hint\Facades\Hint;
 use Xin\Menu\Contracts\Factory as MenuFactory;
+use Xin\Menu\MenuManager;
 use Xin\Support\Arr;
 use Xin\Support\Str;
 
 class MenuController extends Controller
 {
+    /**
+     * @var MenuManager
+     */
+    private $menuManager;
+
+    /**
+     * @param Application $app
+     * @param MenuFactory $menuFactory
+     */
+    public function __construct(Application $app, MenuFactory $menuFactory)
+    {
+        parent::__construct($app);
+        $this->menuManager = $menuFactory;
+    }
 
     /**
      * 菜单列表
-     * @param Request $request
+     *
      * @return View
      */
-    public function index(Request $request)
+    public function index()
     {
-        $data = AdminMenu::query()->orderBy('sort')->get();
-        $data = Arr::treeToList(Arr::tree($data->toArray(), static function ($level, &$item) {
+        $data = $this->menuManager->repository()->all();
+        $data = Arr::tree($data, static function ($level, &$item) {
             $item['level'] = $level;
-        }));
+        });
+//        $data = Arr::treeToList($data);
 
         return Hint::result($data);
     }
@@ -42,20 +57,19 @@ class MenuController extends Controller
     /**
      * 同步菜单
      *
-     * @param Request $request
-     * @param MenuFactory $factory
+     *
      * @return Response
      */
-    public function sync(Request $request, MenuFactory $factory)
+    public function sync()
     {
-        $config = $factory->getMenuConfig('admin');
+        $config = $this->menuManager->getMenuConfig('admin');
         $baseMenus = require_once $config['base_path'];
 
-        $factory->puts($baseMenus, null, [
+        $this->menuManager->puts($baseMenus, null, [
             'system' => 1,
         ]);
 
-        return Hint::success("同步完成！", $request->header('referer') ?: (string)url('index/index'));
+        return Hint::success("同步完成！", $this->request->header('referer') ?: (string)url('index/index'));
     }
 
     /**
@@ -67,21 +81,21 @@ class MenuController extends Controller
     {
         $data = $request->validated();
 
-        $info = AdminMenu::query()->create($data);
+        $info = $this->menuManager->repository()->insert($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
      * 数据展示
-     * @param Request $request
+     *
      * @return Response
      */
-    public function info(Request $request)
+    public function info()
     {
-        $id = $request->validId();
+        $id = $this->request->validId();
 
-        $info = AdminMenu::query()->where('id', $id)->firstOrFail();
+        $info = $this->menuManager->repository()->get($id);
 
         return Hint::result($info);
     }
@@ -93,77 +107,38 @@ class MenuController extends Controller
      */
     public function update(AdminMenuRequest $request)
     {
-        $id = $request->validId();
-
-        $info = Agreement::query()->where('id', $id)->firstOrFail();
-
+        $id = $this->request->validId();
         $data = $request->validated();
 
-        if (!$info->save($data)) {
-            return Hint::error("更新失败！");
-        }
+        $info = $this->menuManager->repository()->update($id, $data);
 
         return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
     /**
-     * 生成菜单树
-     *
-     * @param int $id
-     */
-    protected function assignTreeNodes($id = 0)
-    {
-        $map = [];
-        if ($id) {
-            $map[] = ['id', '<>', $id];
-        }
-
-        $pList = AdminMenu::query()->select(['id', 'pid', 'title'])->where($map)->get()->toArray();
-        $menus = Arr::tree($pList, static function ($level, &$val) {
-            $tmp_str = str_repeat(str_repeat("&nbsp;", 5) . "│", $level - 1);
-            $tmp_str .= str_repeat("&nbsp;", 4) . "┝";
-
-            $val['level'] = $level;
-            $val['title_show'] = $level == 0 ? $val['title'] . "&nbsp;" : $tmp_str . $val['title'] . "&nbsp;";
-        });
-        $menus = Arr::treeToList($menus);
-
-        $this->assign('nodes', $menus);
-    }
-
-    /**
      * 删除数据
-     * @param Request $request
+     *
      * @return Response
      * @throws ValidationException
      */
-    public function destroy(Request $request)
+    public function delete()
     {
-        $ids = $request->validIds();
+        $ids = $this->request->validIds();
 
-        //检查是否有子分类 计算两个数组交集
-        $pidList = AdminMenu::query()->where('pid', 'in', $ids)->pluck('pid');
-        $pidList = array_intersect($pidList, $ids);
-
-        if (!empty($pidList)) {
-            $titles = implode("、", AdminMenu::query()->select($pidList)->pluck("title")->toArray());
-            throw Error::validationException("请先删除【{$titles}】下的子菜单！");
-        }
-
-        AdminMenu::query()->whereIn('id', $ids)->where('system', '=', 0)->delete();
+        $this->menuManager->repository()->delete($ids);
 
         return Hint::success("已删除！");
     }
 
     /**
      * 更新数据
-     * @throws \Xin\LaravelFortify\Validation\ValidationException
+     * @throws ValidationException
      */
-    public function setValue(Request $request)
+    public function setValue()
     {
-        $ids = $request->validIds();
-        $field = $request->validString('field');
-        $value = $request->input($field);
+        $ids = $this->request->validIds();
+        $field = $this->request->validString('field');
+        $value = $this->request->input($field);
 
         AdminMenu::setManyValue($ids, $field, $value);
 
@@ -174,21 +149,19 @@ class MenuController extends Controller
      * 菜单排序
      *
      */
-    public function sort(Request $request)
+    public function sort()
     {
-        if ($request->isPost()) {
-            $groupIds = $request->input("ids");
+        if ($this->request->isPost()) {
+            $groupIds = $this->request->input("ids");
             foreach ($groupIds as $kg => $group) {
                 AdminMenu::query()->where('id', $group['root'])->update(["sort" => $kg]);
 
                 $group['childs'] = isset($group['childs']) ? Str::explode($group['childs']) : [];
                 foreach ($group['childs'] as $kc => $childIds) {
-                    if (AdminMenu::query()->where('id', $childIds)->update([
-                            'sort' => $kc,
-                            'pid'  => $group['root'],
-                        ]) === false) {
-                        return Hint::error("保存排序失败！");
-                    }
+                    AdminMenu::query()->where('id', $childIds)->update([
+                        'sort' => $kc,
+                        'pid'  => $group['root'],
+                    ]);
                 }
             }
 

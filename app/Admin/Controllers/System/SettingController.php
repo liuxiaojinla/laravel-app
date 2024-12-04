@@ -4,13 +4,12 @@ namespace App\Admin\Controllers\System;
 
 use App\Admin\Controller;
 use App\Exceptions\Error;
-use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Psr\SimpleCache\InvalidArgumentException;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Validation\ValidationException;
-use Xin\Setting\Contracts\Factory as SettingFactoryContract;
+use Xin\Setting\Contracts\Factory as SettingFactory;
 use Xin\Setting\Exceptions\NotFountSettingItemException;
 use Xin\Setting\SettingManager;
 
@@ -23,9 +22,9 @@ class SettingController extends Controller
 
     /**
      * @param Application $app
-     * @param SettingFactoryContract $factory
+     * @param SettingFactory $factory
      */
-    public function __construct(Application $app, SettingFactoryContract $factory)
+    public function __construct(Application $app, SettingFactory $factory)
     {
         parent::__construct($app);
         $this->settingManager = $factory;
@@ -34,7 +33,7 @@ class SettingController extends Controller
     /**
      * 数据列表
      *
-     * @return View
+     * @return Response
      */
     public function index()
     {
@@ -48,7 +47,7 @@ class SettingController extends Controller
     /**
      * 数据展示
      *
-     * @return View
+     * @return Response
      * @throws NotFountSettingItemException
      */
     public function info()
