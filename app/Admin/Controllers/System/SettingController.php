@@ -3,12 +3,13 @@
 namespace App\Admin\Controllers\System;
 
 use App\Admin\Controller;
+use App\Exceptions\Error;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Psr\SimpleCache\InvalidArgumentException;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Validation\ValidationException;
 use Xin\Setting\Contracts\Factory as SettingFactoryContract;
 use Xin\Setting\Exceptions\NotFountSettingItemException;
 use Xin\Setting\SettingManager;
@@ -32,12 +33,12 @@ class SettingController extends Controller
 
     /**
      * 数据列表
-     * @param Request $request
+     *
      * @return View
      */
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->query();
+        $search = $this->request->query();
 
         $data = $this->settingManager->paginate($search);
 
@@ -45,90 +46,43 @@ class SettingController extends Controller
     }
 
     /**
-     * 数据创建表单
-     * @param Request $request
+     * 数据展示
+     *
      * @return View
      * @throws NotFountSettingItemException
      */
-    public function create(Request $request)
+    public function info()
     {
-        $key = $request->input('key', '');
-        $copy = 0;
-        $info = null;
+        $key = $this->request->validString('key');
 
-        if (!empty($key)) {
-            $copy = 1;
-            $info = $this->settingManager->get($key);
-        }
-
-        return view('setting.edit', [
-            'copy' => $copy,
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 数据创建
-     * @param Request $request
-     * @return Response
-     */
-    public function put(Request $request)
-    {
-        $key = $request->input('name');
-        $data = $request->except(['name']);
-        $data['title'] = now();
-        $data['value'] = now();
-
-        $info = $this->settingManager->put($key, $data);
+        $info = $this->settingManager->info($key);
 
         return Hint::result($info);
     }
 
     /**
-     * 数据展示
-     * @param Request $request
-     * @return View
-     * @throws NotFountSettingItemException
+     * 数据创建
+     *
+     * @return Response
      */
-    public function info(Request $request)
+    public function upsert()
     {
-        $key = $request->validString('key');
+        $key = $this->request->validString('name');
+        $data = $this->request->except(['name']);
 
-        $info = $this->settingManager->get($key);
+        $info = $this->settingManager->upsert($key, $data);
 
-        return view('setting.show', [
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return View|Response
-     */
-    public function edit(Request $request)
-    {
-        $key = $request->validString('key');
-
-        try {
-            $info = $this->settingManager->get($key);
-        } catch (NotFountSettingItemException $e) {
-            return Hint::error($e->getMessage());
-        }
-
-        return view('agreement.edit', [
-            'info' => $info,
-        ]);
+        return Hint::result($info);
     }
 
     /**
      * 数据删除
-     * @param Request $request
+     *
      * @return Response
      */
-    public function delete(Request $request)
+    public function delete()
     {
-        $keys = $request->validIds('keys', 'strval');
+        $keys = $this->request->validIds('keys', 'strval');
 
         $result = $this->settingManager->deletes($keys);
 
@@ -137,18 +91,18 @@ class SettingController extends Controller
 
     /**
      * 更新站点配置
-     * @param Request $request
      * @return Response
      * @throws InvalidArgumentException
+     * @throws ValidationException
      */
-    public function set(Request $request)
+    public function set()
     {
-        $result = $this->settingManager->sets([
-            '1704955431'                     => 1,
-            'user_recharge_status1704955460' => 2,
-            'user_recharge_status1704955473' => 3,
-            'user_recharge_status1704955550' => 4,
-        ]);
+        $settings = $this->request->input('settings');
+        if (empty($settings)) {
+            throw Error::validationException("提交的数据不合法！");
+        }
+
+        $result = $this->settingManager->setMultiple($settings);
 
         $this->settingManager->clearCache();
 

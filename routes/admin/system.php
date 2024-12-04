@@ -17,7 +17,7 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function (
 Route::middleware(['auth'])->prefix('system/setting')->name('system.setting.')->group(function () {
     Route::get('/lists', [SettingController::class, 'index'])->name('lists');
     Route::get('/info', [SettingController::class, 'info'])->name('info');
-    Route::post('/put', [SettingController::class, 'put'])->name('put');
+    Route::post('/upsert', [SettingController::class, 'upsert'])->name('upsert');
     Route::post('/delete', [SettingController::class, 'delete'])->name('delete');
     Route::post('/set', [SettingController::class, 'set'])->name('set');
 });

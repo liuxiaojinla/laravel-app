@@ -15,14 +15,14 @@ class EventController extends Controller
 {
     /**
      * 数据列表
-     * @param Request $request
+     *
      * @return Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $type = (int)$request->input('type', -1);
+        $type = (int)$this->request->input('type', -1);
 
-        $search = $request->query();
+        $search = $this->request->query();
 
         $data = Event::simple()->search($search)
             ->orderByDesc('id')->paginate();
@@ -32,12 +32,12 @@ class EventController extends Controller
 
     /**
      * 数据展示
-     * @param Request $request
+     *
      * @return Response
      */
-    public function info(Request $request)
+    public function info()
     {
-        $id = $request->validId();
+        $id = $this->request->validId();
 
         /** @var Event $info */
         $info = Event::query()->where('id', $id)->firstOrFail();
@@ -85,13 +85,13 @@ class EventController extends Controller
 
     /**
      * 数据删除
-     * @param Request $request
+     *
      * @return Response
      */
-    public function destroy(Request $request)
+    public function delete()
     {
-        $ids = $request->validIds();
-        $isForce = (int)$request->input('force', 0);
+        $ids = $this->request->validIds();
+        $isForce = (int)$this->request->input('force', 0);
 
         Event::query()->whereIn('id', $ids)->where('system', '=', 0)->get()->each(function (Model $item) use ($isForce) {
             if ($isForce) {
@@ -106,15 +106,15 @@ class EventController extends Controller
 
     /**
      * 更新数据
-     * @param Request $request
+     *
      * @return Response
      * @throws ValidationException
      */
-    public function setValue(Request $request)
+    public function setValue()
     {
-        $ids = $request->validIds();
-        $field = $request->validString('field');
-        $value = $request->input($field);
+        $ids = $this->request->validIds();
+        $field = $this->request->validString('field');
+        $value = $this->request->input($field);
 
         Event::setManyValue($ids, $field, $value);
 
@@ -126,13 +126,13 @@ class EventController extends Controller
      *
      * @return string|Response
      */
-    public function plugin(Request $request)
+    public function plugin()
     {
         /** @var Event $info */
         $info = $this->findIsEmptyAssert();
 
-        if ($request->isPost()) {
-            $addons = $request->input('addons/a');
+        if ($this->request->isPost()) {
+            $addons = $this->request->input('addons/a');
             $info->addons = $addons;
             $info->save();
 

@@ -13,9 +13,8 @@ return [
     'repositories' => [
         // 使用模型
         'default' => [
-            'driver' => 'database',
+            'driver' => 'model',
 //            'model' => null,
-//            'database' => 'settings',
         ],
     ],
 
