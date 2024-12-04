@@ -39,4 +39,6 @@ Route::middleware(['auth'])->prefix('system/menu')->name('system.menu.')->group(
     Route::post('/update', [MenuController::class, 'update'])->name('update');
     Route::post('/delete', [MenuController::class, 'delete'])->name('delete');
     Route::post('/sync', [MenuController::class, 'sync'])->name('sync');
+    Route::get('/sort', [MenuController::class, 'sort'])->name('sort');
+    Route::post('/sort', [MenuController::class, 'sort']);
 });

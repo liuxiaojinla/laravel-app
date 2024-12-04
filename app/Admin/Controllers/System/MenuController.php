@@ -62,12 +62,7 @@ class MenuController extends Controller
      */
     public function sync()
     {
-        $config = $this->menuManager->getMenuConfig('admin');
-        $baseMenus = require_once $config['base_path'];
-
-        $this->menuManager->puts($baseMenus, null, [
-            'system' => 1,
-        ]);
+        $this->menuManager->menu()->refresh();
 
         return Hint::success("同步完成！", $this->request->header('referer') ?: (string)url('index/index'));
     }
@@ -151,50 +146,20 @@ class MenuController extends Controller
      */
     public function sort()
     {
-        if ($this->request->isPost()) {
-            $groupIds = $this->request->input("ids");
-            foreach ($groupIds as $kg => $group) {
-                AdminMenu::query()->where('id', $group['root'])->update(["sort" => $kg]);
+        $groupIds = $this->request->input("ids");
+        foreach ($groupIds as $kg => $group) {
+            AdminMenu::query()->where('id', $group['root'])->update(["sort" => $kg]);
 
-                $group['childs'] = isset($group['childs']) ? Str::explode($group['childs']) : [];
-                foreach ($group['childs'] as $kc => $childIds) {
-                    AdminMenu::query()->where('id', $childIds)->update([
-                        'sort' => $kc,
-                        'pid'  => $group['root'],
-                    ]);
-                }
-            }
-
-            return Hint::success("已更新排序！");
-        }
-
-        $map = ['show' => 1];
-        $menus = AdminMenu::query()->select([
-            'id', 'pid', 'title', 'icon',
-        ])->where($map)->orderBy('sort')->get();
-
-        $getChildren = static function (&$menus, $pid) {
-            $children = [];
-            foreach ($menus as $key => $menu) {
-                if ($menu['pid'] == $pid) {
-                    unset($menus[$key]);
-                    $children[] = $menu;
-                }
-            }
-
-            return $children;
-        };
-
-        $data = [];
-        foreach ($menus as $key => $menu) {
-            if ($menu['pid'] == 0) {
-                unset($menus[$key]);
-                $menu['child'] = $getChildren($menus, $menu['id']);
-                $data[] = $menu;
+            $group['childs'] = isset($group['childs']) ? Str::explode($group['childs']) : [];
+            foreach ($group['childs'] as $kc => $childIds) {
+                AdminMenu::query()->where('id', $childIds)->update([
+                    'sort' => $kc,
+                    'pid'  => $group['root'],
+                ]);
             }
         }
 
-        return Hint::result($data);
+        return Hint::success("已更新排序！");
     }
 
 }

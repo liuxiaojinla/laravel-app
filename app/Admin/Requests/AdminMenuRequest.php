@@ -36,12 +36,12 @@ class AdminMenuRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'      => ['required', 'max:12'],
+            'title'      => ['required', 'max:24'],
             "menu"       => ['string', 'max:50'],
             "icon"       => ['string', 'max:50'],
             "pid"        => ['integer'],
             "sort"       => ['integer'],
-            "url"        => ['string', 'url', 'max:255'],
+            "url"        => ['string', 'max:255'],
             "show"       => ['integer', 'in:0,1'],
             "only_admin" => ['integer', 'in:0,1'],
             "only_dev"   => ['integer', 'in:0,1'],
