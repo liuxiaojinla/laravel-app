@@ -23,7 +23,7 @@ class SinglePageRequest extends FormRequest
         return [
             'title'   => ['required', 'between:2,50'],
             'name'    => ['alpha_dash:ascii', 'between:3,48', Rule::unique(SinglePage::class)->ignore($id)],
-            'content' => ['required', 'between:2,255'],
+            'content' => ['required', 'string', 'between:1,65535'],
         ];
     }
 

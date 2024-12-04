@@ -7,6 +7,7 @@ use App\Admin\Controllers\Media\AudioController;
 use App\Admin\Controllers\Media\ImageController;
 use App\Admin\Controllers\Media\VideoController;
 use App\Admin\Controllers\NoticeController;
+use App\Admin\Controllers\SinglePageController;
 use App\Http\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,4 +56,19 @@ Route::middleware(['auth'])->prefix('media')->name('media.')->group(function () 
     Route::prefix('image')->name('image.')->group(function () {
         Route::get('/lists', [ImageController::class, 'index'])->name('lists');
     });
+});
+
+// 单页
+Route::middleware(['auth'])->prefix('single_page')->name('single_page.')->group(function () {
+    Route::get('/lists', [SinglePageController::class, 'index'])->name('lists');
+    Route::get('/info', [SinglePageController::class, 'info'])->name('info');
+    Route::post('/create', [SinglePageController::class, 'store'])->name('store');
+    Route::post('/update', [SinglePageController::class, 'update'])->name('update');
+    Route::post('/delete', [SinglePageController::class, 'delete'])->name('delete');
+});
+
+// 关于我们
+Route::middleware(['auth'])->prefix('about')->name('about.')->group(function () {
+    Route::get('/', [SinglePageController::class, 'about'])->name('show');
+    Route::post('/', [SinglePageController::class, 'about'])->name('update');
 });

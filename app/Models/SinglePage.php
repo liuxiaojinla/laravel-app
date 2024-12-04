@@ -19,9 +19,21 @@ class SinglePage extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'int',
+        'id'     => 'int',
         'app_id' => 'int',
-        'extra' => 'json',
+        'extra'  => 'json',
     ];
 
+    /**
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
+     * @return string[]
+     */
+    public static function getSimpleFields()
+    {
+        return ['id', 'title', 'name', 'status', 'system', 'created_at', 'updated_at'];
+    }
 }

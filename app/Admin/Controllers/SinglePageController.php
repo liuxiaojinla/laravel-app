@@ -9,8 +9,8 @@ use App\Models\SinglePage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Validation\ValidationException;
 use Xin\Support\Str;
 
 class SinglePageController extends Controller
@@ -29,6 +29,21 @@ class SinglePageController extends Controller
         return Hint::result($data);
     }
 
+
+    /**
+     * 数据展示
+     * @param Request $request
+     * @return View
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = SinglePage::query()->where('id', $id)->firstOrFail();
+
+        return Hint::result($info);
+    }
+
     /**
      * 数据创建
      * @param SinglePageRequest $request
@@ -42,22 +57,9 @@ class SinglePageController extends Controller
         }
 
         $info = SinglePage::query()->create($data);
+        $info->refresh();
 
         return Hint::success("创建成功！", (string)url('index'), $info);
-    }
-
-    /**
-     * 数据展示
-     * @param Request $request
-     * @return View
-     */
-    public function show(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = SinglePage::query()->where('id', $id)->firstOrFail();
-
-        return Hint::result($info);
     }
 
     /**
@@ -68,11 +70,9 @@ class SinglePageController extends Controller
     public function update(SinglePageRequest $request)
     {
         $id = $request->validId();
-
-        $info = SinglePage::query()->where('id', $id)->firstOrFail();
-
         $data = $request->validated();
 
+        $info = SinglePage::query()->where('id', $id)->firstOrFail();
         if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
@@ -85,7 +85,7 @@ class SinglePageController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function destroy(Request $request)
+    public function delete(Request $request)
     {
         $ids = $request->validIds();
         $isForce = $request->integer('force', 0);
@@ -103,6 +103,7 @@ class SinglePageController extends Controller
 
     /**
      * 更新数据
+     * @param Request $request
      * @return Response
      * @throws ValidationException
      */
@@ -134,11 +135,12 @@ class SinglePageController extends Controller
             }
             $info->extra = $extra;
 
-            $this->assign('info', $info);
-            return $this->fetch();
+            return Hint::result($info);
         }
 
         $data = $request->input();
+        $data['name'] = SinglePage::ABOUT;
+
         if (isset($data['location'])) {
             $location = explode(',', $data['location'], 2);
             $data['extra']['lng'] = $location[0] ?? '';
@@ -148,10 +150,6 @@ class SinglePageController extends Controller
 
         if (!empty($data['extra']['region'])) {
             $data['extra']['region'] = json_decode($data['extra']['region'], true);
-        }
-
-        if ($info->isEmpty()) {
-            $data['name'] = SinglePage::ABOUT;
         }
 
         $info->save($data);
