@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Plugins\Activity\app\Http\Controllers\ActivityController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes

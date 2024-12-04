@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Plugins\Activity\app\Http\Controllers\ActivityController;
+use Plugins\Activity\App\Http\Controllers\IndexController;
+use Plugins\Activity\App\Http\Controllers\JoinController;
 
 /*
     |--------------------------------------------------------------------------
@@ -15,9 +15,12 @@ use Plugins\Activity\app\Http\Controllers\ActivityController;
     |
 */
 
-Route::middleware(['api', 'auth:sanctum'])->group(function () {
-    Route::get('info', fn(Request $request) => $request->user())->name('activity');
+Route::group(['api',], function () {
+    Route::get('/lists', [IndexController::class, 'index']);
+    Route::get('/info', [IndexController::class, 'detail']);
 });
-Route::group([], function () {
-    Route::resource('activity', ActivityController::class)->names('activity');
+
+Route::middleware(['api', 'auth:sanctum'])->prefix('join')->name('join')->group(function () {
+    Route::get('/lists', [JoinController::class, 'index']);
+    Route::post('/submit', [JoinController::class, 'join']);
 });
