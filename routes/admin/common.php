@@ -8,6 +8,7 @@ use App\Admin\Controllers\Media\ImageController;
 use App\Admin\Controllers\Media\VideoController;
 use App\Admin\Controllers\NoticeController;
 use App\Admin\Controllers\SinglePageController;
+use App\Admin\Controllers\UrlChoiceController;
 use App\Http\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
 
@@ -72,3 +73,6 @@ Route::middleware(['auth'])->prefix('about')->name('about.')->group(function () 
     Route::get('/', [SinglePageController::class, 'about'])->name('show');
     Route::post('/', [SinglePageController::class, 'about'])->name('update');
 });
+
+// URL 选择
+Route::get('url_choice', [UrlChoiceController::class, 'index'])->name('url_choice');

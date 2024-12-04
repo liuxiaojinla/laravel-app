@@ -3,9 +3,9 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Controller;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use function App\Http\Admin\Controllers\adv_event;
+use Illuminate\Http\Response;
+use Xin\Hint\Facades\Hint;
 
 class UrlChoiceController extends Controller
 {
@@ -17,17 +17,17 @@ class UrlChoiceController extends Controller
     /**
      * 数据列表
      * @param Request $request
-     * @return View
+     * @return Response
      */
     public function index(Request $request)
     {
         $this->initConfig();
 
-        $module = $request->get('_module', '', 'trim');
-        $subModule = (int)$request->get('_submodule', -1);
+        $module = trim($request->query('_module', ''));
+        $subModule = (int)$request->query('_submodule', -1);
 
         if (empty($this->data)) {
-            return view('url_choice', [
+            return Hint::result([
                 'config' => $this->data,
             ]);
         }
@@ -48,15 +48,14 @@ class UrlChoiceController extends Controller
 
             if ($subModule != -1) {
                 $item = $this->data[$module]['resources'][$subModule];
-                $data = $this->app->invoke($item['data']);
-                $this->assign('data', $data);
+                $data = $this->app->call($item['data']);
             }
         }
 
-        return view('url_choice', [
-            'data' => $data ?? [],
-            'config' => $this->data,
-            'module' => $module,
+        return Hint::result([
+            'data'      => $data ?? [],
+            'config'    => $this->data,
+            'module'    => $module,
             'submodule' => $subModule,
         ]);
     }
@@ -70,7 +69,7 @@ class UrlChoiceController extends Controller
             if (!isset($this->data[$module])) {
                 $this->data[$module] = array_merge($options, [
                     'resources' => [],
-                    'statics' => [],
+                    'statics'   => [],
                 ]);
             }
 
@@ -85,6 +84,6 @@ class UrlChoiceController extends Controller
             }
         };
 
-        adv_event('URLChoiceInit', $define);
+        event('URLChoiceInit', $define);
     }
 }
