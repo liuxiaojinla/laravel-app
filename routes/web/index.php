@@ -25,12 +25,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('chirps', ChirpController::class)
-    ->only(['index', 'create', 'store'])
-    ->middleware(['auth', 'verified']);
-
-
-
 $fallback = Route::fallback(function () {
     return Hint::error("404 Not Found", 404, request()->path())->setStatusCode(404);
 });
