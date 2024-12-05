@@ -12,7 +12,7 @@ use Plugins\Shop\App\Jobs\VoiceAmountJob;
 use Plugins\Shop\App\Models\Cashout;
 use Plugins\Shop\App\Models\PayFlow;
 use Plugins\Shop\App\Models\Shop;
-use plugins\shop\service\RebateService;
+use Plugins\Shop\App\Services\RebateService;
 use Xin\Hint\Facades\Hint;
 use Xin\Http\Client;
 use Xin\Support\Str;

@@ -8,7 +8,7 @@
 namespace Plugins\Shop\App\Models;
 
 use App\Models\Model;
-use think\model\concern\SoftDelete;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property-read  float shop_ratio_percentage
@@ -18,8 +18,7 @@ use think\model\concern\SoftDelete;
  */
 class ShopDistribution extends Model
 {
-
-    use SoftDelete;
+    use SoftDeletes;
 
     /**
      * @var string
@@ -31,9 +30,6 @@ class ShopDistribution extends Model
      *
      * @param int $shopId
      * @return bool
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public static function hasByShopId($shopId)
     {
@@ -44,10 +40,7 @@ class ShopDistribution extends Model
      * 快速首次创建对应商家的分销配置
      *
      * @param int $shopId
-     * @return array|\plugin\shop\model\ShopDistribution|\think\Model
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return ShopDistribution
      */
     public static function fastFirstCreateByShopId($shopId)
     {
@@ -63,7 +56,7 @@ class ShopDistribution extends Model
      * 根据商家ID快速创建
      *
      * @param int $shopId
-     * @return \plugin\shop\model\ShopDistribution|\think\Model
+     * @return ShopDistribution
      */
     public static function fastCreateByShopId($shopId)
     {
@@ -95,9 +88,9 @@ class ShopDistribution extends Model
      *
      * @return string
      */
-    protected function getShopRatioPercentageAttr()
+    protected function getShopRatioPercentageAttribute()
     {
-        $ratio = $this->getOrigin('shop_ratio');
+        $ratio = $this->getRawOriginal('shop_ratio');
         return bcdiv($ratio, 100, 4);
     }
 
@@ -106,9 +99,9 @@ class ShopDistribution extends Model
      *
      * @return string
      */
-    protected function getUserRebateRatioPercentageAttr()
+    protected function getUserRebateRatioPercentageAttribute()
     {
-        $ratio = $this->getOrigin('user_rebate_ratio');
+        $ratio = $this->getRawOriginal('user_rebate_ratio');
         return bcdiv($ratio, 100, 4);
     }
 
@@ -117,9 +110,9 @@ class ShopDistribution extends Model
      *
      * @return string
      */
-    protected function getPartnerRebateRatioPercentageAttr()
+    protected function getPartnerRebateRatioPercentageAttribute()
     {
-        $ratio = $this->getOrigin('partner_rebate_ratio');
+        $ratio = $this->getRawOriginal('partner_rebate_ratio');
         return bcdiv($ratio, 100, 4);
     }
 
@@ -128,9 +121,9 @@ class ShopDistribution extends Model
      *
      * @return string
      */
-    protected function getPlatformRebateRatioPercentageAttr()
+    protected function getPlatformRebateRatioPercentageAttribute()
     {
-        $ratio = $this->getOrigin('platform_rebate_ratio');
+        $ratio = $this->getRawOriginal('platform_rebate_ratio');
         return bcdiv($ratio, 100, 4);
     }
 }

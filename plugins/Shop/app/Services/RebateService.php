@@ -5,16 +5,12 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\shop\service;
+namespace Plugins\Shop\App\Services;
 
-use app\common\model\User;
 use Plugins\Shop\App\Models\PayFlow;
 use Plugins\Shop\App\Models\PayOrder;
 use Plugins\Shop\App\Models\Shop;
 use Plugins\Shop\App\Models\ShopDistribution;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
-use think\Model;
 
 class RebateService
 {
@@ -37,8 +33,8 @@ class RebateService
     /**
      * 根据流水单进行返利
      *
-     * @param \Plugins\Shop\App\Models\PayFlow $payFlow
-     * @return \Plugins\Shop\App\Models\PayOrder|\think\Model
+     * @param PayFlow $payFlow
+     * @return PayOrder
      */
     public function rebateByPayFlow(PayFlow $payFlow)
     {
@@ -61,7 +57,7 @@ class RebateService
      * 解析商户返利配置
      *
      * @param int $shopId
-     * @return array|\think\Model|\Plugins\Shop\App\Models\ShopDistribution
+     * @return ShopDistribution
      */
     protected function resolveShopDistribution($shopId)
     {
@@ -186,7 +182,7 @@ class RebateService
      * 生成订单
      *
      * @param array $result
-     * @return \Plugins\Shop\App\Models\PayOrder|\think\Model
+     * @return PayOrder|\think\Model
      */
     protected function makeOrder($result)
     {
@@ -244,7 +240,7 @@ class RebateService
      * @param int $shopId
      * @param float $totalAmount
      * @param array $appends
-     * @return \Plugins\Shop\App\Models\PayOrder|\think\Model
+     * @return PayOrder|\think\Model
      */
     public function rebate($userId, $shopId, $totalAmount, $appends = [])
     {

@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Plugins\Shop\app\Http\Controllers\ShopController;
+use Plugins\Shop\App\Http\Controllers\IndexController;
+use Plugins\Shop\App\Http\Controllers\Manager\IndexController as ManagerIndexController;
+use Plugins\Shop\App\Http\Controllers\Manager\ConfigController as ManagerConfigController;
+use Plugins\Shop\App\Http\Controllers\Manager\CashoutController as ManagerCashoutController;
 
 /*
     |--------------------------------------------------------------------------
@@ -15,10 +17,31 @@ use Plugins\Shop\app\Http\Controllers\ShopController;
     |
 */
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::get('shop', fn (Request $request) => $request->user())->name('shop');
+// 公共
+Route::group([], function () {
+    Route::get('/lists', [IndexController::class, 'index'])->name('lists');
+    Route::get('/info', [IndexController::class, 'detail'])->name('info');
+    Route::get('/categories', [IndexController::class, 'categories'])->name('categories');
 });
 
-Route::group([], function () {
-    Route::resource('shop', ShopController::class)->names('shop');
+// 店铺管理
+Route::middleware(['auth:sanctum'])->prefix('manager')->name('manager.')->group(function () {
+    Route::get('/info', [ManagerIndexController::class, 'info'])->name('info');
+    Route::get('/bank', [ManagerIndexController::class, 'bank'])->name('bank');
+    Route::get('/pay_qrcode', [ManagerIndexController::class, 'payQrCode'])->name('bank');
+});
+
+// 店铺配置
+Route::middleware(['auth:sanctum'])->prefix('manager/config')->name('manager.config.')->group(function () {
+    Route::get('/info', [ManagerConfigController::class, 'info'])->name('info');
+    Route::post('/update', [ManagerConfigController::class, 'update'])->name('update');
+});
+
+// 提现管理
+Route::middleware(['auth:sanctum'])->prefix('manager/cashout')->name('manager.cashout.')->group(function () {
+    Route::get('/lists', [ManagerCashoutController::class, 'index'])->name('lists');
+    Route::get('/info', [ManagerCashoutController::class, 'info'])->name('info');
+    Route::get('/apply_info', [ManagerCashoutController::class, 'applyInfo'])->name('apply_info');
+    Route::get('/apply', [ManagerCashoutController::class, 'apply'])->name('apply');
+    Route::get('/apply', [ManagerCashoutController::class, 'apply'])->name('apply');
 });

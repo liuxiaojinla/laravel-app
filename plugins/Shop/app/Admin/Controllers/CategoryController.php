@@ -9,7 +9,7 @@ namespace Plugins\Shop\App\Admin\Controllers;
 
 use App\Admin\Controller;
 use Illuminate\Http\Response;
-use Plugins\Shop\App\Http\Requests\CategoryRequest;
+use Illuminate\Validation\ValidationException;
 use Plugins\Shop\App\Http\Requests\CategoryRequest;
 use Plugins\Shop\App\Models\Category;
 use Plugins\Shop\App\Models\Shop;
@@ -46,84 +46,62 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $id = $this->request->param('id/d', 0);
+        $data = $request->validated();
 
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = Category::where('id', $id)->find();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
+        $info = Category::query()->create($data);
 
-            $this->assignTreeCategories();
-
-            return $this->fetch('edit');
-        }
-
-        $data = $this->request->validate(null, CategoryRequest::class);
-        $info = Category::create($data);
-
-        return Hint::success("创建成功！", (string)plugin_url('index'), $info);
+        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
      * 更新数据
-     * @return string|\think\Response
+     * @return Response
      */
-    public function update()
+    public function update(CategoryRequest $request)
     {
         $id = $this->request->validId();
-        $info = Category::where('id', $id)->findOrFail();
+        $data = $request->validated();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
-            $this->assignTreeCategories();
-
-            return $this->fetch('edit');
-        }
-
-        $data = $this->request->validate(null, CategoryRequest::class);
-        if (!$info->save($data)) {
+        $info = Category::query()->where('id', $id)->firstOrFail();
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
-        return Hint::success("更新成功！", (string)plugin_url('index'), $info);
+        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
     /**
      * 删除指定资源
      *
-     * @return \think\Response
-     * @throws \think\Exception
+     * @return Response
      */
     public function delete()
     {
         $ids = $this->request->ids();
 
         //检查是否有子分类 计算两个数组交集
-        $pids = Category::where('pid', 'in', $ids)->column('pid');
+        $pids = Category::query()->where('pid', 'in', $ids)->pluck('pid')->toArray();
         $pids = array_intersect($pids, $ids);
 
         if (!empty($pids)) {
-            $titles = implode("、", Category::select($pids)->column("title"));
+            $titles = implode("、", Category::query()->whereIn('id', $pids)->get()->pluck("title")->toArray());
 
             return Hint::error("请先删除【{$titles}】下的子分类！");
         }
 
-        if (Shop::where('category_id', 'in', $ids)->count()) {
+        if (Shop::query()->where('category_id', 'in', $ids)->count()) {
             return Hint::error('请先处理分类下的门店！');
         }
 
-        if (Category::destroy($ids) === false) {
-            return Hint::error('删除失败！');
-        }
+        Category::destroy($ids);
 
         return Hint::success('已删除！');
     }
 
     /**
      * 更新数据
-     * @return \think\Response
+     * @return Response
+     * @throws ValidationException
      */
     public function setValue()
     {

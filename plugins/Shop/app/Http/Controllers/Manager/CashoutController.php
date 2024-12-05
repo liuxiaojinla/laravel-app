@@ -24,7 +24,6 @@ class CashoutController extends Controller
      * 获取提现记录
      *
      * @return Response
-     *
      */
     public function index()
     {
@@ -39,7 +38,7 @@ class CashoutController extends Controller
      *
      * @return Response
      */
-    public function detail()
+    public function info()
     {
         $id = $this->request->validId();
         $shopId = $this->auth->user()->shop_id;
@@ -58,7 +57,7 @@ class CashoutController extends Controller
      *
      * @return Response
      */
-    public function getApplyInfo()
+    public function applyInfo()
     {
         return Hint::result();
     }
@@ -71,8 +70,8 @@ class CashoutController extends Controller
      */
     public function apply()
     {
-        $money = $this->request->param('money/f', 0);
-        $type = $this->request->param('type/d', 0);
+        $money = $this->request->float('money', 0);
+        $type = $this->request->integer('type', 0);
         if ($money < 0.01) {
             throw Error::validationException('提现金额错误！');
         }

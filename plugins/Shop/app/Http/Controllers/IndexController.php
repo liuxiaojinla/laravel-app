@@ -9,6 +9,7 @@ namespace Plugins\Shop\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Plugins\Shop\App\Models\Category;
 use Plugins\Shop\App\Models\Shop;
@@ -55,6 +56,8 @@ class IndexController extends Controller
         }
 
         $search = $this->request->query();
+
+        /** @var LengthAwarePaginator $data */
         $data = Shop::simple(function ($fields) use ($isNearby, $lng, $lat) {
             if ($isNearby) {
                 $fields[] = build_mysql_distance_field($lng, $lat, 'lng', 'lat');
@@ -67,13 +70,14 @@ class IndexController extends Controller
                 'status' => 1,
             ])
             ->orderByDesc('sort')
-            ->paginate($this->request->paginate(), $total)
-            ->each(function (Shop $item) use ($isNearby, $lng, $lat) {
-                if (!$isNearby) {
-                    $item['distance'] = Position::calcDistance($lng, $lat, $item->lng, $item->lat);
-                }
-                $item['distance'] = round($item['distance'] / 1000, 2);
-            });
+            ->paginate($this->request->paginate(), $total);
+
+        $data->each(function (Shop $item) use ($isNearby, $lng, $lat) {
+            if (!$isNearby) {
+                $item['distance'] = Position::calcDistance($lng, $lat, $item->lng, $item->lat);
+            }
+            $item['distance'] = round($item['distance'] / 1000, 2);
+        });
 
         return Hint::result($data);
     }

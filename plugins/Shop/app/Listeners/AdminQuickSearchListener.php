@@ -5,11 +5,11 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\shop\listener;
+namespace Plugins\Shop\App\Listeners;
 
 use Plugins\Shop\App\Models\Shop;
 
-class QuickSearch
+class AdminQuickSearchListener
 {
 
     /**
@@ -21,8 +21,8 @@ class QuickSearch
         return [
             [
                 'title' => '门店',
-                'items' => !empty($keywords) ? Shop::where('title', 'like', $keywords)->order('view_count desc')
-                    ->page(1, 10)->select()->map(function (Shop $item) {
+                'items' => !empty($keywords) ? Shop::simple()->where('title', 'like', $keywords)->orderByDesc('view_count')
+                    ->forPage(1, 10)->select()->map(function (Shop $item) {
                         return [
                             'title'       => $item->title,
                             'description' => $item->description,

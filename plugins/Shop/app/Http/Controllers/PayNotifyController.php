@@ -13,7 +13,7 @@ use Plugins\Shop\App\Jobs\VoiceAmountJob;
 use Plugins\Shop\App\Models\PayFlow;
 use Plugins\Shop\App\Models\PayOrder;
 use Plugins\Shop\App\Models\Shop;
-use plugins\shop\service\RebateService;
+use Plugins\Shop\App\Services\RebateService;
 
 class PayNotifyController extends Controller
 {

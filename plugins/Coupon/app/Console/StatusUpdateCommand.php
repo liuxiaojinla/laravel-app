@@ -3,8 +3,6 @@
 namespace Plugins\Coupon\App\Console;
 
 use Illuminate\Console\Command;
-use Plugins\Activity\App\Enums\ActivityStatus;
-use Plugins\Activity\App\Models\Activity;
 use Plugins\Coupon\app\Enums\CouponStatus;
 use Plugins\Coupon\App\Models\Coupon;
 

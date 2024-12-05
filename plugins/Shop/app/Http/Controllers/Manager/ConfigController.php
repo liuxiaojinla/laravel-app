@@ -23,7 +23,7 @@ class ConfigController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function info()
     {
         $shopId = $this->auth->user()->shop_id;
         $config = $this->shopConfigService->get($shopId);

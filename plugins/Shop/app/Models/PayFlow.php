@@ -8,7 +8,7 @@
 namespace Plugins\Shop\App\Models;
 
 use App\Models\Model;
-use think\Validate;
+use Illuminate\Support\Facades\Validator;
 use Xin\Support\Str;
 
 /**
@@ -36,7 +36,7 @@ class PayFlow extends Model
      * 生成流水单
      *
      * @param array $data
-     * @return \Plugins\Shop\App\Models\PayFlow|\think\Model
+     * @return PayFlow
      */
     public static function make($data)
     {
@@ -69,8 +69,7 @@ class PayFlow extends Model
      */
     private static function validateData($data)
     {
-        $validate = new Validate();
-        $validate->rule([
+        $data = Validator::validate($data, [
             'user_id'          => 'require',
             'shop_id'          => 'require',
             'total_amount'     => 'require|float|gt:0.01',
@@ -78,7 +77,6 @@ class PayFlow extends Model
             'out_trade_no'     => 'require',
             'transaction_id'   => 'require',
         ]);
-        $validate->failException(true)->check($data);
 
         return $data;
     }

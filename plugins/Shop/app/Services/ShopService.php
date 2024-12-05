@@ -5,6 +5,7 @@ namespace Plugins\Shop\App\Services;
 use App\Exceptions\Error;
 use App\Services\Concerns\Caching;
 use Illuminate\Database\Eloquent\Collection;
+use Plugins\Shop\App\Models\BankAccount;
 use Plugins\Shop\App\Models\Category;
 use Plugins\Shop\App\Models\Shop;
 
@@ -32,9 +33,26 @@ class ShopService
         return Shop::query()->find($identifier);
     }
 
-    public function getPayQrCodeById(mixed $shopId)
+    /**
+     * @param int $shopId
+     * @return mixed
+     */
+    public function getPayQrCodeById($shopId)
     {
+        $shop = $this->get($shopId);
+        $qrCodeId = $shop->pay_qrcode_id;
+        if ($qrCodeId > 0) {
+            $qrCode = WechatWeappQrcode::getDetailById($qrCodeId);
+        } else {
+            $qrCode = WechatWeappQrcode::makeCode(
+                "/pages/pay/index?id={$shopId}"
+            );
+            $this->update($shopId, [
+                'pay_qrcode_id' => $qrCode->id,
+            ]);
+        }
 
+        return $qrCode;
     }
 
     /**
@@ -109,5 +127,38 @@ class ShopService
 
             $this->forgetCache($item->id);
         });
+    }
+
+    /**
+     * 获取银行卡
+     * @param int $shopId
+     * @return BankAccount
+     */
+    public function getBank(int $shopId)
+    {
+        return value(
+            BankAccount::query()->where([
+                'shop_id' => $shopId,
+            ])->first()
+        );
+    }
+
+    /**
+     * 更新或插入银行卡
+     * @param int $shopId
+     * @param array $data
+     * @return BankAccount
+     */
+    public function upsertBank($shopId, array $data)
+    {
+        /** @var BankAccount $info */
+        $info = BankAccount::query()->updateOrCreate([
+            'shop_id' => $shopId,
+        ], $data);
+        if ($info->wasRecentlyCreated) {
+            $info->refresh();
+        }
+
+        return $info;
     }
 }

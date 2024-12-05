@@ -5,21 +5,46 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\shop\notification;
+namespace Plugins\Shop\App\Notifications;
 
-use Xin\Thinkphp\Notification\Channel\Official;
-use Xin\Thinkphp\Notification\Channel\Weapp;
-use Xin\Thinkphp\Notification\Message\WxSubscribeMessage;
-use Xin\Thinkphp\Notification\Message\WxTemplateMessage;
-use yunwuxin\Notification;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 
 class OrderPay extends Notification
 {
 
+    use Queueable;
+
     /**
-     * @var int
+     * Create a new notification instance.
      */
-    public $tries = 1;
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['official', 'weapp'];
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            //
+        ];
+    }
 
     /**
      * @inheritDoc

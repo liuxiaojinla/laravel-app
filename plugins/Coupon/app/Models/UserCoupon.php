@@ -9,6 +9,7 @@ namespace Plugins\Coupon\App\Models;
 
 use App\Exceptions\Error;
 use App\Models\Model;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Xin\LaravelFortify\Validation\ValidationException;
 
