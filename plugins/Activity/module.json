@@ -5,7 +5,7 @@
     "keywords": [],
     "priority": 0,
     "providers": [
-        "Plugins\\Activity\\app\\Providers\\ActivityServiceProvider"
+        "Plugins\\Activity\\App\\Providers\\AppServiceProvider"
     ],
     "files": []
 }

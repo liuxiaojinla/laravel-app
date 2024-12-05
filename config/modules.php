@@ -56,7 +56,7 @@ return [
                 'PROVIDER_NAMESPACE',
             ],
         ],
-        'gitkeep'      => true,
+        'gitkeep'      => false,
     ],
     'paths'    => [
         /*
@@ -109,7 +109,7 @@ return [
             'provider'        => ['path' => 'app/Providers', 'generate' => true],
             'controller'      => ['path' => 'app/Http/Controllers', 'generate' => true],
             'filter'          => ['path' => 'app/Http/Middleware', 'generate' => false],
-            'request'         => ['path' => 'app/Http/Requests', 'generate' => false],
+            'request'         => ['path' => 'app/Http/Requests', 'generate' => true],
             'repository'      => ['path' => 'app/Repositories', 'generate' => false],
             'event'           => ['path' => 'app/Events', 'generate' => false],
             'listener'        => ['path' => 'app/Listeners', 'generate' => false],

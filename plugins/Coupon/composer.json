@@ -16,10 +16,5 @@
             "Plugins\\Coupon\\Database\\Factories\\": "database/factories/",
             "Plugins\\Coupon\\Database\\Seeders\\": "database/seeders/"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Plugins\\Coupon\\Tests\\": "tests/"
-        }
     }
 }

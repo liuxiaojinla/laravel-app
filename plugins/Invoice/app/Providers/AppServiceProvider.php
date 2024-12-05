@@ -1,15 +1,15 @@
 <?php
 
-namespace Plugins\Activity\app\Providers;
+namespace Plugins\Invoice\App\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
-class ActivityServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
-    protected string $moduleName = 'Activity';
+    protected string $moduleName = 'Invoice';
 
-    protected string $moduleNameLower = 'activity';
+    protected string $moduleNameLower = 'invoice';
 
     /**
      * Boot the application events.

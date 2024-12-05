@@ -5,9 +5,9 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace Plugins\Activity\App\Enum;
+namespace Plugins\Activity\App\Enums;
 
-use Xin\Enum\Enum;
+use MyCLabs\Enum\Enum;
 
 class ActivityStatus extends Enum
 {

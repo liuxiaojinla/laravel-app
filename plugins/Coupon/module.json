@@ -1,11 +1,11 @@
 {
-    "name": "Activity",
-    "alias": "activity",
+    "name": "Coupon",
+    "alias": "coupon",
     "description": "",
     "keywords": [],
     "priority": 0,
     "providers": [
-        "Plugins\\Activity\\app\\Providers\\ActivityServiceProvider"
+        "Plugins\\Coupon\\App\\Providers\\AppServiceProvider"
     ],
     "files": []
 }

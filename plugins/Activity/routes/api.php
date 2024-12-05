@@ -15,12 +15,12 @@ use Plugins\Activity\App\Http\Controllers\JoinController;
     |
 */
 
-Route::group(['api',], function () {
+Route::group([], function () {
     Route::get('/lists', [IndexController::class, 'index']);
     Route::get('/info', [IndexController::class, 'detail']);
 });
 
-Route::middleware(['api', 'auth:sanctum'])->prefix('join')->name('join')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('join')->name('join')->group(function () {
     Route::get('/lists', [JoinController::class, 'index']);
     Route::post('/submit', [JoinController::class, 'join']);
 });
