@@ -1,5 +1,5 @@
 {
-    "name": "nwidart/shop",
+    "name": "xin/shop",
     "description": "",
 
     "extra": {
@@ -16,11 +16,6 @@
             "Plugins\\Shop\\App\\": "app/",
             "Plugins\\Shop\\Database\\Factories\\": "database/factories/",
             "Plugins\\Shop\\Database\\Seeders\\": "database/seeders/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Plugins\\Shop\\Tests\\": "tests/"
         }
     }
 }

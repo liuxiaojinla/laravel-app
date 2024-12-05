@@ -5,7 +5,7 @@
     "keywords": [],
     "priority": 0,
     "providers": [
-        "Plugins\\Wechat\\app\\Providers\\WechatServiceProvider"
+        "Plugins\\Wechat\\App\\Providers\\AppServiceProvider"
     ],
     "files": []
 }

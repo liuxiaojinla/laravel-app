@@ -33,11 +33,6 @@ class Category extends Model
     const CACHE_KEY = 'plugin:shop:category:list';
 
     /**
-     * @var int
-     */
-    protected $defaultSoftDelete = 0;
-
-    /**
      * @var string
      */
     protected $table = 'shop_category';
@@ -105,7 +100,7 @@ class Category extends Model
     }
 
     /**
-     * 关联文章
+     * 关联店铺
      *
      * @return HasMany
      */

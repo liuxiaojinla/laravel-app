@@ -15,12 +15,12 @@ class BankAccount extends Model
     /**
      * @var string
      */
-    protected $name = 'shop_bank_account';
+    protected $table = 'shop_bank_account';
 
     /**
      * @var array
      */
-    protected $append = [
+    protected $appends = [
         'bank_account_show',
     ];
 
@@ -29,9 +29,9 @@ class BankAccount extends Model
      *
      * @return string
      */
-    protected function getBankAccountShowAttr()
+    protected function getBankAccountShowAttribute()
     {
-        $value = $this->getOrigin('bank_account');
+        $value = $this->getRawOriginal('bank_account');
         return implode(" ", str_split($value, 4));
     }
 }

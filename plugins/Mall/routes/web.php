@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Plugins\Mall\app\Http\Controllers\MallController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes

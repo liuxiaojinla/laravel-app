@@ -30,7 +30,7 @@ class PayFlow extends Model
     /**
      * @var string
      */
-    protected $name = 'shop_pay_flow';
+    protected $table = 'shop_pay_flow';
 
     /**
      * 生成流水单

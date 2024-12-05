@@ -5,7 +5,7 @@
     "keywords": [],
     "priority": 0,
     "providers": [
-        "Plugins\\Mall\\app\\Providers\\MallServiceProvider"
+        "Plugins\\Mall\\App\\Providers\\AppServiceProvider"
     ],
     "files": []
 }

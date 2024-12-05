@@ -17,17 +17,6 @@ use Xin\LaravelFortify\Request\FormRequest;
 class ArticleRequest extends FormRequest
 {
 
-    /**
-     * 验证规则
-     *
-     * @var array
-     */
-    protected $rule = [
-        'title'       => 'required|between:2,48',
-        'content'     => 'required',
-        'category_id' => 'required',
-        'status'      => 'nullable|in:0,1,2,3',
-    ];
 
     /**
      * 字段信息
@@ -48,4 +37,18 @@ class ArticleRequest extends FormRequest
      */
     protected $scene = [];
 
+    /**
+     * 验证规则
+     *
+     * @return string[]
+     */
+    public function rules()
+    {
+        return [
+            'title'       => 'required|between:2,48',
+            'content'     => 'required',
+            'category_id' => 'required',
+            'status'      => 'nullable|in:0,1,2,3',
+        ];
+    }
 }
