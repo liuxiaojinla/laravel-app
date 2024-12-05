@@ -37,19 +37,6 @@ class AdminService extends EloquentUserProvider
     }
 
     /**
-     * 从数据库刷新到缓存中
-     * @param string $id
-     * @return bool
-     */
-    public function refresh($id)
-    {
-        /** @var Admin $user */
-        $user = $this->retrieveById($id);
-
-        return $this->updateCache($user);
-    }
-
-    /**
      * 获取缓存的有效期
      * @return \Carbon\Carbon|\Illuminate\Support\Carbon
      */

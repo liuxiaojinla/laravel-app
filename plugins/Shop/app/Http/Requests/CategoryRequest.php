@@ -7,12 +7,12 @@
  * @author        <657306123@qq.com> LXSEA
  */
 
+namespace Plugins\Shop\App\Http\Requests;
 
-namespace App\Admin\Requests\Article;
 
-use App\Models\Article\Category;
 use Closure;
 use Illuminate\Validation\Validator;
+use Plugins\Shop\App\Models\Category;
 use Xin\LaravelFortify\Request\FormRequest;
 
 /**
@@ -20,7 +20,6 @@ use Xin\LaravelFortify\Request\FormRequest;
  */
 class CategoryRequest extends FormRequest
 {
-
 
     /**
      * 字段信息
@@ -71,13 +70,13 @@ class CategoryRequest extends FormRequest
 
     /**
      * 验证规则
+     *
      * @return string[]
      */
     public function rules()
     {
         return [
-            'title' => ['required', 'between:2,48'],
-            //		'name'  =>'require|alpha_dash:ascii|between:3,48|unique:category',
+            'title' => 'require|length:2,48',
             'pid'   => [
                 'integer',
                 // 验证父级是不是自己

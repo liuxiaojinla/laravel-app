@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException as BaseValidationException;
 use Xin\LaravelFortify\Validation\ValidationException;
 
 class Error
@@ -13,7 +14,7 @@ class Error
     /**
      * 验证错误
      * @param string $message
-     * @return ValidationException
+     * @return BaseValidationException
      */
     public static function validationException($message)
     {
@@ -25,7 +26,7 @@ class Error
     /**
      * 验证错误
      * @param array $messages
-     * @return ValidationException
+     * @return BaseValidationException
      */
     public static function validationExceptionWithMessages($messages)
     {
@@ -36,7 +37,7 @@ class Error
      * 抛出验证错误
      * @param string $message
      * @return mixed
-     * @throws ValidationException
+     * @throws BaseValidationException
      */
     public static function throwValidateException($message)
     {

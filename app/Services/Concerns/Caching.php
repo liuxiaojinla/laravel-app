@@ -2,10 +2,12 @@
 
 namespace App\Services\Concerns;
 
-use App\Admin\Models\Admin;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template M of Model
+ */
 trait Caching
 {
     /**
@@ -16,14 +18,29 @@ trait Caching
     /**
      * 通过用户的唯一标识符检索数据。
      * @param mixed $identifier
-     * @return Model
+     * @return M
      */
     abstract public function retrieveById($identifier);
 
     /**
+     * 从数据库刷新到缓存中
+     * @param string|int $id
+     * @return M
+     */
+    public function refresh($id)
+    {
+        /** @var Model $info */
+        $info = $this->retrieveById($id);
+
+        $this->updateCache($info);
+
+        return $info;
+    }
+
+    /**
      * 获取数据（优先从缓存加载）
-     * @param int $id
-     * @return Admin
+     * @param int|string $id
+     * @return M
      */
     public function getCache($id)
     {
@@ -32,7 +49,6 @@ trait Caching
             $this->getCacheExpired(),
             function () use ($id) {
                 $info = $this->retrieveById($id);
-
                 return $this->safetyHandling($info);
             }
         );
@@ -50,6 +66,16 @@ trait Caching
             $this->safetyHandling($info),
             $this->getCacheExpired()
         );
+    }
+
+    /**
+     * 忘记缓存
+     * @param int $id
+     * @return void
+     */
+    public function forgetCache($id)
+    {
+        $this->cache->forget($this->getCacheKey($id));
     }
 
     /**
@@ -86,10 +112,10 @@ trait Caching
 
     /**
      * 安全的处理模型
-     * @param Model $info
-     * @return Model
+     * @param M|Model $info
+     * @return M
      */
-    protected function safetyHandling(Model $info)
+    protected function safetyHandling($info)
     {
         return $info->makeHidden([
             'password',
