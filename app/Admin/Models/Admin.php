@@ -90,10 +90,9 @@ class Admin extends Authenticatable
     /**
      * 登录IP地址访问器修改器
      *
-     * @param int $ip
      * @return Attribute
      */
-    protected function loginIp()
+    protected function loginIp(): Attribute
     {
         return Attribute::make(
             function ($ip) {
@@ -105,6 +104,22 @@ class Admin extends Authenticatable
         );
     }
 
+    /**
+     * 创建IP地址访问器修改器
+     *
+     * @return Attribute
+     */
+    protected function createIp(): Attribute
+    {
+        return Attribute::make(
+            function ($ip) {
+                return long2ip($ip);
+            },
+            function ($ip) {
+                return ip2long($ip);
+            }
+        );
+    }
 
     /**
      * @return mixed|string

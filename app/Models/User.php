@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -87,5 +88,39 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->morphMany(Notification::class, 'notifiable')->latest();
+    }
+
+    /**
+     * 登录IP地址访问器修改器
+     *
+     * @return Attribute
+     */
+    protected function lastLoginIp(): Attribute
+    {
+        return Attribute::make(
+            function ($ip) {
+                return long2ip($ip);
+            },
+            function ($ip) {
+                return ip2long($ip);
+            }
+        );
+    }
+
+    /**
+     * 创建IP地址访问器修改器
+     *
+     * @return Attribute
+     */
+    protected function createIp(): Attribute
+    {
+        return Attribute::make(
+            function ($ip) {
+                return long2ip($ip);
+            },
+            function ($ip) {
+                return ip2long($ip);
+            }
+        );
     }
 }

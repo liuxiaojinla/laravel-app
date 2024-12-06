@@ -11,6 +11,7 @@ namespace Plugins\Shop\App\Models;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * 分类模型
@@ -35,28 +36,7 @@ class Category extends Model
     /**
      * @var string
      */
-    protected $table = 'shop_category';
-
-    /**
-     * 获取列表
-     *
-     * @param array $query
-     * @param string $order
-     * @param int $page
-     * @param int $limit
-     * @return Collection
-     */
-    public static function getGoodList($query, $order = 'sort asc', $page = 1, $limit = 10)
-    {
-        $field = 'id,title,description,cover';
-
-        return static::where('status', 1)
-            ->where($query)
-            ->field($field)
-            ->order($order)
-            ->page($page, $limit)
-            ->select();
-    }
+    protected $table = 'shop_categories';
 
     /**
      * @inheritDoc
@@ -72,13 +52,19 @@ class Category extends Model
     }
 
     /**
-     * 数据写入后
-     *
-     * @param static $model
+     * 模型的「booted」方法。
      */
-    protected static function onAfterWrite($model)
+    protected static function booted(): void
     {
-        static::updateCache();
+        // 数据写入后
+        static::saved(function (self $info) {
+            static::updateCache();
+        });
+
+        // 数据删除后
+        static::deleted(function (self $info) {
+            static::updateCache();
+        });
     }
 
     /**
@@ -87,16 +73,6 @@ class Category extends Model
     public static function updateCache()
     {
         Cache::delete(static::CACHE_KEY);
-    }
-
-    /**
-     * 数据删除后
-     *
-     * @param static $model
-     */
-    protected static function onAfterDelete($model)
-    {
-        static::updateCache();
     }
 
     /**

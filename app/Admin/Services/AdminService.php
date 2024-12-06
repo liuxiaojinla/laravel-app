@@ -4,13 +4,18 @@ namespace App\Admin\Services;
 
 use App\Admin\Models\Admin;
 use App\Services\Concerns\Caching;
+use App\Services\Concerns\CrudOperations;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 
+/**
+ * @mixin Caching<Admin>
+ * @mixin CrudOperations<Admin>
+ */
 class AdminService extends EloquentUserProvider
 {
-    use Caching;
+    use Caching, CrudOperations;
 
     /**
      * @var string
@@ -26,14 +31,13 @@ class AdminService extends EloquentUserProvider
         $this->cache = $cache;
     }
 
+
     /**
-     * 获取数据（优先从缓存加载）
-     * @param int $id
-     * @return Admin
+     * @inerhitDoc
      */
-    public function get($id)
+    protected function newQuery()
     {
-        return $this->getCache($id);
+        return Admin::query();
     }
 
     /**

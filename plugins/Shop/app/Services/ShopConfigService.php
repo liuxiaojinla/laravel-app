@@ -3,20 +3,32 @@
 namespace Plugins\Shop\App\Services;
 
 use App\Services\Concerns\Caching;
+use App\Services\Concerns\CrudOperations;
 use Illuminate\Support\Facades\Validator;
 use Plugins\Shop\App\Models\ShopConfig;
 
+/**
+ * @mixin Caching<ShopConfig>
+ * @mixin CrudOperations<ShopConfig>
+ */
 class ShopConfigService
 {
-    use Caching;
+    use Caching, CrudOperations {
+        create as protected;
+        update as protected;
+    }
 
     /**
-     * @param int $shopId
-     * @return ShopConfig
+     * @var string
      */
-    public function get(int $shopId)
+    protected $cachePrefix = 'shop_config';
+
+    /**
+     * @inerhitDoc
+     */
+    protected function newQuery()
     {
-        return $this->getCache($shopId);
+        return ShopConfig::query();
     }
 
     /**

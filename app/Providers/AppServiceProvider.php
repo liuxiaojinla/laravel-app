@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator;
 use Symfony\Component\Routing\RequestContext;
+use Xin\LaravelFortify\Validation\Rules\MobileRule;
 use Xin\LaravelFortify\Validation\ValidationException;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     protected function resolvingValidation(): void
     {
         $this->app->resolving(ValidationFactory::class, function (ValidationFactory $factory) {
+//            $factory->extend('mobile', MobileRule::class);
             $factory->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
                 $validator = new Validator($translator, $data, $rules, $messages, $customAttributes);
                 $validator->setException(ValidationException::class);

@@ -79,7 +79,7 @@ class IndexController extends Controller
      * @return Response
      * @throws ValidationException
      */
-    public function bank()
+    public function bankInfo()
     {
         $shopId = $this->shopId();
 

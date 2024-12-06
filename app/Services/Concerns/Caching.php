@@ -40,7 +40,7 @@ trait Caching
     /**
      * 获取数据（优先从缓存加载）
      * @param int|string $id
-     * @return M
+     * @return array
      */
     public function getCache($id)
     {
@@ -49,7 +49,7 @@ trait Caching
             $this->getCacheExpired(),
             function () use ($id) {
                 $info = $this->retrieveById($id);
-                return $this->safetyHandling($info);
+                return $this->safetyHandling($info)->toArray();
             }
         );
     }
@@ -63,7 +63,7 @@ trait Caching
     {
         return $this->cache->put(
             $this->getCacheKey($info->id),
-            $this->safetyHandling($info),
+            $this->safetyHandling($info)->toArray(),
             $this->getCacheExpired()
         );
     }

@@ -21,10 +21,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float order_money
  * @property string update_time
  */
-class Shop extends Model implements OrderListenerOfStatic
+class Shop extends Model
 {
-    use SoftDeletes, OpenAppable;
-    use HasAccountAssets;
+    use SoftDeletes;
 
     /**
      * 多态类型

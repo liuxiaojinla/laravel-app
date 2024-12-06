@@ -31,7 +31,7 @@ class CashoutController extends Controller
     public function index()
     {
         $shopId = $this->shopId();
-        $data = Cashout::query()->where('shop_id', $shopId)->orderByDesc('id')->paginate($this->request->paginate());
+        $data = Cashout::query()->where('shop_id', $shopId)->orderByDesc('id')->paginate();
 
         return Hint::result($data);
     }

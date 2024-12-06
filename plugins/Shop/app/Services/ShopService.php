@@ -3,8 +3,11 @@
 namespace Plugins\Shop\App\Services;
 
 use App\Exceptions\Error;
+use App\Models\User;
 use App\Services\Concerns\Caching;
 use App\Services\Concerns\CrudOperations;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Plugins\Shop\App\Models\BankAccount;
 use Plugins\Shop\App\Models\Category;
 use Plugins\Shop\App\Models\Shop;
@@ -15,6 +18,19 @@ use Plugins\Shop\App\Models\Shop;
 class ShopService
 {
     use Caching, CrudOperations;
+
+    /**
+     * @var string
+     */
+    protected $cachePrefix = 'shop';
+
+    /**
+     * @param Cache $cache
+     */
+    public function __construct(Cache $cache)
+    {
+        $this->cache = $cache;
+    }
 
     /**
      * @inerhitDoc

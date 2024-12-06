@@ -41,21 +41,15 @@ class VerifyCodeController extends BaseController
     /**
      * 获取要发送的手机号
      * @return string
-     * @throws ValidationException
      */
     protected function getMobile()
     {
         $mobile = trim($this->request->input('mobile', ''));
-        $validator = Validator::make([
+        Validator::validate([
             'mobile' => $mobile,
         ], [
-            'mobile' => 'required|mobile',
+            'mobile' => ['required', new MobileRule()],
         ]);
-        $validator->addRules([
-            'mobile' => new MobileRule(),
-        ]);
-
-        $validator->validated();
 
         return $mobile;
     }

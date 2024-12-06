@@ -18,6 +18,6 @@ class Cashout extends Model
     /**
      * @var string
      */
-    protected $table = 'shop_cashout';
+    protected $table = 'shop_cashouts';
 
 }

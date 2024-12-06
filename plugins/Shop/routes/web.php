@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Plugins\Shop\app\Http\Controllers\ShopController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes

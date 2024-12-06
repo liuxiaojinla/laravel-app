@@ -18,7 +18,15 @@ trait CrudOperations
      */
     public function get($id)
     {
-        return $this->getCache($id);
+        $data = $this->getCache($id);
+        if (is_null($data)) {
+            return null;
+        }
+
+        $info = $this->newQuery()->make()->setRawAttributes($data,true);
+        $info->exists = true;
+
+        return $info;
     }
 
     /**

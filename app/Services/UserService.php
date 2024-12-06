@@ -2,16 +2,20 @@
 
 namespace App\Services;
 
-use App\Admin\Models\Admin;
 use App\Models\User;
 use App\Services\Concerns\Caching;
+use App\Services\Concerns\CrudOperations;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 
+/**
+ * @mixin Caching<User>
+ * @mixin CrudOperations<User>
+ */
 class UserService extends EloquentUserProvider
 {
-    use Caching;
+    use Caching, CrudOperations;
 
     /**
      * @var string
@@ -28,26 +32,11 @@ class UserService extends EloquentUserProvider
     }
 
     /**
-     * 获取数据（优先从缓存加载）
-     * @param int $id
-     * @return Admin
+     * @inerhitDoc
      */
-    public function get($id)
+    protected function newQuery()
     {
-        return $this->getCache($id);
-    }
-
-    /**
-     * 从数据库刷新到缓存中
-     * @param string $id
-     * @return bool
-     */
-    public function refresh($id)
-    {
-        /** @var Admin $user */
-        $user = $this->retrieveById($id);
-
-        return $this->updateCache($user);
+        return $this->newModelQuery();
     }
 
     /**

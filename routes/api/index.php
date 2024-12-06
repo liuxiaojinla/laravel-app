@@ -1,13 +1,7 @@
 <?php
-
-use App\Http\Controllers\BannerController;
-use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\IndexController;
-use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\NoticeController;
-use App\Http\Controllers\TestController;
-use App\Http\Controllers\VerifyCodeController;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
+use Xin\Hint\Facades\Hint;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,24 +13,14 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/test', [TestController::class, 'index']);
-
-Route::controller(IndexController::class)->group(function () {
-    Route::get('/index', 'index');
-    Route::get('/config', 'config');
-    Route::get('/agreement', 'agreement');
-    Route::get('/about', 'about');
-    Route::get('/regions', 'regions');
-});
-
-Route::get('/notices', [NoticeController::class, 'index']);
-Route::get('/banners', [BannerController::class, 'index']);
-Route::get('/languages', [LanguageController::class, 'index']);
-Route::apiResource('/feedback', FeedbackController::class)->only(['index', 'store']);
-
-Route::post('/verify_code', [VerifyCodeController::class, 'index']);
-
+require __DIR__ . '/common.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/article.php';
 require __DIR__ . '/media.php';
 require __DIR__ . '/wechat.php';
+
+$fallback = Route::fallback(function () {
+    return Hint::error("404 Not Found", 404, request()->path())->setStatusCode(404);
+});
+$fallback->methods = Router::$verbs;
+Route::getRoutes()->add($fallback);
