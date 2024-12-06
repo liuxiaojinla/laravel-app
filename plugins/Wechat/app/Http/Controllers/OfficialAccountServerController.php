@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class WechatController extends Controller
+class OfficialAccountServerController extends Controller
 {
     /**
      * Display a listing of the resource.

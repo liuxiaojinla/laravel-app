@@ -8,6 +8,8 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\WechatAuthenticatedController;
+use App\Http\Controllers\Auth\WechatMiniAppController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\User\BrowseController;
 use App\Http\Controllers\User\CashoutController;
@@ -25,10 +27,17 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store'])->name('register');
     Route::post('forgot-password', [ResetPasswordLinkController::class, 'store'])->name('password.account');
     Route::post('reset-password', [ResetPasswordController::class, 'store'])->name('password.store');
+
+    // 微信授权相关
+    Route::prefix('wechat/authorize')->name('wechat.authorize.')->group(function () {
+        Route::post('/weapp', [WechatAuthenticatedController::class, 'weapp'])->name('weapp');
+        Route::post('/official', [WechatAuthenticatedController::class, 'official'])->name('official');
+        Route::post('/authorize', [WechatAuthenticatedController::class, 'authorize'])->name('authorize');
+    });
 });
 
 // 已授权
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
@@ -38,6 +47,13 @@ Route::middleware('auth')->group(function () {
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+});
+
+// 微信小程序相关
+Route::middleware(['auth:sanctum'])->prefix('wechat/miniapp')->name('wechat.')->group(function () {
+    Route::post('/code2session', [WechatMiniAppController::class, 'code2session'])->name('code2session');
+    Route::post('/decryptSession', [WechatMiniAppController::class, 'decryptSession'])->name('decryptSession');
+    Route::post('/decrypt_phone', [WechatMiniAppController::class, 'decryptPhoneNumber'])->name('decrypt_phone');
 });
 
 // 基本信息

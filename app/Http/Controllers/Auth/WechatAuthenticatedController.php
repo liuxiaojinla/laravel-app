@@ -5,29 +5,33 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace App\Http\Controllers\Wechat;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Concerns\WechatAuthenticatesUsers;
 use App\Http\Controller;
+use EasyWeChat\Kernel\Exceptions\HttpException;
+use Illuminate\Foundation\Application;
 use Xin\Hint\Facades\Hint;
+use Xin\Wechat\Contracts\Factory as Wechat;
 
-class AuthorizeController extends Controller
+class WechatAuthenticatedController extends Controller
 {
 
     use WechatAuthenticatesUsers;
 
     /**
-     * @var WechatFactory
+     * @var Wechat
      */
-    protected $wechatFactory;
-
+    protected $wechat;
 
     /**
-     * @inheritDoc
+     * @param Application $app
+     * @param Wechat $wechat
      */
-    protected function initialize()
+    public function __construct(Application $app, Wechat $wechat)
     {
-        $this->wechatFactory = $this->app->get('wechat');
+        parent::__construct($app);
+        $this->wechat = $wechat;
     }
 
     /**
@@ -41,18 +45,20 @@ class AuthorizeController extends Controller
         $code = $this->request->validString('code');
 
         // 获取 MiniProgram 实例
-        $miniProgram = $this->wechatFactory->miniProgram();
+        $miniApp = $this->wechat->miniApp();
 
-        $result = WechatResult::make($miniProgram->auth->session($code))
-            ->error(40029, function () {
-                Hint::outputAlert("请管理员检查AppId或AppSecret配置是否正确！");
-            })->throw()->toArray();
+        try {
+            $result = $miniApp->getUtils()->codeToSession($code);
+        } catch (HttpException $e) {
+            Hint::outputAlert("请管理员检查AppId或AppSecret配置是否正确！");
+        }
+
         $openid = $result['openid'];
         $unionid = $result['unionid'] ?? '';
         $sessionKey = $result['session_key'];
 
         [$user, $sessionId] = $this->doLogin(
-            $miniProgram->getConfig()['app_id'],
+            $miniApp->getAccount()->getAppId(),
             $openid,
             $unionid,
             function ($user) use ($sessionKey) {
@@ -72,7 +78,7 @@ class AuthorizeController extends Controller
     public function official()
     {
         // 获取 officialAccount 实例
-        $officialAccount = $this->wechatFactory->officialAccount();
+        $officialAccount = $this->wechat->officialAccount();
 
         try {
             $user = $officialAccount->oauth->user();
@@ -97,7 +103,7 @@ class AuthorizeController extends Controller
     {
         $redirectUrl = $this->request->root() . "/wechat_authorize/official";
 
-        return $this->wechatFactory->officialAccount()
+        return $this->wechat->officialAccount()
             ->oauth->scopes(['snsapi_userinfo'])
             ->redirect($redirectUrl);
     }

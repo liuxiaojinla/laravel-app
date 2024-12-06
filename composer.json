@@ -18,13 +18,13 @@
         "nwidart/laravel-modules": "^10.0",
         "pusher/pusher-php-server": "^7.2",
         "qiniu/php-sdk": "^7.12",
-        "w7corp/easywechat": "^6.7",
         "xin/analysis": "^2.0",
         "xin/capsule": "^1.0",
         "xin/hint": "^1.1",
         "xin/laravel-fortify": "@dev",
         "xin/menu": "@dev",
         "xin/payment": "@dev",
+        "xin/wechat": "@dev",
         "xin/robot": "^1.2",
         "xin/setting": "^2.2",
         "yansongda/pay": "^3.5"
@@ -47,6 +47,10 @@
         "xin/php-payment": {
             "type": "path",
             "url": "../../Projects/PhpProjects/php-payment"
+        },
+        "xin/php-wechat": {
+            "type": "path",
+            "url": "../../Projects/PhpProjects/php-wechat"
         },
         "xin/php-laravel-fortify": {
             "type": "path",
