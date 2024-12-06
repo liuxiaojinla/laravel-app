@@ -12,8 +12,10 @@ use Illuminate\Validation\ValidationException;
 use Plugins\Shop\App\Jobs\VoiceAmountJob;
 use Plugins\Shop\App\Models\Cashout;
 use Plugins\Shop\App\Models\PayFlow;
+use Plugins\Shop\App\Models\PayOrder;
 use Plugins\Shop\App\Models\Shop;
 use Plugins\Shop\App\Services\RebateService;
+use Plugins\Shop\App\Services\ShopService;
 use Xin\Hint\Facades\Hint;
 use Xin\Http\Client;
 use Xin\Payment\Contracts\Factory as Payment;
@@ -27,13 +29,27 @@ class PayController extends Controller
     protected Payment $payment;
 
     /**
+     * @var RebateService
+     */
+    protected RebateService $rebateService;
+
+    /**
+     * @var ShopService
+     */
+    protected ShopService $shopService;
+
+    /**
      * @param Application $app
      * @param Payment $payment
+     * @param RebateService $rebateService
+     * @param ShopService $shopService
      */
-    public function __construct(Application $app, Payment $payment)
+    public function __construct(Application $app, Payment $payment, RebateService $rebateService, ShopService $shopService)
     {
         parent::__construct($app);
         $this->payment = $payment;
+        $this->rebateService = $rebateService;
+        $this->shopService = $shopService;
     }
 
     /**
@@ -72,11 +88,13 @@ class PayController extends Controller
      */
     private function wechatPay($shopId, $amount)
     {
-        $userId = $this->request->userId();
-        $partnerId = $this->request->user('partner_id');
-        $openid = $this->request->user('openid');
+        $userId = $this->auth->id();
+        $partnerId = $this->auth->user()?->partner_id;
+        $openid = $this->auth->user()?->openid;
 
-        $shopTitle = Shop::where('id', $shopId)->value('title');
+        /** @var Shop $shop */
+        $shop = $this->shopService->get($shopId);
+        $shopTitle = $shop?->title;
 
         $notifyUrl = $this->request->domain() . "/api/shop/pay_notify";
         $outTradeNo = Str::makeOrderSn();
@@ -125,23 +143,18 @@ class PayController extends Controller
         /** @var User $user */
         $user = $this->auth->user();
 
-        /** @var RebateService $rateService */
-        $rateService = app(RebateService::class);
-
-        /** @var \Plugins\Shop\App\Models\PayOrder $payOrder */
-        $payOrder = Db::transaction(function () use ($user, $userId, $shopId, $amount, $rateService, $desc) {
+        /** @var PayOrder $payOrder */
+        $payOrder = Db::transaction(function () use ($user, $userId, $shopId, $amount, $desc) {
             $user->consume($amount, $desc ?: '余额买单！');
 
-            /** @var \Plugins\Shop\App\Models\PayOrder $payOrder */
-            $payOrder = $rateService->rebate($userId, $shopId, $amount, [
+            /** @var PayOrder $payOrder */
+            $payOrder = $this->rebateService->rebate($userId, $shopId, $amount, [
                 'out_trade_no' => Str::makeOrderSn(),
                 'pay_type'     => 0,
             ]);
 
             // 更新门店金额
-            /** @var Shop $shop */
-            $shop = Shop::where('id', $shopId)->findOrFail();
-            $shop->incMoney($payOrder->shop_amount);
+            $this->shopService->incMoney($shopId, $payOrder->shop_amount);
 
             return $payOrder;
         });
@@ -169,7 +182,7 @@ class PayController extends Controller
         $userShop = null;
         if ($user->shop_id) {
             /** @var Shop $userShop */
-            $userShop = Shop::query()->where('id', $user->shop_id)->first();
+            $userShop = $this->shopService->get($user->shop_id);
         }
 
         // 未开通商家
@@ -211,9 +224,9 @@ class PayController extends Controller
                 'remark'        => '从商家账户转余额消费',
             ];
 
-            Cashout::fastCreate($data);
+            Cashout::query()->forceCreate($data);
 
-            $shop->dec('order_money', $money)->update([]);
+            $shop->newQuery()->decrement('order_money', $money);
             $user->recharge($money, '从商家账户转余额消费');
         });
     }

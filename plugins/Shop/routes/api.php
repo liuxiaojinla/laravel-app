@@ -5,6 +5,7 @@ use Plugins\Shop\App\Http\Controllers\IndexController;
 use Plugins\Shop\App\Http\Controllers\Manager\IndexController as ManagerIndexController;
 use Plugins\Shop\App\Http\Controllers\Manager\ConfigController as ManagerConfigController;
 use Plugins\Shop\App\Http\Controllers\Manager\CashoutController as ManagerCashoutController;
+use Plugins\Shop\App\Http\Controllers\PayController;
 use Plugins\Shop\App\Http\Controllers\PayNotifyController;
 
 /*
@@ -23,6 +24,7 @@ Route::group([], function () {
     Route::get('/lists', [IndexController::class, 'index'])->name('lists');
     Route::get('/info', [IndexController::class, 'detail'])->name('info');
     Route::get('/categories', [IndexController::class, 'categories'])->name('categories');
+    Route::post('/pay', [PayController::class, 'pay'])->name('pay');
     Route::post('/pay_notify', [PayNotifyController::class, 'index'])->name('pay_notify');
 });
 
