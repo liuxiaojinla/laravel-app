@@ -7,53 +7,77 @@
 
 namespace Plugins\Shop\App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Plugins\Shop\App\Jobs\VoiceAmountJob;
 use Plugins\Shop\App\Models\PayFlow;
 use Plugins\Shop\App\Models\PayOrder;
-use Plugins\Shop\App\Models\Shop;
 use Plugins\Shop\App\Services\RebateService;
+use Plugins\Shop\App\Services\ShopService;
+use Xin\Payment\Contracts\Factory as Payment;
+use Yansongda\Artful\Exception\ContainerException;
+use Yansongda\Artful\Exception\InvalidParamsException;
 
 class PayNotifyController extends Controller
 {
+    /**
+     * @var Payment
+     */
+    protected Payment $payment;
+
+    /**
+     * @var RebateService
+     */
+    protected RebateService $rebateService;
+
+    /**
+     * @var ShopService
+     */
+    protected ShopService $shopService;
+
+    /**
+     * @param Payment $payment
+     * @param RebateService $rebateService
+     * @param ShopService $shopService
+     */
+    public function __construct(Payment $payment, RebateService $rebateService, ShopService $shopService)
+    {
+        $this->payment = $payment;
+        $this->rebateService = $rebateService;
+        $this->shopService = $shopService;
+    }
 
     /**
      * 微信支付回调
-     *
-     * @param \Xin\Contracts\Foundation\Payment $payment
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
-     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
+     * @param Request $request
+     * @return mixed
+     * @throws ContainerException
+     * @throws InvalidParamsException
      */
-    public function index(Payment $payment)
+    public function index(Request $request)
     {
-        Log::log('payment', $this->request->getInput());
+        Log::info('payment', $request->all());
 
-        $wechatPay = $payment->wechat();
-        $data = $wechatPay->verify();
-        //		$data = XML::parse($this->request->getInput());
+        $wechatPay = $this->payment->wechat();
+        $data = $wechatPay->callback();
 
         $outTradeNo = $data['out_trade_no'];
         $transactionId = $data['transaction_id'];
-        $payOrder = PayOrder::where('out_trade_no', $outTradeNo)->find();
+        $payOrder = PayOrder::query()->where('out_trade_no', $outTradeNo)->first();
         if (!empty($payOrder)) {
-            return $wechatPay->success()->send();
+            return $wechatPay->success();
         }
 
         $payFlow = $this->resolvePayFlow($outTradeNo, $transactionId);
         /** @var PayOrder $payOrder */
-        $payOrder = Db::transaction(function () use ($payFlow) {
-            /** @var RebateService $rebate */
-            $rebate = app(RebateService::class);
-
+        $payOrder = DB::transaction(function () use ($payFlow) {
             /** @var PayOrder $payOrder */
-            $payOrder = $rebate->rebateByPayFlow($payFlow);
+            $payOrder = $this->rebateService->rebateByPayFlow($payFlow);
 
             // 更新门店金额
-            /** @var Shop $shop */
-            $shop = Shop::where('id', $payFlow->shop_id)->findOrFail();
-            $shop->incMoney($payOrder->shop_amount);
+            $this->shopService->incMoney($payFlow->shop_id, $payOrder->shop_amount);
 
             return $payOrder;
         });
@@ -67,19 +91,19 @@ class PayNotifyController extends Controller
      * 获取支付流水单
      *
      * @param string $outTradeNo
-     * @return \Plugins\Shop\App\Models\PayFlow|array|\think\Model
+     * @return PayFlow
      */
     protected function resolvePayFlow($outTradeNo, $transactionId)
     {
-        $flow = PayFlow::where('out_trade_no', $outTradeNo)->findOrFail();
+        $flow = PayFlow::query()->where('out_trade_no', $outTradeNo)->findOrFail();
 
         $flow->save([
             'pay_status'     => PayFlow::STATUS_PAID,
-            'pay_time'       => $this->request->time(),
+            'pay_time'       => now(),
             'transaction_id' => $transactionId,
         ]);
 
-        return $flow;
+        return value($flow);
     }
 
 }

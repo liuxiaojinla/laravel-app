@@ -5,6 +5,7 @@ namespace Plugins\Shop\App\Http\Controllers;
 use App\Exceptions\Error;
 use App\Http\Controller;
 use App\Models\User;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -15,28 +16,42 @@ use Plugins\Shop\App\Models\Shop;
 use Plugins\Shop\App\Services\RebateService;
 use Xin\Hint\Facades\Hint;
 use Xin\Http\Client;
+use Xin\Payment\Contracts\Factory as Payment;
 use Xin\Support\Str;
 
 class PayController extends Controller
 {
+    /**
+     * @var Payment
+     */
+    protected Payment $payment;
+
+    /**
+     * @param Application $app
+     * @param Payment $payment
+     */
+    public function __construct(Application $app, Payment $payment)
+    {
+        parent::__construct($app);
+        $this->payment = $payment;
+    }
 
     /**
      * 支付
-     * @param Payment $payment
      * @return Response
      * @throws ValidationException
      */
-    public function pay(Payment $payment)
+    public function pay()
     {
         $shopId = $this->request->validId('shop_id');
-        $amount = $this->request->param('amount/f', 0);
-        $payType = $this->request->param('pay_type/d', 0);
+        $amount = $this->request->float('amount', 0);
+        $payType = $this->request->integer('pay_type', 0);
         if ($amount < 0.01) {
             throw Error::validationException('param amount invalid.');
         }
 
         if ($payType == 0) {
-            $data = $this->wechatPay($shopId, $amount, $payment);
+            $data = $this->wechatPay($shopId, $amount);
         } elseif ($payType == 1) {
             $data = $this->balancePay($shopId, $amount);
         } elseif ($payType == 2) {
@@ -53,26 +68,28 @@ class PayController extends Controller
      *
      * @param int $shopId
      * @param float $amount
-     * @param Payment $payment
-     * @return mixed
+     * @return array
      */
-    private function wechatPay($shopId, $amount, $payment)
+    private function wechatPay($shopId, $amount)
     {
-        $version = $this->request->param('version', '');
-
         $userId = $this->request->userId();
         $partnerId = $this->request->user('partner_id');
         $openid = $this->request->user('openid');
 
         $shopTitle = Shop::where('id', $shopId)->value('title');
 
-        $notifyUrl = $this->request->domain() . "/api/plugin/shop/pay_notify/index";
+        $notifyUrl = $this->request->domain() . "/api/shop/pay_notify";
         $outTradeNo = Str::makeOrderSn();
-        $data = $payment->wechat()->miniapp([
+        $data = $this->payment->wechat()->mini([
             'out_trade_no' => $outTradeNo,
-            'total_fee'    => $amount * 100, // **单位：分**
-            'body'         => "付款给{$shopTitle}",
-            'openid'       => $openid,
+            'description'  => "付款给{$shopTitle}",
+            'amount'       => [
+                'total'    => $amount * 100,
+                'currency' => 'CNY',
+            ],
+            'payer'        => [
+                'openid' => $openid,
+            ],
             'notify_url'   => $notifyUrl,
         ]);
 
@@ -88,7 +105,7 @@ class PayController extends Controller
 
         //		$this->imitateNotify($flow);
 
-        return $version == '1.0' ? $data : [
+        return [
             'flow' => $flow,
             'pay'  => $data,
         ];
