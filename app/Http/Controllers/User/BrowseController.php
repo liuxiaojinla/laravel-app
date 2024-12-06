@@ -35,7 +35,7 @@ class BrowseController extends Controller
         }
         $data = Browse::with($withs)->where('user_id', $userId)
             ->when($topicType, ['topic_type' => $topicType])
-            ->orderByDesc('id')->paginate($this->request->paginate())
+            ->orderByDesc('id')->paginate()
             ->each(function (Browse $item) {
                 if (empty($item->browseable)) {
                     $item->delete();

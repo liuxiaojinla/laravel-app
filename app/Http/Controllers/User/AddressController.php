@@ -25,7 +25,7 @@ class AddressController extends Controller
         $userId = $this->auth->id();
         $data = Address::query()->where([
             'user_id' => $userId,
-        ])->orderByDesc('is_default')->paginate($this->request->paginate());
+        ])->orderByDesc('is_default')->paginate();
 
         return Hint::result($data);
     }

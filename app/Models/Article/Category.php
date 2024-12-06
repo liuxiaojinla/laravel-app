@@ -108,7 +108,7 @@ class Category extends Model
     public function getLastFollowUsers($user = null, $count = 5)
     {
         $followUsers = $this->followUsers()
-            ->orderByDesc('pivot.id')
+            ->orderByPivot('id')
             ->limit($count)
             ->get()
             ->makeHidden(['pivot']);
@@ -210,9 +210,9 @@ class Category extends Model
      * @param int $limit
      * @return Collection
      */
-    public static function getGoodList($query, $order = 'sort asc', $page = 1, $limit = 10)
+    public static function getGoodList($query, $order = 'sort', $page = 1, $limit = 10)
     {
-        $field = 'id,title,description,cover';
+        $field = ['id', 'title', 'description', 'cover'];
 
         return static::query()->where('status', 1)
             ->where($query)

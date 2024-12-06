@@ -23,7 +23,7 @@ class IndexController extends Controller
         $data = Article::simple()->search($search)
             ->where('user_id', $userId)
             ->orderByDesc('id')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         return Hint::result($data);
     }

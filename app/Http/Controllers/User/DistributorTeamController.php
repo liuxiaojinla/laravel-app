@@ -32,7 +32,7 @@ class DistributorTeamController extends Controller
             $map[] = ['nickname', 'like', $keywords];
         }
 
-        $data = User::query()->where($map)->orderByDesc('id')->paginate($this->request->paginate());
+        $data = User::query()->where($map)->orderByDesc('id')->paginate();
 
         return Hint::result($data);
     }

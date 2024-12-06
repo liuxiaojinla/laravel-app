@@ -9,6 +9,8 @@ namespace App\Models\User;
 
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -22,63 +24,53 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class Favorite extends Pivot
 {
 
-	/**
-	 * @var string
-	 */
-	protected $name = 'user_favorite';
+    /**
+     * @var string
+     */
+    protected $table = 'user_favorites';
 
-	/**
-	 * @var bool
-	 */
-	protected $autoWriteTimestamp = true;
+    /**
+     * 关联用户模型
+     *
+     * @return BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-	/**
-	 * @var bool
-	 */
-	protected $updateTime = false;
+    /**
+     * 多态关联
+     *
+     * @return MorphTo
+     */
+    public function favoriteable()
+    {
+        return $this->morphTo([
+            'topic_type', 'topic_id',
+        ], Morph::getTypeList());
+    }
 
-	/**
-	 * 关联用户模型
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    /**
+     * 切换收藏
+     *
+     * @param string $type
+     * @param int $topicId
+     * @param int $userId
+     * @return bool
+     */
+    public static function toggle($type, $topicId, $userId)
+    {
+        if (static::isFavorite($type, $topicId, $userId)) {
+            static::unFavorite($type, $topicId, $userId);
 
-	/**
-	 * 多态关联
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-	 */
-	public function favoriteable()
-	{
-		return $this->morphTo([
-			'topic_type', 'topic_id',
-		], Morph::getTypeList());
-	}
+            return false;
+        } else {
+            static::favorite($type, $topicId, $userId);
 
-	/**
-	 * 切换收藏
-	 *
-	 * @param string $type
-	 * @param int $topicId
-	 * @param int $userId
-	 * @return bool
-	 */
-	public static function toggle($type, $topicId, $userId)
-	{
-		if (static::isFavorite($type, $topicId, $userId)) {
-			static::unFavorite($type, $topicId, $userId);
-
-			return false;
-		} else {
-			static::favorite($type, $topicId, $userId);
-
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 
     /**
      * 立即收藏
@@ -88,79 +80,79 @@ class Favorite extends Pivot
      * @param int $userId
      * @return bool
      */
-	public static function favorite($topicType, $topicId, $userId)
-	{
-		Morph::checkExist($topicType, $topicId);
+    public static function favorite($topicType, $topicId, $userId)
+    {
+        Morph::checkExist($topicType, $topicId);
 
-		$info = static::create([
-			'topic_type' => $topicType,
-			'topic_id' => $topicId,
-			'user_id' => $userId,
-		]);
+        $info = static::create([
+            'topic_type' => $topicType,
+            'topic_id'   => $topicId,
+            'user_id'    => $userId,
+        ]);
 
-		Morph::callMethod($topicType, 'onFavorite', [1, $info]);
+        Morph::callMethod($topicType, 'onFavorite', [1, $info]);
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * 取消收藏
-	 *
-	 * @param string $topicType
-	 * @param int $topicId
-	 * @param int $userId
-	 * @return bool
-	 */
-	public static function unFavorite($topicType, $topicId, $userId)
-	{
-		$flag = static::where([
-			'topic_type' => $topicType,
-			'topic_id' => $topicId,
-			'user_id' => $userId,
-		])->delete();
-		if ($flag === false) {
-			return false;
-		}
-
-		Morph::callMethod($topicType, 'onFavorite', [
-			0, new static([
-				'topic_type' => $topicType,
-				'topic_id' => $topicId,
-				'user_id' => $userId,
-			]),
-		]);
-
-		return true;
-	}
-
-	/**
-	 * 是否收藏
-	 *
-	 * @param string $type
-	 * @param int $topicId
-	 * @param int $userId
-	 * @return bool
-	 */
-	public static function isFavorite($type, $topicId, $userId)
-	{
-		return static::findFavorite($type, $topicId, $userId) != null;
-	}
-
-	/**
-	 * 查找收藏记录
-	 *
-	 * @param string $type
-	 * @param int $topicId
-	 * @param int $userId
-	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+    /**
+     * 取消收藏
+     *
+     * @param string $topicType
+     * @param int $topicId
+     * @param int $userId
+     * @return bool
      */
-	public static function findFavorite($type, $topicId, $userId)
-	{
-		return static::query()->where([
-			'topic_type' => $type,
-			'topic_id' => $topicId,
-			'user_id' => $userId,
-		])->first();
-	}
+    public static function unFavorite($topicType, $topicId, $userId)
+    {
+        $flag = static::where([
+            'topic_type' => $topicType,
+            'topic_id'   => $topicId,
+            'user_id'    => $userId,
+        ])->delete();
+        if ($flag === false) {
+            return false;
+        }
+
+        Morph::callMethod($topicType, 'onFavorite', [
+            0, new static([
+                'topic_type' => $topicType,
+                'topic_id'   => $topicId,
+                'user_id'    => $userId,
+            ]),
+        ]);
+
+        return true;
+    }
+
+    /**
+     * 是否收藏
+     *
+     * @param string $type
+     * @param int $topicId
+     * @param int $userId
+     * @return bool
+     */
+    public static function isFavorite($type, $topicId, $userId)
+    {
+        return static::findFavorite($type, $topicId, $userId) != null;
+    }
+
+    /**
+     * 查找收藏记录
+     *
+     * @param string $type
+     * @param int $topicId
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     */
+    public static function findFavorite($type, $topicId, $userId)
+    {
+        return static::query()->where([
+            'topic_type' => $type,
+            'topic_id'   => $topicId,
+            'user_id'    => $userId,
+        ])->first();
+    }
 
 }

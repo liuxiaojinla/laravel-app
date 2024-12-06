@@ -34,7 +34,7 @@ class FavoriteController extends Controller
             'favoriteable',
         ])->where('user_id', $userId)
             ->when($topicType, ['topic_type' => $topicType])
-            ->order('id desc')->paginate($this->request->paginate())
+            ->order('id desc')->paginate()
             ->each(function (Favorite $item) {
                 if (empty($item->favoriteable)) {
                     $item->delete();

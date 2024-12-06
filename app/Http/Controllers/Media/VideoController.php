@@ -25,7 +25,7 @@ class VideoController extends Controller
 
         $data = Video::search($search)
             ->orderByDesc('id')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         $data->each(function ($item) {
             $item['thumb'] = $item['path'] . '?vframe/jpg/offset/1';

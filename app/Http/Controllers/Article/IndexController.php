@@ -7,11 +7,11 @@
 
 namespace App\Http\Controllers\Article;
 
-use App\Http\Api\Controllers\Article\ModelNotFoundException;
 use App\Http\Controller;
 use App\Models\article\Article;
 use App\Models\article\Category;
 use App\Models\User\Favorite;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;
 
 /**
@@ -40,7 +40,7 @@ class IndexController extends Controller
             ->with('category')
             ->where('status', 1)
             ->orderByDesc($order)
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         return Hint::result($data);
     }
@@ -50,20 +50,20 @@ class IndexController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function detail()
+    public function info()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->getUserId(false);
+        $userId = $this->auth->id();
 
         /** @var Article $info */
         $info = Article::with('category')->where('id', $id)->firstOrFail();
         if ($info->status == 0 && (!$userId || $info->user_id != $userId)) {
             throw new ModelNotFoundException("文章不存在！", 'Article');
         }
-        $info->inc('view_count')->update([]);
-        $info->isAutoWriteTimestamp(false);
-        $info->view_count += 1;
-        $info->isAutoWriteTimestamp(true);
+        Article::withoutTimestamps(function () use ($info) {
+            $info->newQuery()->increment('view_count');
+            $info->view_count += 1;
+        });
 
         // 其他扩展数据
         $info['is_favorite'] = false;
@@ -75,7 +75,7 @@ class IndexController extends Controller
             $info['is_manager'] = $info->user_id == $userId;
         }
 
-        $info['good_categories'] = Category::getGoodList([], 'sort asc', 1, 4);
+        $info['good_categories'] = Category::getGoodList([], 'sort', 1, 4);
 
         return Hint::result($info);
     }

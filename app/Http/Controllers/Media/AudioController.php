@@ -22,7 +22,7 @@ class AudioController extends Controller
         $search = $this->request->query();
         $data = Audio::search($search)
             ->orderByDesc('id')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         return Hint::result($data);
     }

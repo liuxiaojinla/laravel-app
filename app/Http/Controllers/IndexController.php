@@ -16,7 +16,6 @@ use App\Models\SinglePage;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Support\SqlDebug;
 use Xin\Setting\Facades\Setting;
 use Xin\Support\Fluent;
 
@@ -63,8 +62,7 @@ class IndexController extends Controller
      */
     public function config()
     {
-        SqlDebug::debug();
-        return Hint::result(Setting::loadOnPublic(true));
+        return Hint::result(Setting::loadOnPublic());
     }
 
     /**

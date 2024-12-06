@@ -36,7 +36,7 @@ class CashoutController extends Controller
             'user_id' => $userId,
         ])->when(strtotime($date), function (Builder $query) use ($date) {
             $query->whereMonth('create_time', $date);
-        })->orderByDesc('id')->paginate($this->request->paginate());
+        })->orderByDesc('id')->paginate();
 
         return Hint::result($data);
     }

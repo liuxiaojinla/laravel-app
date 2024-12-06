@@ -12,6 +12,8 @@ use App\Http\Controller;
 use App\Models\Article\Article;
 use App\Models\Article\Category;
 use App\Models\User\Favorite;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
 
 class CategoryController extends Controller
@@ -20,24 +22,22 @@ class CategoryController extends Controller
     /**
      * 获取分类列表
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
-        $needStatisticData = $this->request->param('need_statistic_data/d', 0);
-        $needFollowUsersData = $this->request->param('need_follow_users_data/d', 0);
-        $isGood = $this->request->param('is_good/d', 0);
-
-        $order = 'id DESC';
-        if ($isGood) {
-            $order = 'good_time DESC';
-        }
+        $needStatisticData = $this->request->integer('need_statistic_data', 0);
+        $needFollowUsersData = $this->request->integer('need_follow_users_data', 0);
+        $isGood = $this->request->integer('is_good/d', 0);
 
         $data = Category::simple()
-            ->when($isGood, [['good_time', '>', 0]])
-            ->order($order)
-            ->select()
-            //            ->paginate($this->request->paginate())
+            ->when($isGood, function (Builder $query) use ($isGood) {
+                $query->where('good_time', '>', 0);
+            })
+            ->where(function (Builder $query) use ($isGood) {
+                $query->orderBy($isGood ? 'good_time' : 'id');
+            })
+            ->get()
             ->each(function (Category $item) use ($needStatisticData, $needFollowUsersData) {
                 if ($needStatisticData) {
                     $item->append(['article_count', 'article_view_count']);
@@ -45,7 +45,7 @@ class CategoryController extends Controller
 
                 if (!$needFollowUsersData) {
                     $item['follow_users'] = $item->getLastFollowUsers(
-                        $this->auth->getUser(null, null, AuthVerifyType::NOT)
+                        $this->auth->user()
                     );
                 }
 
@@ -58,9 +58,9 @@ class CategoryController extends Controller
     /**
      * 获取分类详细信息
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function detail()
+    public function info()
     {
         $id = $this->request->validId();
         $userId = $this->auth->id();
@@ -73,15 +73,16 @@ class CategoryController extends Controller
 
         // 获取关注的用户
         $info['follow_users'] = $info->getLastFollowUsers(
-            $this->auth->getUser(null, null, AuthVerifyType::NOT)
+            $this->auth->user()
         );
 
         // 获取第一页数据文章数据
-        $info['article_list'] = Article::query()->where([
+        $info['article_list'] = Article::simpleQuery()->where([
             'status'      => 1,
             'category_id' => $info->id,
-        ])->order('id desc')
-            ->paginate($this->request->paginate());
+        ])->orderByDesc('id')
+            ->limit(15)
+            ->get();
 
         // 获取次分类下的文章统计数据
         $info->append(['article_count', 'article_view_count']);
