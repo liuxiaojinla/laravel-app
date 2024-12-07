@@ -22,21 +22,22 @@ use Xin\Hint\Facades\Hint;
 trait WechatAuthenticatesUsers
 {
 
-    use LoginHandle;
+    use AuthenticateAfterHanding;
 
     /**
+     * 微信授权登录
      * @param string $wechatAppId
      * @param string $openid
      * @param string $unionId
-     * @param null $preCheckCallback
+     * @param callable|null $authenticateAfterHanding
      * @return array
      */
-    protected function doLogin($wechatAppId, $openid, $unionId = '', $preCheckCallback = null)
+    protected function wechatAuthenticate(
+        $wechatAppId, $openid, $unionId = '', $origin = 1,
+        callable $authenticateAfterHanding = null
+    )
     {
         $mobile = trim($this->request->string('phone'));
-        $credential = [
-            'app_id' => $this->request->appId(),
-        ];
         if ($mobile) {
             $credential['mobile'] = $mobile;
         } else {
@@ -45,26 +46,29 @@ trait WechatAuthenticatesUsers
 
         /** @var User $user */
         $user = null;
-        $isLogin = $this->auth->attemptWhen($credential, function (User $tempUser) use ($wechatAppId, $openid, &$isCreating, &$user) {
+        $isLogin = $this->auth->attemptWhen($credential, function (User $tempUser) use ($openid, &$isCreating, &$user) {
             $user = $tempUser;
             return $user->status === 1;
         });
-        if ($user && $user->status !== 1) {
-            Hint::outputError("用户" . $user->status_text);
-        }
-
-        if (!$isLogin && !$user) {
-            $user = $this->makeUser($wechatAppId, $openid, 1);
-            $user->save();
-
-            if ($preCheckCallback) {
-                $preCheckCallback($user);
+        if (!$isLogin) {
+            if ($user && $user->status !== 1) {
+                Hint::outputError("用户" . $user->status_text);
             }
 
-            $user->fill($this->resolveUpdateData());
-
-            $this->loginAfterHandle($user);
+            if (!$user) {
+                $user = $this->makeWechatUser($wechatAppId, $openid, $origin);
+                $user->save();
+                $this->auth->login($user);
+            }
+        } else {
+            $user->fill($this->resolveUpdateUserData());
         }
+
+        // 授权后的处理
+        if ($authenticateAfterHanding) {
+            $authenticateAfterHanding($user);
+        }
+        $this->authenticateAfterHanding($user);
 
         $this->request->session()->regenerate();
 
@@ -79,7 +83,7 @@ trait WechatAuthenticatesUsers
      * @param string $origin
      * @return User
      */
-    protected function makeUser($wechatAppId, $openid, $origin)
+    protected function makeWechatUser($wechatAppId, $openid, $origin)
     {
         $shareUserId = $this->request->integer('share_uid', 0);
 
@@ -88,7 +92,7 @@ trait WechatAuthenticatesUsers
             $shareUser = User::query()->where('id', $shareUserId)->first();
         }
 
-        $user = User::query()->create([
+        $userData = array_merge([
             'app_id'      => $this->request->appId(),
             'third_appid' => $wechatAppId,
             'openid'      => $openid ?? '',
@@ -100,20 +104,22 @@ trait WechatAuthenticatesUsers
 
             'belong_distributor_id' => $shareUser ? $shareUser->distributor_id : 0,
 
-            'mobile'   => $this->request->param('phone', ''),
-            'nickname' => $this->request->param('nickName', '普通用户'),
-            'gender'   => $this->request->param('gender', 1),
-            'avatar'   => $this->request->param('avatarUrl', '/images/user.png'),
-            'language' => $this->request->param('language', 'zh_CN'),
-            'country'  => $this->request->param('country', '中国'),
-            'province' => $this->request->param('province', ''),
-            'city'     => $this->request->param('city', ''),
+            'mobile'   => $this->request->string('phone', ''),
+            'nickname' => $this->request->string('nickName', '普通用户'),
+            'gender'   => $this->request->integer('gender', 1),
+            'avatar'   => $this->request->string('avatarUrl', '/images/user.png'),
+            'language' => $this->request->string('language', 'zh_CN'),
+            'country'  => $this->request->string('country', '中国'),
+            'province' => $this->request->string('province', ''),
+            'city'     => $this->request->string('city', ''),
 
             'last_login_time' => $this->request->time(),
             'last_login_ip'   => $this->request->ip(),
             'login_count'     => 1,
             'create_ip'       => $this->request->ip(),
-        ]);
+        ], $this->resolveUpdateUserData());
+
+        $user = User::query()->forceCreate($userData);
 
         return value($user);
     }
@@ -123,7 +129,7 @@ trait WechatAuthenticatesUsers
      *
      * @return array
      */
-    protected function resolveUpdateData()
+    protected function resolveUpdateUserData()
     {
         $data = [];
         if ($this->request->has('nickName')) {

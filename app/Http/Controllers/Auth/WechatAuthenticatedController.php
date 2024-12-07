@@ -9,7 +9,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Concerns\WechatAuthenticatesUsers;
 use App\Http\Controller;
+use App\Models\User;
 use EasyWeChat\Kernel\Exceptions\HttpException;
+use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use Illuminate\Foundation\Application;
 use Xin\Hint\Facades\Hint;
 use Xin\Wechat\Contracts\Factory as Wechat;
@@ -57,10 +59,9 @@ class WechatAuthenticatedController extends Controller
         $unionid = $result['unionid'] ?? '';
         $sessionKey = $result['session_key'];
 
-        [$user, $sessionId] = $this->doLogin(
+        [$user, $sessionId] = $this->wechatAuthenticate(
             $miniApp->getAccount()->getAppId(),
-            $openid,
-            $unionid,
+            $openid, $unionid, User::ORIGIN_WECHAT_MINIAPP,
             function ($user) use ($sessionKey) {
                 $user['session_key'] = $sessionKey;
             });
@@ -74,38 +75,77 @@ class WechatAuthenticatedController extends Controller
      * 公众号授权登录
      *
      * @return \Illuminate\Http\Response
+     * @throws InvalidArgumentException
      */
     public function official()
     {
+        $code = $this->request->validString('code');
+
         // 获取 officialAccount 实例
         $officialAccount = $this->wechat->officialAccount();
 
-        try {
-            $user = $officialAccount->oauth->user();
-            $openid = $user['openid'];
-            $unionid = $result['unionid'] ?? '';
-            [$user, $sessionId] = $this->doLogin($officialAccount->getConfig()['app_id'], $openid, $unionid);
+        $user = $officialAccount->getOAuth()->userFromCode($code);
+        $openid = $user->getId();
+        $unionid = $user['unionid'] ?? '';
+        [$user, $sessionId] = $this->wechatAuthenticate(
+            $officialAccount->getAccount()->getAppId(),
+            $openid, $unionid, User::ORIGIN_WECHAT_OFFICIAL,
+        );
 
-            return Hint::result($user, [
-                'session_id' => $sessionId,
-            ]);
-        } catch (AuthorizeFailedException $e) {
-            throw new ValidateException($e->getMessage());
-        }
+        return Hint::result($user, [
+            'session_id' => $sessionId,
+        ]);
     }
 
     /**
      * 微信公众号授权
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws InvalidArgumentException
      */
     public function officialAuthorize()
     {
-        $redirectUrl = $this->request->root() . "/wechat_authorize/official";
+        $redirectUrl = $this->request->root() . "/wechat/authorize/official";
 
-        return $this->wechat->officialAccount()
-            ->oauth->scopes(['snsapi_userinfo'])
+        $redirectUrl = $this->wechat->officialAccount()
+            ->getOAuth()->scopes(['snsapi_userinfo'])
             ->redirect($redirectUrl);
+
+        return \redirect($redirectUrl);
+    }
+
+    /**
+     * 网页授权实例
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws InvalidArgumentException
+     */
+    public function wechatAuthorize()
+    {
+        // 获取 officialAccount 实例
+        $officialAccount = $this->wechat->officialAccount();
+
+        if ($this->request->has('code')) {
+            $code = $this->request->code;
+            // 获取 OAuth 授权用户信息
+            $user = $officialAccount->getOAuth()->userFromCode($code);
+
+            $openid = $user->getId();
+            $unionid = $user['unionid'] ?? '';
+            [$user, $sessionId] = $this->wechatAuthenticate(
+                $officialAccount->getAccount()->getAppId(),
+                $openid, $unionid, User::ORIGIN_WECHAT_OFFICIAL,
+            );
+
+            return Hint::result($user, [
+                'session_id' => $sessionId,
+            ]);
+        } else {
+            $redirectUrl = $this->request->fullUrl();
+            //生成完整的授权URL
+            $redirectUrl = $officialAccount->getOAuth()->redirect($redirectUrl);
+
+            return \redirect($redirectUrl);
+        }
     }
 
 }

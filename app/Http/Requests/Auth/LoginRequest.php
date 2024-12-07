@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Admin\Models\Admin;
 use App\Exceptions\Error;
 use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
@@ -49,7 +48,7 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited($account);
 
         $user = null;
-        if (!Auth::attemptWhen($credentials, function (Admin $tempUser) use (&$user) {
+        if (!Auth::attemptWhen($credentials, function (User $tempUser) use (&$user) {
             $user = $tempUser;
             return $user->status === 1;
         }, $remember)) {

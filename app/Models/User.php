@@ -14,8 +14,8 @@ use Xin\LaravelFortify\Model\Modelable;
 
 /**
  * @property-read int $id
- * @property int $app_id
  * @property string $third_appid
+ * @property string $mobile
  * @property int $origin
  * @property string $openid
  * @property string $nickname
@@ -29,19 +29,25 @@ use Xin\LaravelFortify\Model\Modelable;
  * @property int $status
  * @property-read string $status_text
  * @property int $sync_time
- * @property int $login_count
- * @property int $last_login_ip
- * @property int $last_login_time
  * @property UserIdentity $identity
  * @property float $cash_amount
  * @property int $parent_id
  * @property int $is_distributor
  * @property int $distributor_id
  * @property int $belong_distributor_id
+ * @property int $login_count
+ * @property int $last_login_ip
+ * @property int $last_login_time
  */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, Modelable;
+
+    // 微信小程序用户
+    const ORIGIN_WECHAT_MINIAPP = 1;
+
+    // 微信公众号用户
+    const ORIGIN_WECHAT_OFFICIAL = 2;
 
     /**
      * The attributes that are mass assignable.

@@ -10,7 +10,6 @@ namespace Plugins\Wechat\App\Http\Controllers;
 use Illuminate\Support\Facades\Log;
 use Xin\Support\Str;
 use Xin\Wechat\Contracts\Factory as WechatFactory;
-use function App\Http\Controllers\Wechat\adv_event;
 
 class OpenPlatformServerController
 {
