@@ -7,50 +7,48 @@
 
 namespace Plugins\Wechat\App\Http\Controllers;
 
+use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use Illuminate\Support\Facades\Log;
-use Xin\Support\Str;
-use Xin\Wechat\Contracts\Factory as WechatFactory;
+use Plugins\Wechat\app\Events\WechatOpenPlatformMessageEvent;
+use Xin\Wechat\Contracts\Factory as Wechat;
 
 class OpenPlatformServerController
 {
+    /**
+     * @var Wechat
+     */
+    protected $wechat;
 
     /**
-     * @param WechatFactory $wechat
-     * @return string
-     * @throws \EasyWeChat\Kernel\Exceptions\BadRequestException
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
-     * @throws \ReflectionException
+     * @param Wechat $wechat
      */
-    public function index(WechatFactory $wechat)
+    public function __construct(Wechat $wechat)
     {
-        $w = $wechat->openPlatform();
-
-        $w->server->push($this);
-        $response = $w->server->serve();
-        $response->send();
-
-        return '';
+        $this->wechat = $wechat;
     }
 
     /**
-     * @inheritDoc
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws InvalidArgumentException
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function handle($payload = null)
+    public function index()
     {
+        $server = $this->wechat->openPlatform()->getServer();
+
+        $decryptedMessage = $server->getDecryptedMessage();
         $raw = file_get_contents('php://input');
-        Log::log($raw . "\n" . json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'wechat.open');
+        Log::log("wechat.open_platform", $raw . "\n" . json_encode($decryptedMessage, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
-        // 微信全局事件
-        adv_event('WechatOpen', $payload);
+        event(new WechatOpenPlatformMessageEvent(
+            $decryptedMessage
+        ));
+        event('WechatOpenPlatformMessage', [
+            'message' => $decryptedMessage,
+        ]);
 
-        $infoType = $payload['InfoType'] ?? '';
-        if ($infoType) {
-            $eventName = "WechatOpen" . Str::studly($infoType);
-            adv_event($eventName, $payload);
-        }
-
-        return 'success';
+        return $server->serve();
     }
 
 }
