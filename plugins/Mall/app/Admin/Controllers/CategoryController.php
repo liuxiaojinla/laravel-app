@@ -8,9 +8,11 @@
 namespace Plugins\Mall\App\Admin\Controllers;
 
 use App\Admin\Controller;
-use Plugins\Mall\App\Http\Requests\GoodsCategoryValidate;
+use Illuminate\Http\Response;
+use Plugins\Mall\App\Http\Requests\GoodsCategoryRequest;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\GoodsCategory;
+use Plugins\Shop\App\Models\Category;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Arr;
 
@@ -37,50 +39,33 @@ class CategoryController extends Controller
      * 创建数据
      * @return Response
      */
-    public function create()
+    public function store(GoodsCategoryRequest $request)
     {
-        $id = $this->request->integer('id', 0);
+        $data = $request->validated();
 
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = GoodsCategory::query()->where('id', $id)->first();
-                $this->assign('info', $info);
-            }
-
-            $this->assignTreeGoodsCategories(true);
-
-            return $this->fetch('edit');
-        }
-
-
-        $data = $this->request->validate(null, GoodsCategoryValidate::class);
+        /** @var GoodsCategory $info */
         $info = GoodsCategory::query()->create($data);
 
-        return Hint::success("创建成功！", null, $info);
+        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
      * 更新数据
      * @return Response
      */
-    public function update()
+    public function update(GoodsCategoryRequest $request)
     {
         $id = $this->request->validId();
+        $data = $request->validated();
+
+        /** @var GoodsCategory $info */
         $info = GoodsCategory::query()->where('id', $id)->firstOrFail();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
-            $this->assignTreeGoodsCategories(true);
-
-            return $this->fetch('edit');
-        }
-
-        $data = $this->request->validate(null, GoodsCategoryValidate::class);
-        if (!$info->save($data)) {
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
-        return Hint::success("更新成功！", null, $info);
+        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
     /**
@@ -97,7 +82,7 @@ class CategoryController extends Controller
         $hasChildPidList = array_intersect($hasChildPidList, $ids);
 
         if (!empty($hasChildPidList)) {
-            $titles = implode("、", GoodsCategory::select($hasChildPidList)->column("title"));
+            $titles = implode("、", Category::query()->whereIn('id', $hasChildPidList)->get()->pluck("title")->toArray());
 
             return Hint::error("请先删除【{$titles}】下的子分类！");
         }
@@ -106,9 +91,7 @@ class CategoryController extends Controller
             return Hint::error('请先处理分类下的商品！');
         }
 
-        if (GoodsCategory::destroy($ids) === false) {
-            return Hint::error('删除失败！');
-        }
+        GoodsCategory::destroy($ids);
 
         return Hint::success('已删除！', null);
     }

@@ -8,15 +8,15 @@
 namespace Plugins\Mall\App\Http\Controllers;
 
 use App\Http\Controller;
-use app\common\model\user\Browse;
-use app\common\model\user\Favorite;
-use plugins\distributor\model\Distributor;
+use App\Models\User\Browse;
+use App\Models\User\Favorite;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Validation\ValidationException;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\GoodsSku;
 use Plugins\Mall\App\Models\ShoppingCart;
-use think\facade\Config;
-use think\model\Relation;
-use Xin\Auth\Contracts\AuthVerifyType;
 use Xin\Hint\Facades\Hint;
 
 class GoodsController extends Controller
@@ -24,14 +24,11 @@ class GoodsController extends Controller
 
     /**
      * 商品列表
-     *
-
      */
     public function index()
     {
         $isUserVip = $this->request->user('is_vip', 0, AuthVerifyType::NOT);
-
-        $type = $this->request->param('type', 'new', 'trim');
+        $type = $this->request->input('type', 'new', 'trim');
 
         $order = [
             'top_time' => 'desc',
@@ -56,7 +53,7 @@ class GoodsController extends Controller
             ->search($search)
             ->when($type == 'good', [['good_time', '<>', 0]])
             ->when($type == 'discount', [['recommend_way', '=', 2]])
-            ->order($order)->paginate($this->request->paginate())
+            ->order($order)->paginate()
             ->each(function (Goods $goods) use ($isUserVip) {
                 $goods['show_price'] = $isUserVip ? $goods->vip_price : $goods->price;
             });
@@ -68,11 +65,12 @@ class GoodsController extends Controller
      * 商品详情
      *
      * @return Response
+     * @throws ValidationException
      */
     public function detail()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->getUserId(AuthVerifyType::NOT);
+        $userId = $this->auth->id(AuthVerifyType::NOT);
         $isUserVip = $this->request->user('is_vip', 0, AuthVerifyType::NOT);
         $distributorId = $this->request->integer('distributor_id', 0);
 
@@ -96,7 +94,7 @@ class GoodsController extends Controller
             // 新增商品浏览数量
             $userBrowse = Browse::attach('goods', $info->id, $userId);
             if ($userBrowse->view_count == 1) {
-                $info->inc('view_count')->update([]);
+                $info->newQuery()->increment('view_count');
             }
 
             // 判断商品是否被收藏
@@ -130,7 +128,7 @@ class GoodsController extends Controller
         $goods = Goods::query()->where('id', $id)->firstOrFail();
         $data = GoodsSku::query()->where([
             'goods_id' => $id,
-        ])->select();
+        ])->get();
 
         return Hint::result([
             'spec_list' => $goods->spec_list,

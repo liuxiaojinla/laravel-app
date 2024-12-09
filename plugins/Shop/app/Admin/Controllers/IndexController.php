@@ -48,7 +48,7 @@ class IndexController extends Controller
         $data = Shop::simple()
             ->search($search)
             ->orderByDesc('id')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
 
         return Hint::result($data);

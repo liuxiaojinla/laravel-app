@@ -1,6 +1,6 @@
 <?php
 
-namespace plugins\order\admin\controller;
+namespace Plugins\Order\App\Admin\Controllers;
 
 use app\admin\Controller;
 use Carbon\Carbon;

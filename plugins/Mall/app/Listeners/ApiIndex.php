@@ -7,13 +7,11 @@
 
 namespace Plugins\Mall\App\Listeners;
 
-use app\common\model\user\Browse;
-use app\Request;
+use App\Models\User\Browse;
+use Illuminate\Database\Eloquent\Collection;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\GoodsCategory;
-use Xin\Auth\Contracts\AuthVerifyType;
 use Xin\Support\Fluent;
-use Xin\ThinkPHP\Model\MorphMaker;
 
 class ApiIndex
 {
@@ -44,18 +42,17 @@ class ApiIndex
     private function goodsList()
     {
         return Goods::query()->where([
-            'app_id' => $this->request->appId(),
             'status' => 1,
-        ])->order([
-            'top_time' => 'desc',
-            'id'       => 'desc',
-        ])->limit(0, $this->request->limit())->select();
+        ])
+            ->latest('top_time')
+            ->latest('id')
+            ->limit($this->request->limit())->get();
     }
 
     /**
      * 获取浏览的商品列表
      *
-     * @return \app\common\model\user\Browse[]|array|Collection
+     * @return Browse[]
      */
     private function goodsBrowseList()
     {
@@ -89,7 +86,7 @@ class ApiIndex
         return GoodsCategory::query()->where([
             'app_id' => $this->request->appId(),
             'pid'    => 0,
-        ])->order('sort asc')->select();
+        ])->oldest('sort')->get();
     }
 
 }

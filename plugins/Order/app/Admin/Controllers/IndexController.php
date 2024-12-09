@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\order\admin\controller;
+namespace Plugins\Order\App\Admin\Controllers;
 
 use app\admin\Controller;
 use Plugins\Order\App\Models\Express;

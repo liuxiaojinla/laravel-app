@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\order\admin\controller;
+namespace Plugins\Order\App\Admin\Controllers;
 
 use app\admin\Controller;
 use Plugins\Order\App\Models\OrderRefund;
@@ -30,7 +30,7 @@ class RefundController extends Controller
         $data = OrderRefund::with([
             'masterOrder', 'orderGoodsList',
         ])->simple()->search($search)->order('id desc')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         $this->assign('data', $data);
         $this->assign('status', $status);

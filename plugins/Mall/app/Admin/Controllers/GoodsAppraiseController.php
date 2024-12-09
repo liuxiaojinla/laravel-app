@@ -8,6 +8,8 @@
 namespace Plugins\Mall\App\Admin\Controllers;
 
 use App\Admin\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Plugins\Mall\App\Models\GoodsAppraise;
 use Xin\Hint\Facades\Hint;
 
@@ -19,14 +21,12 @@ class GoodsAppraiseController extends Controller
     public function index()
     {
         $search = $this->request->query();
-        $data = GoodsAppraise::with([
+        $data = GoodsAppraise::simple()->with([
             'user',
             'goods',
-        ])->simple()->search($search)
-            ->order([
-                'id' => 'desc',
-            ])
-            ->paginate($this->request->paginate());
+        ])->search($search)
+            ->orderBy('id')
+            ->paginate();
 
 
         return Hint::result($data);
@@ -35,6 +35,7 @@ class GoodsAppraiseController extends Controller
     /**
      * 更新数据
      * @return Response
+     * @throws ValidationException
      */
     public function setValue()
     {

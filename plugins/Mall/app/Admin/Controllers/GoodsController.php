@@ -9,8 +9,11 @@ namespace Plugins\Mall\App\Admin\Controllers;
 
 use App\Admin\Controller;
 use app\common\enum\CURDScene;
+use App\Exceptions\Error;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use plugins\mall\admin\concern\InteractsGoodsCategory;
-use Plugins\Mall\App\Http\Requests\GoodsValidate;
+use Plugins\Mall\App\Http\Requests\GoodsRequest;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\GoodsCategory;
 use Plugins\Mall\App\Models\GoodsService;
@@ -44,7 +47,7 @@ class GoodsController extends Controller
             $query->withoutField('content,picture');
         }
 
-        $data = $query->order('id desc')->paginate($this->request->paginate());
+        $data = $query->order('id desc')->paginate();
 
 
         return Hint::result($data);
@@ -54,6 +57,7 @@ class GoodsController extends Controller
     /**
      * 创建商品
      * @return Response
+     * @throws \Exception
      */
     public function create()
     {
@@ -72,7 +76,7 @@ class GoodsController extends Controller
             return $this->fetch('edit');
         }
 
-        $data = $this->request->validate($this->validateDataCallback(), GoodsValidate::class);
+        $data = $this->request->validate($this->validateDataCallback(), GoodsRequest::class);
         $info = DB::transaction(function () use (&$data) {
             $info = Goods::query()->create($data);
             if ($info->allowField([])->save($data) === false) {
@@ -85,7 +89,7 @@ class GoodsController extends Controller
             return $info;
         });
 
-        return Hint::success("创建成功！", (string)plugin_url('index'), $info);
+        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
@@ -184,6 +188,7 @@ class GoodsController extends Controller
      * 更新商品
      *
      * @return Response
+     * @throws ValidationException
      */
     public function update()
     {
@@ -200,7 +205,7 @@ class GoodsController extends Controller
             return $this->fetch('edit');
         }
 
-        $data = $this->request->validate($this->validateDataCallback(CURDScene::UPDATE), GoodsValidate::class);
+        $data = $this->request->validate($this->validateDataCallback(CURDScene::UPDATE), GoodsRequest::class);
         $info = DB::transaction(function () use ($info, &$data) {
             if ($info->allowField([])->save($data) === false) {
                 throw new \LogicException("更新失败！");
@@ -210,7 +215,7 @@ class GoodsController extends Controller
             GoodsSku::sync($info->id, $data['sku_list']);
         });
 
-        return Hint::success("更新成功！", (string)plugin_url('index'), $info);
+        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
     /**

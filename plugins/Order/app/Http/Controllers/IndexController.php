@@ -35,7 +35,7 @@ class IndexController extends Controller
                 'app_id'  => $this->request->appId(),
                 'user_id' => $this->auth->getUserId(),
             ])
-            ->order('id desc')->paginate($this->request->paginate());
+            ->order('id desc')->paginate();
 
         return Hint::result($data);
     }

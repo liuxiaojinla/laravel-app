@@ -32,7 +32,7 @@ class GoodsAppraiseController extends Controller
         ])->where([
             'goods_id' => $goodsId,
             'status'   => 1,
-        ])->order('id desc')->paginate($this->request->paginate());
+        ])->latest('id')->paginate();
 
         return Hint::result($data);
     }
@@ -46,7 +46,7 @@ class GoodsAppraiseController extends Controller
     public function create()
     {
         $orderId = $this->request->validId('order_id');
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
         /** @var Order $order */
         $order = Order::with(['goods_list'])->where([

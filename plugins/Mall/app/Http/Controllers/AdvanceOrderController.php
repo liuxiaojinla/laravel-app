@@ -7,17 +7,20 @@
 
 namespace Plugins\Mall\App\Http\Controllers;
 
+use App\Exceptions\Error;
 use App\Http\Controller;
-use app\common\model\user\Address;
-use plugins\coupon\model\UserCoupon;
+use App\Models\User;
+use App\Models\User\Address;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Validation\ValidationException;
+use Plugins\Coupon\App\Models\UserCoupon;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\ShoppingCart;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderGoods;
 use plugins\order\job\OrderAutoClose;
-use think\Collection;
-use think\exception\ValidateException;
-use think\facade\Config;
 use Xin\Hint\Facades\Hint;
 
 class AdvanceOrderController extends Controller
@@ -83,6 +86,7 @@ class AdvanceOrderController extends Controller
      *
      * @param Collection $orderGoodsList
      * @return Response
+     * @throws ValidationException
      */
     private function order($orderGoodsList)
     {
@@ -94,7 +98,7 @@ class AdvanceOrderController extends Controller
         $belongDistributorId = $this->request->user('belong_distributor_id', 0);
         $data = $this->request->post();
         $data['app_id'] = $this->request->appId();
-        $data['user_id'] = $this->auth->getUserId();
+        $data['user_id'] = $this->auth->id();
         $data['distributor_id'] = $belongDistributorId;
         $data['is_sample'] = $isSample;
         $data['orderable_type'] = 'goods';
@@ -120,8 +124,9 @@ class AdvanceOrderController extends Controller
     /**
      * 生成预下单相应数据
      *
-     * @param \iterable $orderGoodsList
+     * @param iterable $orderGoodsList
      * @return Response
+     * @throws ValidationException
      */
     private function toAdvance($orderGoodsList)
     {
@@ -139,8 +144,8 @@ class AdvanceOrderController extends Controller
         $deliveryList = $this->loadDeliveryList();
 
         // 获取当前用户余额
-        /** @var \app\common\model\User $user */
-        $user = $this->auth->getUser();
+        /** @var User $user */
+        $user = $this->auth->user();
         $userBalance = $user->getBalance();
 
         return Hint::result([
@@ -155,7 +160,9 @@ class AdvanceOrderController extends Controller
     /**
      * 加载用户可用优惠券列表
      *
+     * @param float $totalAmount
      * @return Collection
+     * @throws \Xin\LaravelFortify\Validation\ValidationException
      */
     private function loadUserCouponList($totalAmount)
     {
@@ -173,7 +180,8 @@ class AdvanceOrderController extends Controller
     /**
      * 加载用户默认收货地址
      *
-     * @return \app\common\model\user\Address|\think\Model|null
+     * @return Address
+     * @throws ValidationException
      */
     private function loadUserAddress()
     {
@@ -199,7 +207,7 @@ class AdvanceOrderController extends Controller
     /**
      * 加载可用配置方式列表
      *
-     * @return \string[][]
+     * @return string[][]
      */
     private function loadDeliveryList()
     {
@@ -221,6 +229,8 @@ class AdvanceOrderController extends Controller
      * @param float $totalAmount
      * @param int $userCouponId
      * @return float
+     * @throws ValidationException
+     * @throws \Xin\LaravelFortify\Validation\ValidationException
      */
     private function calcCouponAmount($totalAmount, $userCouponId)
     {
@@ -241,11 +251,12 @@ class AdvanceOrderController extends Controller
      * 创建订单 - 根据购物车商品
      *
      * @return Response
+     * @throws ValidationException
      */
     public function fromShoppingCart()
     {
         $cartIdList = $this->request->idsWithValid();
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
         $isVipUser = $this->request->user('is_vip', 0);
         $belongDistributorId = $this->request->user('belong_distributor_id', 0);
 

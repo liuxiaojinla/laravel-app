@@ -12,9 +12,9 @@ namespace Plugins\Mall\App\Http\Requests;
 use Xin\LaravelFortify\Request\FormRequest;
 
 /**
- * 分类验证器
+ * 类目验证器
  */
-class GoodsCategoryValidate extends FormRequest
+class GoodsClassRequest extends FormRequest
 {
 
     /**
@@ -23,7 +23,7 @@ class GoodsCategoryValidate extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title' => 'require|length:2,48|unique:goods_category,app_id^title',
+        'title' => 'require|length:2,48|unique:goods_class',
         'cover' => 'require',
         'pid'   => 'checkOneself',
     ];
@@ -34,9 +34,9 @@ class GoodsCategoryValidate extends FormRequest
      * @var array
      */
     protected $field = [
-        'title' => '分类标题',
-        'cover' => '分类封面',
-        'pid'   => '父级分类',
+        'title' => '类目标题',
+        'cover' => '类目封面',
+        'pid'   => '父级类目',
     ];
 
     /**
@@ -45,8 +45,8 @@ class GoodsCategoryValidate extends FormRequest
      * @var array
      */
     protected $message = [
-        'pid.checkOneself'  => '父级分类不能是自己',
-        'pid.checkCategory' => '父级分类不存在',
+        'pid.checkOneself'  => '父级类目不能是自己',
+        'pid.checkCategory' => '父级类目不存在',
     ];
 
     /**

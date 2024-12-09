@@ -9,7 +9,7 @@ namespace Plugins\Mall\App\Http\Requests;
 
 use Xin\LaravelFortify\Request\FormRequest;
 
-class GoodsSkuValidate extends FormRequest
+class GoodsSkuRequest extends FormRequest
 {
 
     /**

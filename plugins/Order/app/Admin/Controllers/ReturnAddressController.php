@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\order\admin\controller;
+namespace Plugins\Order\App\Admin\Controllers;
 
 use app\admin\Controller;
 use app\common\model\Model;
@@ -28,7 +28,7 @@ class ReturnAddressController extends Controller
                 'sort' => 'asc',
                 'id'   => 'desc',
             ])
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         $this->assign('data', $data);
 
@@ -56,7 +56,7 @@ class ReturnAddressController extends Controller
         $data = $this->request->validate($this->validateDataCallback(), ReturnAddressValidate::class);
         $info = ReturnAddress::query()->create($data);
 
-        return Hint::success("创建成功！", (string)plugin_url('index'), $info);
+        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
@@ -105,7 +105,7 @@ class ReturnAddressController extends Controller
             return Hint::error("更新失败！");
         }
 
-        return Hint::success("更新成功！", (string)plugin_url('index'), $info);
+        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
     /**

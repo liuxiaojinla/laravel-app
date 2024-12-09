@@ -9,8 +9,10 @@ namespace Plugins\Mall\App\Admin\Controllers;
 
 use App\Admin\Controller;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Plugins\Mall\App\Http\Requests\GoodsBrandRequest;
 use Plugins\Mall\App\Models\GoodsBrand;
 use Xin\Hint\Facades\Hint;
 
@@ -27,63 +29,51 @@ class BrandController extends Controller
                 'sort' => 'asc',
                 'id'   => 'desc',
             ])
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         return Hint::result($data);
+    }
+
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return mixed
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = GoodsBrand::query()->with([
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
     }
 
     /**
      * 创建数据
      * @return Response
      */
-    public function create()
+    public function store(GoodsBrandRequest $request)
     {
-        $id = $this->request->integer('id', 0);
+        $data = $request->validated();
 
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = GoodsBrand::query()->where('id', $id)->first();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            return $this->fetch('edit');
-        }
-
-        $data = $this->request->validate($this->validateDataCallback(), GoodsBrandValidate::class);
+        /** @var GoodsBrand $info */
         $info = GoodsBrand::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
-     * 验证数据合法性
-     *
-     * @param string $scene
-     * @return \Closure|null
-     */
-    protected function validateDataCallback($scene = null)
-    {
-        return null;
-    }
-
-    /**
      * 更新数据
      * @return Response
      */
-    public function update()
+    public function update(GoodsBrandRequest $request)
     {
         $id = $this->request->validId();
+        $data = $request->validated();
+
+        /** @var GoodsBrand $info */
         $info = GoodsBrand::query()->where('id', $id)->firstOrFail();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
-
-            return $this->fetch('edit');
-        }
-
-        $data = $this->request->validate($this->validateDataCallback(), GoodsBrandValidate::class);
-        if (!$info->save($data)) {
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
@@ -100,7 +90,11 @@ class BrandController extends Controller
         $isForce = $this->request->integer('force', 0);
 
         GoodsBrand::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);

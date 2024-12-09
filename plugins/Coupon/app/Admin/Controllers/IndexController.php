@@ -28,7 +28,7 @@ class IndexController extends Controller
         $search = $this->request->query();
         $data = Coupon::simple()->search($search)
             ->orderByDesc('id')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         return Hint::result($data);
     }

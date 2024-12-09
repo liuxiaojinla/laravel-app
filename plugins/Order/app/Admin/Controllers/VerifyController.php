@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\order\admin\controller;
+namespace Plugins\Order\App\Admin\Controllers;
 
 use app\admin\Controller;
 use Plugins\Order\App\Models\Order;
@@ -66,7 +66,7 @@ class VerifyController extends Controller
         }
 
         $data = Order::query()->where($map)->order('verify_time desc')
-            ->paginate($this->request->paginate());
+            ->paginate();
         $this->assign('data', $data);
 
         return $this->fetch();

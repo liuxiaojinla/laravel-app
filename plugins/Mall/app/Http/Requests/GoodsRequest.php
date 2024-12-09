@@ -12,9 +12,9 @@ namespace Plugins\Mall\App\Http\Requests;
 use Xin\LaravelFortify\Request\FormRequest;
 
 /**
- * 品牌验证器
+ * 商品验证器
  */
-class GoodsBrandValidate extends FormRequest
+class GoodsRequest extends FormRequest
 {
 
     /**
@@ -23,8 +23,12 @@ class GoodsBrandValidate extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title' => 'require|length:2,48|unique:goods_brand',
-        'cover' => 'require',
+        'title'         => 'require|length:2,80',
+        'cover'         => 'require',
+        'picture'       => 'require|array',
+        'category_ids'  => 'require',
+        'is_multi_spec' => 'require',
+        'content'       => 'require',
     ];
 
     /**
@@ -33,16 +37,12 @@ class GoodsBrandValidate extends FormRequest
      * @var array
      */
     protected $field = [
-        'title' => '品牌标题',
-        'cover' => '品牌封面',
-    ];
-
-    /**
-     * 验证消息
-     *
-     * @var array
-     */
-    protected $message = [
+        'title'         => '商品名称',
+        'cover'         => '商品封面',
+        'picture'       => '商品图册',
+        'content'       => '商品详情',
+        'category_ids'  => '所属分类',
+        'is_multi_spec' => '商品规格类型',
     ];
 
     /**

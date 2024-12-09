@@ -12,9 +12,9 @@ namespace Plugins\Mall\App\Http\Requests;
 use Xin\LaravelFortify\Request\FormRequest;
 
 /**
- * 类目验证器
+ * 品牌验证器
  */
-class GoodsClassValidate extends FormRequest
+class GoodsBrandRequest extends FormRequest
 {
 
     /**
@@ -23,9 +23,8 @@ class GoodsClassValidate extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title' => 'require|length:2,48|unique:goods_class',
+        'title' => 'require|length:2,48|unique:goods_brand',
         'cover' => 'require',
-        'pid'   => 'checkOneself',
     ];
 
     /**
@@ -34,9 +33,8 @@ class GoodsClassValidate extends FormRequest
      * @var array
      */
     protected $field = [
-        'title' => '类目标题',
-        'cover' => '类目封面',
-        'pid'   => '父级类目',
+        'title' => '品牌标题',
+        'cover' => '品牌封面',
     ];
 
     /**
@@ -45,8 +43,6 @@ class GoodsClassValidate extends FormRequest
      * @var array
      */
     protected $message = [
-        'pid.checkOneself'  => '父级类目不能是自己',
-        'pid.checkCategory' => '父级类目不存在',
     ];
 
     /**
@@ -55,18 +51,5 @@ class GoodsClassValidate extends FormRequest
      * @var array
      */
     protected $scene = [];
-
-    /**
-     * 验证父级是不是自己
-     *
-     * @param string $pid
-     * @param mixed $rule
-     * @param array $data
-     * @return bool
-     */
-    protected function checkOneself($pid, $rule, $data)
-    {
-        return !isset($data['id']) || $data['id'] == 0 || $data['id'] != $pid;
-    }
 
 }

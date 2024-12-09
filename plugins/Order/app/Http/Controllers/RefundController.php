@@ -32,7 +32,7 @@ class RefundController extends Controller
         ])->where([
             'user_id' => $userId,
         ])->order('create_time desc')
-            ->paginate($this->request->paginate());
+            ->paginate();
 
         return Hint::result($data);
     }

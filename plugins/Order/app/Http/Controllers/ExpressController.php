@@ -5,12 +5,12 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\order\api\controller;
+namespace Plugins\Order\App\Http\Controllers;
 
 use App\Http\Controller;
+use Illuminate\Http\Response;
 use Plugins\Order\App\Models\Express;
 use Plugins\Order\App\Models\Order;
-use think\facade\Config;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Str;
 
