@@ -4,10 +4,11 @@
 namespace Plugins\Order\App\Models;
 
 use App\Models\Model;
-use plugins\order\enum\RefundStatus as RefundStatusEnum;
-use plugins\order\enum\RefundType as RefundTypeEnum;
-use think\model\concern\SoftDelete;
-use Xin\Saas\ThinkPHP\Models\OpenAppable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Plugins\Order\App\Enums\RefundStatus as RefundStatusEnum;
+use Plugins\Order\App\Enums\RefundType as RefundTypeEnum;
 
 /**
  * @property int audit_status
@@ -17,8 +18,7 @@ use Xin\Saas\ThinkPHP\Models\OpenAppable;
  */
 class OrderRefund extends Model
 {
-
-    use SoftDelete, OpenAppable, OrderRefundStates, OrderRefundActions;
+    use SoftDeletes, OrderRefundStates, OrderRefundActions;
 
     /**
      * 原始订单

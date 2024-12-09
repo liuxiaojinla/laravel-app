@@ -8,8 +8,6 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Plugins\Mall\App\Models\Goods;
-use Xin\Saas\ThinkPHP\Models\OpenAppable;
-use Xin\ThinkPHP\Model\Morph;
 
 /**
  * @property int order_id
@@ -22,8 +20,6 @@ use Xin\ThinkPHP\Model\Morph;
  */
 class OrderGoods extends Model
 {
-
-    use OpenAppable;
 
     /**
      * 模型标题

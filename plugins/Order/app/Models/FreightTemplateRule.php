@@ -12,7 +12,7 @@ class FreightTemplateRule extends Model
      * 区域选择 - 获取器
      *
      * @param string $val
-     * @return false|string[]
+     * @return string[]
      */
     protected function getRegionAttribute($val)
     {

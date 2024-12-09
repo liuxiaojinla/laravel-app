@@ -5,7 +5,7 @@ namespace Plugins\Order\App\Http\Requests;
 
 use Xin\LaravelFortify\Request\FormRequest;
 
-class FreightTemplateRuleValidate extends FormRequest
+class FreightTemplateRuleRequest extends FormRequest
 {
 
     /**
@@ -14,11 +14,11 @@ class FreightTemplateRuleValidate extends FormRequest
      * @var array
      */
     protected $rule = [
-        'region'         => 'require',
-        'first'          => 'require|float',
-        'first_fee'      => 'require|float',
-        'additional'     => 'require|float',
-        'additional_fee' => 'require|float',
+        'region'         => 'required',
+        'first'          => 'required|float',
+        'first_fee'      => 'required|float',
+        'additional'     => 'required|float',
+        'additional_fee' => 'required|float',
     ];
 
     /**

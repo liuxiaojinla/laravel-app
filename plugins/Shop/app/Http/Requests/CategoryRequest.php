@@ -53,7 +53,7 @@ class CategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'require|length:2,48',
+            'title' => 'required|between2,48',
             'pid'   => [
                 'integer',
                 // 验证父级是不是自己

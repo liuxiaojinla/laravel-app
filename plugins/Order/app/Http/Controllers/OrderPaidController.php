@@ -4,8 +4,8 @@
 namespace plugins\order\api\controller;
 
 use App\Http\Controller;
+use Plugins\Order\App\Enums\PayType as PayTypeEnum;
 use Plugins\Order\App\Models\Order;
-use plugins\order\enum\PayType as PayTypeEnum;
 use plugins\order\service\PayService;
 use think\db\exception\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;

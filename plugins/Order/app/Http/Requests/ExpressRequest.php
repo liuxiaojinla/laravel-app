@@ -5,18 +5,9 @@ namespace Plugins\Order\App\Http\Requests;
 
 use Xin\LaravelFortify\Request\FormRequest;
 
-class ExpressValidate extends FormRequest
+class ExpressRequest extends FormRequest
 {
 
-    /**
-     * 验证规则
-     *
-     * @var array
-     */
-    protected $rule = [
-        'title' => 'require|length:2,48',
-        'url'   => 'require',
-    ];
 
     /**
      * 字段信息
@@ -34,5 +25,18 @@ class ExpressValidate extends FormRequest
      * @var array
      */
     protected $scene = [];
+
+    /**
+     * 验证规则
+     *
+     * @return string[]
+     */
+    public function rules()
+    {
+        return [
+            'title' => 'required|between2,48',
+            'url'   => 'required',
+        ];
+    }
 
 }

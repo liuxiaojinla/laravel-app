@@ -78,18 +78,18 @@ class ShopRequest extends FormRequest
         //            return $data;
         //        };
         return [
-            'title'       => 'required|length:2,48',
+            'title'       => 'required|between2,48',
             'logo'        => 'required',
-            'description' => 'required|length:15,255',
+            'description' => 'required|between15,255',
             'picture'     => 'required|array',
-            'realname'    => 'required|length:2,24',
+            'realname'    => 'required|between2,24',
             'phone'       => 'required|phone',
             'province'    => 'required',
             'city'        => 'required',
             'district'    => 'required',
             'lng'         => 'required|float',
             'lat'         => 'required|float',
-            'address'     => 'required|length:3,255',
+            'address'     => 'required|between3,255',
         ];
     }
 }

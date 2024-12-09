@@ -3,27 +3,28 @@
 
 namespace Plugins\Order\App\Models;
 
+use App\Exceptions\Error;
 use App\Models\Model;
 use App\Models\User;
-use plugins\coupon\model\UserCoupon;
-use Plugins\Order\App\Http\Requests\OrderValidate;
-use plugins\order\enum\DeliveryStatus as DeliverStatusEnum;
-use plugins\order\enum\DeliveryType as DeliveryTypeEnum;
-use plugins\order\enum\OrderStatus as OrderStatusEnum;
-use plugins\order\enum\PayStatus as PayStatusEnum;
-use plugins\order\enum\PayType as PayTypeEnum;
-use plugins\order\enum\ReceiptStatus as ReceiptStatusEnum;
-use plugins\order\event\OrderDeletedEvent;
-use plugins\shop\model\Shop;
-use think\db\Query;
-use think\exception\ValidateException;
-use think\facade\Db;
-use think\facade\Event;
-use think\model\concern\SoftDelete;
-use Xin\Saas\ThinkPHP\Models\OpenAppable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\ValidationException;
+use Plugins\Coupon\App\Models\UserCoupon;
+use Plugins\Order\App\Enums\DeliveryStatus as DeliverStatusEnum;
+use Plugins\Order\App\Enums\DeliveryType as DeliveryTypeEnum;
+use Plugins\Order\App\Enums\OrderStatus as OrderStatusEnum;
+use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
+use Plugins\Order\App\Enums\PayType as PayTypeEnum;
+use Plugins\Order\App\Enums\ReceiptStatus as ReceiptStatusEnum;
+use Plugins\Order\App\Http\Requests\OrderRequest;
+use Plugins\Shop\App\Models\Shop;
 use Xin\Support\Radix;
 use Xin\Support\Str;
-use Xin\ThinkPHP\Model\Morph;
 
 /**
  * @property-read int id
@@ -46,7 +47,7 @@ use Xin\ThinkPHP\Model\Morph;
  * @property string express_no 物流单号
  * @property int is_verify 是否已核销
  * @property int $user_coupon_id
- * @property array|Model\Collection goods_list 订单商品列表
+ * @property array|Collection goods_list 订单商品列表
  * @property-read string orderable_type 订单类型
  * @method $this orderableMorph(string $orderableType, int $orderableId)
  * @method $this orderableType(string $orderableType)
@@ -54,7 +55,7 @@ use Xin\ThinkPHP\Model\Morph;
 class Order extends Model
 {
 
-    use SoftDelete, OpenAppable, OrderStates, OrderActions;
+    use SoftDeletes, OrderStates, OrderActions;
 
     /**
      * 模型标题
@@ -101,6 +102,7 @@ class Order extends Model
      * @param array $orderData
      * @param iterable $orderGoodsList
      * @return static
+     * @throws \Exception
      */
     public static function fastCreate(array $orderData, $orderGoodsList)
     {
@@ -138,6 +140,7 @@ class Order extends Model
      *
      * @param array $order
      * @return array
+     * @throws ValidationException
      */
     protected static function validateData(array $order)
     {
@@ -207,7 +210,7 @@ class Order extends Model
         ], $order);
 
         // 验证数据合法性
-        $validate = new OrderValidate();
+        $validate = new OrderRequest();
         if (!$validate->check($order)) {
             throw Error::validationException($validate->getError());
         }
@@ -271,7 +274,7 @@ class Order extends Model
     public static function onAfterDelete(Order $model)
     {
         $model->callMorphMethod('onOrderDeleted', [$model]);
-        Event::trigger(new OrderDeletedEvent($model));
+        Event::dispatch(new OrderDeletedEvent($model));
     }
 
     /**
@@ -316,7 +319,7 @@ class Order extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id')->field([
+        return $this->belongsTo(User::class, 'user_id')->select([
             'id', 'nickname', 'gender', 'avatar',
         ])->bind([
             'user_nickname' => 'nickname',
@@ -348,7 +351,7 @@ class Order extends Model
     /**
      * 订单类型活动作用域
      *
-     * @param Query $query
+     * @param Builder $query
      * @param string $orderableType
      * @param int $orderableId
      */
@@ -360,7 +363,7 @@ class Order extends Model
     /**
      * 订单类型作用域
      *
-     * @param Query $query
+     * @param Builder $query
      * @param string $orderableType
      */
     public function scopeOrderableType($query, $orderableType)
@@ -371,53 +374,51 @@ class Order extends Model
     /**
      * 用户昵称搜索器
      *
-     * @param Query $query
+     * @param Builder $query
      * @param string $value
      * @param mixed $data
      * @return void
      */
-    public function searchUserNicknameAttribute(Query $query, $value, $data)
+    public function searchUserNicknameAttribute(Builder $query, $value, $data)
     {
-        $query->whereIn('user_id', DB::raw(
-            User::field('id')->where('nickname', 'like', "%{$value}%")->buildSql(true)
-        ));
+        $subQuery = User::query()->select('id')->where('nickname', 'like', "%{$value}%");
+        $query->whereIn('user_id', $subQuery);
     }
 
     /**
      * 用户手机号搜索器
      *
-     * @param Query $query
+     * @param Builder $query
      * @param string $value
      * @param mixed $data
      * @return void
      */
-    public function searchUserMobileAttribute(Query $query, $value, $data)
+    public function searchUserMobileAttribute(Builder $query, $value, $data)
     {
-        $query->where('user_id', DB::raw(
-            User::field('id')->where('mobile', $value)->buildSql(true)
-        ));
+        $subQuery = User::query()->select('id')->where('mobile', $value);
+        $query->where('user_id', $subQuery);
     }
 
     /**
      * 订单状态搜索器
      *
-     * @param Query $query
+     * @param Builder $query
      * @param string $value
      * @param mixed $data
      * @return void
      */
-    public function searchStateAttribute(Query $query, $value, $data)
+    public function searchStateAttribute(Builder $query, $value, $data)
     {
-        $query->when($value === 'pending', function (Query $query) {
+        $query->when($value === 'pending', function (Builder $query) {
             $query->where('order_status', OrderStatusEnum::PENDING);
         })
-            ->when($value === 'paid', function (Query $query) {
+            ->when($value === 'paid', function (Builder $query) {
                 $query->where('order_status', OrderStatusEnum::PAYMENT);
             })
-            ->when($value === 'delivered', function (Query $query) {
+            ->when($value === 'delivered', function (Builder $query) {
                 $query->where('order_status', OrderStatusEnum::DELIVERED);
             })
-            ->when($value === 'received', function (Query $query) {
+            ->when($value === 'received', function (Builder $query) {
                 $query->where('order_status', OrderStatusEnum::RECEIVED);
             });
     }

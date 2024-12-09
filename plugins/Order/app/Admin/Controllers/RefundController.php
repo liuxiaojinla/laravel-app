@@ -3,10 +3,12 @@
 
 namespace Plugins\Order\App\Admin\Controllers;
 
-use app\admin\Controller;
+use App\Admin\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Plugins\Order\App\Enums\RefundStatus;
 use Plugins\Order\App\Models\OrderRefund;
 use Plugins\Order\App\Models\ReturnAddress;
-use plugins\order\enum\RefundStatus;
 use Xin\Hint\Facades\Hint;
 
 class RefundController extends Controller
@@ -22,16 +24,15 @@ class RefundController extends Controller
             RefundStatus::RECEIVED, RefundStatus::FINISHED, RefundStatus::REFUSED,
         ], -1);
 
-        $search = $this->request->get();
-        $data = OrderRefund::with([
+        $search = $this->request->query();
+
+        /** @var LengthAwarePaginator $data */
+        $data = OrderRefund::simple()->with([
             'masterOrder', 'orderGoodsList',
-        ])->simple()->search($search)->order('id desc')
+        ])->search($search)->orderBy('id')
             ->paginate();
 
-        $this->assign('data', $data);
-        $this->assign('status', $status);
-
-        return $this->fetch();
+        return Hint::result($data);
     }
 
     /**
@@ -44,21 +45,16 @@ class RefundController extends Controller
         $id = $this->request->validId();
 
         /** @var OrderRefund $info */
-        $info = OrderRefund::getDetail([
-            'id' => $id,
-        ], [
+        $info = OrderRefund::query()->with([
             'masterOrder', 'masterOrder.user', 'orderGoodsList',
-        ], [
-            'failException' => true,
-        ]);
-        $this->assign('info', $info);
+        ])->where('id', $id)->firstOrFail();
 
         if ($info->isPending()) {
-            $returnAddressList = ReturnAddress::getList([], ['sort' => 'asc']);
-            $this->assign('return_address_list', $returnAddressList);
+            $returnAddressList = ReturnAddress::query()->orderBy('sort')->get();
+            $info['returnAddressList'] = $returnAddressList;
         }
 
-        return $this->fetch();
+        return Hint::result($info);
     }
 
     /**
@@ -70,7 +66,7 @@ class RefundController extends Controller
     {
         $info = $this->findIsEmptyAssert();
 
-        $data = $this->request->param();
+        $data = $this->request->input();
         if (!$info->audit($data)) {
             return Hint::error('审核失败！');
         }
@@ -82,7 +78,7 @@ class RefundController extends Controller
      * 根据id获取数据，如果为空将中断执行
      *
      * @param int|null $id
-     * @return \app\common\model\Model|OrderRefund
+     * @return OrderRefund
      */
     protected function findIsEmptyAssert($id = null)
     {
@@ -91,11 +87,7 @@ class RefundController extends Controller
         }
 
         /** @var OrderRefund $info */
-        return OrderRefund::getPlain([
-            'id' => $id,
-        ], [
-            'failException' => true,
-        ]);
+        return OrderRefund::simple()->where('id', $id)->firstOrFail();
     }
 
     /**
@@ -106,12 +98,6 @@ class RefundController extends Controller
     public function refuse()
     {
         $info = $this->findIsEmptyAssert();
-
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
-
-            return $this->fetch();
-        }
 
         $refuseDesc = $this->request->param('refuse_desc', '', 'trim');
         if (!$info->setRefuse($refuseDesc)) {
@@ -145,12 +131,6 @@ class RefundController extends Controller
     public function refund()
     {
         $info = $this->findIsEmptyAssert();
-
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
-
-            return $this->fetch();
-        }
 
         $data = $this->request->param();
         if (!$info->refund($data)) {

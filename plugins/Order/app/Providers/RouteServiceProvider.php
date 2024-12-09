@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Order\app\Providers;
+namespace Plugins\Order\App\Providers;
 
 use Xin\LaravelFortify\Plugin\RouteServiceProvider as ServiceProvider;
 

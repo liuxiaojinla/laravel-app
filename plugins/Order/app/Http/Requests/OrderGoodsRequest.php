@@ -5,7 +5,7 @@ namespace Plugins\Order\App\Http\Requests;
 
 use Xin\LaravelFortify\Request\FormRequest;
 
-class OrderGoodsValidate extends FormRequest
+class OrderGoodsRequest extends FormRequest
 {
 
     /**
@@ -14,10 +14,10 @@ class OrderGoodsValidate extends FormRequest
      * @var array
      */
     protected $rule = [
-        'goods_id'    => 'require|number',
-        'goods_price' => 'require',
-        'goods_num'   => 'require|number|min:1',
-        'total_price' => 'require|number|min:0',
+        'goods_id'    => 'required|number',
+        'goods_price' => 'required',
+        'goods_num'   => 'required|number|min:1',
+        'total_price' => 'required|number|min:0',
     ];
 
     /**

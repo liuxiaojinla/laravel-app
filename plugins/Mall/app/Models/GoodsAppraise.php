@@ -27,11 +27,11 @@ class GoodsAppraise extends Model
     {
         $validate = new Validate();
         $validate->rule([
-            'order_goods_id'  => 'require',
-            'whole_credit'    => 'require|min:0|max:5',
-            'service_credit'  => 'require|min:0|max:5',
-            'delivery_credit' => 'require|min:0|max:5',
-            'content'         => 'require|length:3,255',
+            'order_goods_id'  => 'required',
+            'whole_credit'    => 'required|min:0|max:5',
+            'service_credit'  => 'required|min:0|max:5',
+            'delivery_credit' => 'required|min:0|max:5',
+            'content'         => 'required|between3,255',
             'images'          => 'array',
         ], [
             'whole_credit'    => '综合评分',

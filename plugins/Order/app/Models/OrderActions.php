@@ -3,16 +3,16 @@
 
 namespace Plugins\Order\App\Models;
 
+use App\Exceptions\Error;
 use App\Models\User;
-use plugins\order\enum\DeliveryStatus as DeliverStatusEnum;
-use plugins\order\enum\DeliveryType as DeliveryTypeEnum;
-use plugins\order\enum\OrderStatus as OrderStatusEnum;
-use plugins\order\enum\PayStatus as PayStatusEnum;
-use plugins\order\enum\ReceiptStatus as ReceiptStatusEnum;
-use plugins\order\event\OrderChangeStatusEvent;
-use plugins\order\job\OrderAutoReceive;
-use think\exception\ValidateException;
-use think\facade\Event;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\ValidationException;
+use Plugins\Order\App\Enums\DeliveryStatus as DeliverStatusEnum;
+use Plugins\Order\App\Enums\DeliveryType as DeliveryTypeEnum;
+use Plugins\Order\App\Enums\OrderStatus as OrderStatusEnum;
+use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
+use Plugins\Order\App\Enums\ReceiptStatus as ReceiptStatusEnum;
+use Plugins\Order\App\Jobs\OrderAutoReceive;
 use Xin\Support\Str;
 
 /**
@@ -55,6 +55,7 @@ trait OrderActions
      * 取消订单
      *
      * @return bool
+     * @throws ValidationException
      */
     public function setCancel()
     {
@@ -81,13 +82,14 @@ trait OrderActions
     protected function triggerChangedEvent($type)
     {
         $this->callMorphMethod('onOrderStatusChanged', [$this]);
-        Event::trigger(new OrderChangeStatusEvent($this, $type));
+        Event::dispatch(new OrderChangeStatusEvent($this, $type));
     }
 
     /**
      * 关闭订单
      *
      * @return bool
+     * @throws ValidationException
      */
     public function setClose()
     {
@@ -111,6 +113,7 @@ trait OrderActions
 
     /**
      * 检查订单是否允许支付
+     * @throws ValidationException
      */
     public function checkIsAllowPaid()
     {
@@ -177,6 +180,7 @@ trait OrderActions
      * 确认取消订单
      *
      * @return bool
+     * @throws ValidationException
      */
     public function confirmCancel()
     {

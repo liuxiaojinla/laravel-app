@@ -3,9 +3,9 @@
 
 namespace Plugins\Order\App\Models;
 
-use plugins\order\enum\PayStatus as PayStatusEnum;
-use plugins\order\enum\RefundAuditStatus as RefundAuditStatusEnum;
-use plugins\order\enum\RefundStatus as RefundStatusEnum;
+use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
+use Plugins\Order\App\Enums\RefundAuditStatus as RefundAuditStatusEnum;
+use Plugins\Order\App\Enums\RefundStatus as RefundStatusEnum;
 
 trait OrderRefundStates
 {

@@ -3,7 +3,9 @@
 
 namespace Plugins\Order\App\Admin\Controllers;
 
-use app\admin\Controller;
+use App\Admin\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Plugins\Order\App\Models\Order;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Radix;
@@ -18,8 +20,9 @@ class VerifyController extends Controller
      */
     public function index()
     {
-        $code = $this->request->param('code', '', 'trim');
+        $code = $this->request->string('code', '')->trim()->toString();
 
+        $order = null;
         if ($code) {
             $orderId = Radix::radix62()->parse($code);
             if ($orderId) {
@@ -34,9 +37,11 @@ class VerifyController extends Controller
             }
         }
 
-        $this->assign('code', $code);
 
-        return $this->fetch();
+        return Hint::result([
+            'code' => $code,
+            'order' => $order,
+        ]);
     }
 
     /**
@@ -60,11 +65,11 @@ class VerifyController extends Controller
             $map[] = ['verify_time', 'between', $rangeTime];
         }
 
-        $data = Order::query()->where($map)->order('verify_time desc')
+        /** @var LengthAwarePaginator $data */
+        $data = Order::query()->where($map)->orderByDesc('verify_time')
             ->paginate();
-        $this->assign('data', $data);
 
-        return $this->fetch();
+        return Hint::result($data);
     }
 
     /**

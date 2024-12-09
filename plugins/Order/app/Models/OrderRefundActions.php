@@ -3,13 +3,14 @@
 
 namespace Plugins\Order\App\Models;
 
-use plugins\order\enum\PayStatus as PayStatusEnum;
-use plugins\order\enum\RefundAuditStatus as RefundAuditStatusEnum;
-use plugins\order\enum\RefundStatus as RefundStatusEnum;
-use plugins\order\event\OrderChangeStatusEvent;
-use plugins\order\event\RefundChangeStatusEvent;
-use think\exception\ValidateException;
-use think\facade\Event;
+use App\Exceptions\Error;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\ValidationException;
+use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
+use Plugins\Order\App\Enums\RefundAuditStatus as RefundAuditStatusEnum;
+use Plugins\Order\App\Enums\RefundStatus as RefundStatusEnum;
+use Plugins\Order\App\Events\OrderChangeStatusEvent;
+use Plugins\Order\App\Events\RefundChangeStatusEvent;
 
 trait OrderRefundActions
 {
@@ -18,6 +19,7 @@ trait OrderRefundActions
      * 取消订单
      *
      * @return bool
+     * @throws ValidationException
      */
     public function setCancel()
     {
@@ -44,7 +46,7 @@ trait OrderRefundActions
     protected function triggerChangedEvent($type)
     {
         // $this->callMorphMethod('onRefundStatusChanged', [$this]);
-        Event::trigger(new RefundChangeStatusEvent($this, $type));
+        Event::dispatch(new RefundChangeStatusEvent($this, $type));
     }
 
     /**
@@ -52,13 +54,14 @@ trait OrderRefundActions
      *
      * @param array $data
      * @return bool
+     * @throws ValidationException
      */
     public function audit(array $data)
     {
         $validate = new Validate();
         $validate->rule([
-            'audit_status' => 'require|in:1,2',
-            'refuse_desc'  => 'requireIf:audit_status,2|length:3,255',
+            'audit_status' => 'required|in:1,2',
+            'refuse_desc'  => 'requireIf:audit_status,2|between3,255',
         ], [
             'audit_status' => '审核状态',
             'refuse_desc'  => '拒绝原因',
@@ -117,6 +120,7 @@ trait OrderRefundActions
      *
      * @param string $refuseDesc
      * @return bool
+     * @throws ValidationException
      */
     public function setRefuse($refuseDesc)
     {
@@ -143,13 +147,14 @@ trait OrderRefundActions
      *
      * @param array $data
      * @return bool
+     * @throws ValidationException
      */
     public function setDelivery(array $data)
     {
         $validate = new Validate();
         $validate->rule([
-            'express_name' => 'require',
-            'express_no'   => 'require',
+            'express_name' => 'required',
+            'express_no'   => 'required',
         ], [
             'express_name' => '物流公司',
             'express_no'   => '物流单号',
@@ -217,6 +222,7 @@ trait OrderRefundActions
      *
      * @param array $data
      * @return bool
+     * @throws ValidationException
      */
     public function refund(array $data)
     {

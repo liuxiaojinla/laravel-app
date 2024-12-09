@@ -1,30 +1,35 @@
 <?php
 
+namespace Plugins\Order\App\Jobs;
 
-namespace plugins\order\job;
-
+use Illuminate\Support\Facades\Log;
+use Plugins\Order\App\Enums\DeliveryType as DeliveryTypeEnum;
+use Plugins\Order\App\Enums\Setting as SettingEnum;
 use Plugins\Order\App\Models\Order;
-use plugins\order\enum\DeliveryType as DeliveryTypeEnum;
-use plugins\order\enum\Setting as SettingEnum;
-use think\facade\Log;
-use think\queue\Job;
-use think\queue\Queueable;
-use Xin\ThinkPHP\Foundation\Bus\Dispatchable;
+use Xin\LaravelFortify\Queue\Job;
 
-class OrderAutoClose
+class OrderAutoClose extends Job
 {
 
-    use Dispatchable, Queueable;
+    /**
+     * @var array
+     */
+    protected $data;
 
     /**
-     * @var string
+     * @param array $data
      */
-    protected static $defaultQueue = SettingEnum::ORDER_QUEUE;
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+        $this->queue = SettingEnum::ORDER_QUEUE;
+    }
+
 
     /**
      * @param int $delay
      * @param Order $order
-     * @return mixed
+     * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
     public static function dispatchOfOrder(Order $order, $delay = 15 * 60)
     {
@@ -33,33 +38,25 @@ class OrderAutoClose
 
     /**
      * 关闭订单
-     *
-     * @param Job $job
-     * @param array $data
      */
-    public function fire(Job $job, $data)
+    protected function execute()
     {
-        $orderId = isset($data['id']) ? $data['id'] : null;
+        $orderId = isset($this->data['id']) ? $this->data['id'] : null;
         if (empty($orderId)) {
             Log::error("自动关闭订单失败：未传递订单ID");
-            $job->delete();
+            return;
         }
 
         /** @var Order $info */
-        $info = Order::getPlainById($orderId);
+        $info = Order::query()->find($orderId);
         if (!$info) {
             return;
         }
         if ($info->isPaySucceed() || $info->delivery_type != DeliveryTypeEnum::EXPRESS
             || $info->isClosed() || $info->isCancelled()) {
-            $job->delete();
-
             return;
         }
 
         $info->setClose();
-
-        $job->delete();
     }
-
 }

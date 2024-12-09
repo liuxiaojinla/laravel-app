@@ -3,7 +3,7 @@
 
 namespace plugins\order\service;
 
-use plugins\order\enum\PayType;
+use Plugins\Order\App\Enums\PayType;
 use Xin\Support\Str;
 
 class WechatPayService extends AbstractPayService

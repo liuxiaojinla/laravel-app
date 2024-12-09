@@ -3,9 +3,10 @@
 
 namespace Plugins\Order\App\Admin\Controllers;
 
-use app\admin\Controller;
-use app\common\model\Model;
-use Plugins\Order\App\Http\Requests\ReturnAddressValidate;
+use App\Admin\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
+use Plugins\Order\App\Http\Requests\ReturnAddressRequest;
 use Plugins\Order\App\Models\ReturnAddress;
 use Xin\Hint\Facades\Hint;
 
@@ -17,86 +18,44 @@ class ReturnAddressController extends Controller
      */
     public function index()
     {
-        $search = $this->request->get();
+        $search = $this->request->query();
         $data = ReturnAddress::simple()->search($search)
-            ->order([
-                'sort' => 'asc',
-                'id'   => 'desc',
-            ])
+            ->orderBy('sort')
+            ->orderByDesc('id')
             ->paginate();
 
-        $this->assign('data', $data);
-
-        return $this->fetch();
+        return Hint::result($data);
     }
 
     /**
      * 创建数据
      * @return Response
      */
-    public function create()
+    public function store(ReturnAddressRequest $request)
     {
-        $id = $this->request->integer('id', 0);
-
-        if ($this->request->isGet()) {
-            if ($id > 0) {
-                $info = ReturnAddress::query()->where('id', $id)->first();
-                $this->assign('copy', 1);
-                $this->assign('info', $info);
-            }
-
-            return $this->fetch('edit');
+        $data = $request->validated();
+        if (!isset($data['config'])) {
+            $data['config'] = [];
         }
-
-        $data = $this->request->validate($this->validateDataCallback(), ReturnAddressValidate::class);
         $info = ReturnAddress::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
-    /**
-     * 验证数据合法性
-     *
-     * @param string $scene
-     * @return \Closure
-     */
-    protected function validateDataCallback($scene = null)
-    {
-        return function ($data) {
-            if (isset($data['region'])) {
-                $region = (array)json_decode($data['region'], true);
-                unset($data['region']);
-                $data = array_merge($region, $data);
-            }
-
-            if (isset($data['location'])) {
-                $location = explode(',', $data['location'], 2);
-                unset($data['location']);
-                $data['lng'] = $location[0] ?? '';
-                $data['lat'] = $location[1] ?? '';
-            }
-
-            return $data;
-        };
-    }
 
     /**
      * 更新数据
      * @return Response
      */
-    public function update()
+    public function update(ReturnAddressRequest $request)
     {
         $id = $this->request->validId();
+        $data = $request->validated();
+
+        /** @var ReturnAddress $info */
         $info = ReturnAddress::query()->where('id', $id)->firstOrFail();
 
-        if ($this->request->isGet()) {
-            $this->assign('info', $info);
-
-            return $this->fetch('edit');
-        }
-
-        $data = $this->request->validate($this->validateDataCallback(), ReturnAddressValidate::class);
-        if (!$info->save($data)) {
+        if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
 
@@ -112,8 +71,12 @@ class ReturnAddressController extends Controller
         $ids = $this->request->validIds();
         $isForce = $this->request->integer('force', 0);
 
-        ReturnAddress::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
-            $item->force($isForce)->delete();
+        ReturnAddress::withTrashed()->whereIn('id', $ids)->select()->each(function (ReturnAddress $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
         });
 
         return Hint::success('删除成功！', null, $ids);
@@ -122,6 +85,7 @@ class ReturnAddressController extends Controller
     /**
      * 更新数据
      * @return Response
+     * @throws ValidationException
      */
     public function setValue()
     {

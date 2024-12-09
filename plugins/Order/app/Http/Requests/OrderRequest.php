@@ -5,22 +5,22 @@ namespace Plugins\Order\App\Http\Requests;
 
 use Xin\LaravelFortify\Request\FormRequest;
 
-class OrderValidate extends FormRequest
+class OrderRequest extends FormRequest
 {
 
     /**
      * @var string[]
      */
     protected $rule = [
-        'app_id'  => 'require',
-        'user_id' => 'require',
+        'app_id'  => 'required',
+        'user_id' => 'required',
 
-        'order_no'            => 'require|alphaNum|max:32',
-        'order_type'          => 'require|in:0,1,2,3',
-        'order_status'        => 'require|number',
+        'order_no'            => 'required|alphaNum|max:32',
+        'order_type'          => 'required|in:0,1,2,3',
+        'order_status'        => 'required|number',
 
         // 订单相关金额
-        'total_amount'        => 'require|float|egt:0',
+        'total_amount'        => 'required|float|egt:0',
         'point_amount'        => 'float|egt:0',
         'adjust_amount'       => 'float|egt:0',
         'discount_amount'     => 'float|egt:0',
@@ -34,9 +34,9 @@ class OrderValidate extends FormRequest
         'coupon_amount'       => 'float|egt:0',
 
         // 支付信息
-        'pay_status'          => 'require|in:10,20',
+        'pay_status'          => 'required|in:10,20',
         'pay_amount'          => 'float|egt:0',
-        'pay_type'            => 'require|in:0,1,2',
+        'pay_type'            => 'required|in:0,1,2',
         //		'pay_time'            => '',
         //		'pay_no'              => '',
         //		'transaction_id'      => '', //第三方流水号
@@ -46,8 +46,8 @@ class OrderValidate extends FormRequest
         'extract_verifier_id' => 'number',
 
         // 物流信息
-        'delivery_type'       => 'require|in:10,20',
-        'delivery_status'     => 'require|in:10,20',
+        'delivery_type'       => 'required|in:10,20',
+        'delivery_status'     => 'required|in:10,20',
         'delivery_amount'     => 'float|egt:0',
         //		'delivery_time'   => '',
         //		'express_company' => '',
@@ -59,9 +59,9 @@ class OrderValidate extends FormRequest
         //		'buyer_rate'      => '',
 
         // 收货信息
-        'receipt_status'      => 'require|in:10,20',
+        'receipt_status'      => 'required|in:10,20',
         //		'receipt_time'    => '',
-        'receiver_name'       => 'requireIf:delivery_type,10|length:2,24',
+        'receiver_name'       => 'requireIf:delivery_type,10|between2,24',
         'receiver_gender'     => 'requireIf:delivery_type,10|in:0,1',
         'receiver_phone'      => 'requireIf:delivery_type,10|mobile',
         'receiver_province'   => 'requireIf:delivery_type,10',

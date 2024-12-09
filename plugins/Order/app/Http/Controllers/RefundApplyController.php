@@ -4,10 +4,10 @@
 namespace plugins\order\api\controller;
 
 use App\Http\Controller;
+use Plugins\Order\App\Enums\RefundAuditStatus as RefundAuditStatusEnum;
+use Plugins\Order\App\Enums\RefundStatus as RefundStatusEnum;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderRefund;
-use plugins\order\enum\RefundAuditStatus as RefundAuditStatusEnum;
-use plugins\order\enum\RefundStatus as RefundStatusEnum;
 use think\exception\ValidateException;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Str;
@@ -92,14 +92,14 @@ class RefundApplyController extends Controller
             'amount', 'apply_desc', 'apply_desc_img', 'phone',
         ], [
             'rules'  => [
-                'order_id'         => 'require',
-                'order_goods_list' => 'require|array',
-                'type'             => 'require|in:0,1',
-                'receipt_status'   => 'require|in:0,1',
-                //				'apply_desc'     => 'require|length:3,1000',
-                //				'amount'         => 'require|float|min:0',
-                //				'apply_desc_img' => 'require|array',
-                //				'phone'          => 'require|mobile',
+                'order_id'         => 'required',
+                'order_goods_list' => 'required|array',
+                'type'             => 'required|in:0,1',
+                'receipt_status'   => 'required|in:0,1',
+                //				'apply_desc'     => 'required|between3,1000',
+                //				'amount'         => 'required|float|min:0',
+                //				'apply_desc_img' => 'required|array',
+                //				'phone'          => 'required|mobile',
             ],
             'fields' => [
                 'order_goods_list' => '订单商品',

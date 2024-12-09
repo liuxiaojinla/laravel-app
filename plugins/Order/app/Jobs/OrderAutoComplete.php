@@ -1,24 +1,29 @@
 <?php
 
 
-namespace plugins\order\job;
+namespace Plugins\Order\App\Jobs;
 
+use Illuminate\Support\Facades\Log;
+use Plugins\Order\App\Enums\Setting as SettingEnum;
 use Plugins\Order\App\Models\Order;
-use plugins\order\enum\Setting as SettingEnum;
-use think\facade\Log;
-use think\queue\Job;
-use think\queue\Queueable;
-use Xin\ThinkPHP\Foundation\Bus\Dispatchable;
+use Xin\LaravelFortify\Queue\Job;
 
-class OrderAutoComplete
+class OrderAutoComplete extends Job
 {
 
-    use Dispatchable, Queueable;
+    /**
+     * @var array
+     */
+    protected $data;
 
     /**
-     * @var string
+     * @param array $data
      */
-    protected static $defaultQueue = SettingEnum::ORDER_QUEUE;
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+        $this->queue = SettingEnum::ORDER_QUEUE;
+    }
 
     /**
      * @param int $delay
@@ -32,32 +37,26 @@ class OrderAutoComplete
 
     /**
      * 自动收货
-     *
-     * @param Job $job
-     * @param array $data
      */
-    public function fire(Job $job, $data)
+    protected function execute()
     {
-        $orderId = isset($data['id']) ? $data['id'] : null;
+        $orderId = isset($this->data['id']) ? $this->data['id'] : null;
         if (empty($orderId)) {
             Log::error("订单自动收货失败：未传递订单ID");
-            $job->delete();
+            return;
         }
 
         /** @var Order $info */
-        $info = Order::getPlainById($orderId);
+        $info = Order::query()->find($orderId);
         if (!$info) {
             return;
         }
         if ($info->isPaySucceed() || $info->isClosed() || $info->isCancelled()) {
-            $job->delete();
 
             return;
         }
 
         $info->setComplete();
-
-        $job->delete();
     }
 
 }

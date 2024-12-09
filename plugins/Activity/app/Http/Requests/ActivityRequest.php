@@ -15,8 +15,8 @@ class ActivityRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'       => 'required|length:2,48',
-        'description' => 'required|length:15,255',
+        'title'       => 'required|between2,48',
+        'description' => 'required|between15,255',
         'content'     => 'required',
         'cover'       => 'required',
         'start_time'  => 'required|date|after:+15 minutes',

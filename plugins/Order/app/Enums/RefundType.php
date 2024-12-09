@@ -1,7 +1,7 @@
 <?php
 
 
-namespace plugins\order\enum;
+namespace Plugins\Order\App\Enums;
 
 use MyCLabs\Enum\Enum;
 

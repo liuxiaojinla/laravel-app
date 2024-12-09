@@ -20,7 +20,7 @@ class CouponRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'         => 'required|length:2,48',
+        'title'         => 'required|between2,48',
         'money'         => 'required|egt:0.01',
         'discount'      => 'required|egt:1|elt:9.9',
         'total_num'     => 'required|integer|egt:1',

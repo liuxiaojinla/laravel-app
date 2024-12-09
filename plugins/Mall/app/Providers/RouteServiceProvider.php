@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Mall\app\Providers;
+namespace Plugins\Mall\App\Providers;
 
 use Xin\LaravelFortify\Plugin\RouteServiceProvider as ServiceProvider;
 

@@ -36,4 +36,14 @@ class Express extends Model
         return $result->toArray();
     }
 
+    /**
+     * @inerhitDoc
+     */
+    public static function getAllowSetFields()
+    {
+        return array_merge(parent::getAllowSetFields(), [
+            'sort' => 'number|min:0',
+        ]);
+    }
+
 }

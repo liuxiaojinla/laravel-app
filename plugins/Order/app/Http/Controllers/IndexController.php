@@ -4,10 +4,10 @@
 namespace plugins\order\api\controller;
 
 use App\Http\Controller;
+use Plugins\Order\App\Enums\DeliveryStatus;
+use Plugins\Order\App\Enums\DeliveryType;
+use Plugins\Order\App\Enums\PayType;
 use Plugins\Order\App\Models\Order;
-use plugins\order\enum\DeliveryStatus;
-use plugins\order\enum\DeliveryType;
-use plugins\order\enum\PayType;
 use think\db\exception\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;
 

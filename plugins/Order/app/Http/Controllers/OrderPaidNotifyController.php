@@ -3,9 +3,9 @@
 
 namespace plugins\order\api\controller;
 
+use Plugins\Order\App\Enums\PayType;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\PayLog;
-use plugins\order\enum\PayType;
 use think\facade\Log;
 
 class OrderPaidNotifyController

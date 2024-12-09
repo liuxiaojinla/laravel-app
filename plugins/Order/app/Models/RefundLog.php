@@ -4,12 +4,9 @@
 namespace Plugins\Order\App\Models;
 
 use App\Models\Model;
-use Xin\Saas\ThinkPHP\Models\OpenAppable;
 
 class RefundLog extends Model
 {
-
-    use OpenAppable;
 
     /**
      * 支付单号是否已退款

@@ -3,9 +3,9 @@
 
 namespace plugins\order\api\controller;
 
+use Plugins\Order\App\Enums\PayType;
 use Plugins\Order\App\Models\OrderRefund;
 use Plugins\Order\App\Models\RefundLog;
-use plugins\order\enum\PayType;
 
 class OrderRefundNotifyController
 {

@@ -66,12 +66,12 @@ class PayFlow extends Model
     private static function validateData($data)
     {
         $data = Validator::validate($data, [
-            'user_id'          => 'require',
-            'shop_id'          => 'require',
-            'total_amount'     => 'require|float|gt:0.01',
+            'user_id'          => 'required',
+            'shop_id'          => 'required',
+            'total_amount'     => 'required|float|gt:0.01',
             'deduction_amount' => 'float|egt:0',
-            'out_trade_no'     => 'require',
-            'transaction_id'   => 'require',
+            'out_trade_no'     => 'required',
+            'transaction_id'   => 'required',
         ]);
 
         return $data;

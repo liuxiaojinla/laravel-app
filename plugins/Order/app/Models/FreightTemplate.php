@@ -4,17 +4,17 @@
 namespace Plugins\Order\App\Models;
 
 use App\Models\Model;
-use Xin\Saas\ThinkPHP\Models\OpenAppable;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property-read int id
  * @property string title
- * @property Model\Collection rules
+ * @property Collection rules
  */
 class FreightTemplate extends Model
 {
 
-    use OpenAppable;
 
     /**
      * @var string[]
@@ -42,8 +42,7 @@ class FreightTemplate extends Model
      */
     public function rules()
     {
-        return $this->hasMany(FreightTemplateRule::class, 'template_id')
-            ->withoutField(['create_time']);
+        return $this->hasMany(FreightTemplateRule::class, 'template_id');
     }
 
     /**
@@ -53,10 +52,19 @@ class FreightTemplate extends Model
      */
     public function getFeeTypeTextAttribute()
     {
-        $val = $this->getData('fee_type');
+        $val = $this->getRawOriginal('fee_type');
 
         return isset(static::$FEE_TYPE_TEXT_MAP[$val])
             ? static::$FEE_TYPE_TEXT_MAP[$val] : '';
     }
 
+    /**
+     * @inerhitDoc
+     */
+    public static function getAllowSetFields()
+    {
+        return array_merge(parent::getAllowSetFields(), [
+            'sort' => 'number|min:0',
+        ]);
+    }
 }

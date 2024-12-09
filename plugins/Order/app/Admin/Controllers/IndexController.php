@@ -3,17 +3,14 @@
 
 namespace Plugins\Order\App\Admin\Controllers;
 
-use app\admin\Controller;
+use App\Admin\Controller;
+use App\Exceptions\Error;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
+use Plugins\Order\App\Jobs\OrderAutoComplete;
 use Plugins\Order\App\Models\Express;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderGoods;
-use plugins\order\job\OrderAutoComplete;
-use plugins\verifier\model\Verifier;
-use think\exception\ValidateException;
-use think\facade\Db;
-use Xin\Excel\Column;
-use Xin\Excel\TableExport;
-use Xin\Excel\Writer;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\File;
 
@@ -31,21 +28,18 @@ class IndexController extends Controller
             -1, 10, 20, 30, 40, 50,
         ], -1);
 
-        $search = $this->request->get();
-        $data = Order::with([
+        $search = $this->request->query();
+        $data = Order::simple()->with([
             'goods_list', 'user',
-        ])->simple()->search($search)
-            ->order('id desc')->paginate();
+        ])->search($search)
+            ->orderByDesc('id')->paginate();
 
-        $this->assign('data', $data);
-        $this->assign('status', $status);
-
-        return $this->fetch();
+        return Hint::result($data);
     }
 
     /**
      * 导出数据
-     * @return Response\File
+     * @return Response
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */
@@ -102,18 +96,17 @@ class IndexController extends Controller
         ])->firstOrFail();
 
         $expressList = Express::query()->where(['status' => 1])->select();
-        $this->assign('express_list', $expressList);
 
+        $verifierList = [];
         if (class_exists(Verifier::class)) {
             $verifierList = Verifier::with('shop')->where(['status' => 1])->select();
-            $this->assign('verifier_list', $verifierList);
-        } else {
-            $this->assign('verifier_list', []);
         }
 
-        $this->assign('info', $info);
-
-        return $this->fetch();
+        return Hint::result([
+            'order'         => $info,
+            'express'       => $expressList,
+            'verifier_list' => $verifierList,
+        ]);
     }
 
     /**
@@ -126,12 +119,10 @@ class IndexController extends Controller
         $info = $this->findIsEmptyAssert();
 
         if (!$this->request->isPost()) {
-            $this->assign([
+            return Hint::result([
                 'order_amount'    => $info->order_amount,
                 'delivery_amount' => $info->delivery_amount,
             ]);
-
-            return $this->fetch();
         }
 
         $orderAmount = $this->request->param('order_amount/f', 0);
@@ -147,7 +138,7 @@ class IndexController extends Controller
      * 根据id获取数据，如果为空将中断执行
      *
      * @param int|null $id
-     * @return array|Order|\think\Model
+     * @return Order
      */
     protected function findIsEmptyAssert($id = null)
     {
@@ -155,7 +146,9 @@ class IndexController extends Controller
             $id = $this->request->validId();
         }
 
-        return Order::findOrFail($id);
+        $info = Order::query()->where('id', $id)->firstOrFail();
+
+        return value($info);
     }
 
     /**
@@ -183,10 +176,11 @@ class IndexController extends Controller
      * 核销订单
      *
      * @return Response
+     * @throws ValidationException
      */
     public function extract()
     {
-        $verifierId = $this->request->param('verifier_id/d');
+        $verifierId = $this->request->integer('verifier_id');
         if ($verifierId < 1) {
             throw Error::validationException('请选择核销员！');
         }
@@ -210,8 +204,8 @@ class IndexController extends Controller
             'express_id', 'express_no',
         ], [
             'rules'  => [
-                'express_id' => 'require|number',
-                'express_no' => 'require|length:5,30',
+                'express_id' => 'required|number',
+                'express_no' => 'required|between5,30',
             ],
             'fields' => [
                 'express_id' => '物流公司',

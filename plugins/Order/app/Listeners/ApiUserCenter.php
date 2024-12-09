@@ -1,15 +1,12 @@
 <?php
 
 
-namespace plugins\order\listener;
+namespace Plugins\Order\App\Listeners;
 
-use app\Request;
+use Plugins\Order\App\Enums\OrderStatus;
+use Plugins\Order\App\Enums\RefundStatus;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderRefund;
-use plugins\order\enum\OrderStatus;
-use plugins\order\enum\RefundStatus;
-use think\db\exception\DbException;
-use Xin\Auth\Contracts\AuthVerifyType;
 
 class ApiUserCenter
 {

@@ -3,10 +3,10 @@
 
 namespace Plugins\Order\App\Models;
 
-use plugins\order\enum\DeliveryStatus as DeliveryStatusEnum;
-use plugins\order\enum\OrderStatus as OrderStatusEnum;
-use plugins\order\enum\PayStatus as PayStatusEnum;
-use plugins\order\enum\ReceiptStatus as ReceiptStatusEnum;
+use Plugins\Order\App\Enums\DeliveryStatus as DeliveryStatusEnum;
+use Plugins\Order\App\Enums\OrderStatus as OrderStatusEnum;
+use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
+use Plugins\Order\App\Enums\ReceiptStatus as ReceiptStatusEnum;
 
 /**
  * @mixin Order
@@ -21,7 +21,7 @@ trait OrderStates
      */
     public function isCancelled()
     {
-        return $this->getData('order_status') == OrderStatusEnum::CANCEL;
+        return $this->getRawOriginal('order_status') == OrderStatusEnum::CANCEL;
     }
 
     /**
@@ -31,7 +31,7 @@ trait OrderStates
      */
     public function isClosed()
     {
-        return $this->getData('order_status') == OrderStatusEnum::CLOSED;
+        return $this->getRawOriginal('order_status') == OrderStatusEnum::CLOSED;
     }
 
     /**
@@ -41,7 +41,7 @@ trait OrderStates
      */
     public function isPending()
     {
-        return $this->getData('order_status') == OrderStatusEnum::PENDING;
+        return $this->getRawOriginal('order_status') == OrderStatusEnum::PENDING;
     }
 
     /**
@@ -51,7 +51,7 @@ trait OrderStates
      */
     public function isPaid()
     {
-        return $this->getData('order_status') == OrderStatusEnum::PAYMENT;
+        return $this->getRawOriginal('order_status') == OrderStatusEnum::PAYMENT;
     }
 
     /**
@@ -61,7 +61,7 @@ trait OrderStates
      */
     public function isPaySucceed()
     {
-        return $this->getData('pay_status') == PayStatusEnum::SUCCESS;
+        return $this->getRawOriginal('pay_status') == PayStatusEnum::SUCCESS;
     }
 
     /**
@@ -71,7 +71,7 @@ trait OrderStates
      */
     public function isDelivered()
     {
-        return $this->getData('delivery_status') == DeliveryStatusEnum::SUCCESS;
+        return $this->getRawOriginal('delivery_status') == DeliveryStatusEnum::SUCCESS;
     }
 
     /**
@@ -81,7 +81,7 @@ trait OrderStates
      */
     public function isReceived()
     {
-        return $this->getData('receipt_status') == ReceiptStatusEnum::SUCCESS;
+        return $this->getRawOriginal('receipt_status') == ReceiptStatusEnum::SUCCESS;
     }
 
     /**
@@ -91,7 +91,7 @@ trait OrderStates
      */
     public function isEvaluated()
     {
-        return $this->getData('is_evaluate') != 0;
+        return $this->getRawOriginal('is_evaluate') != 0;
     }
 
     /**
@@ -101,7 +101,7 @@ trait OrderStates
      */
     public function isCompleted()
     {
-        return $this->getData('order_status') == OrderStatusEnum::FINISHED;
+        return $this->getRawOriginal('order_status') == OrderStatusEnum::FINISHED;
     }
 
     /**
@@ -111,7 +111,7 @@ trait OrderStates
      */
     public function isRefunded()
     {
-        return $this->getData('order_status') == OrderStatusEnum::REFUNDED;
+        return $this->getRawOriginal('order_status') == OrderStatusEnum::REFUNDED;
     }
 
 }

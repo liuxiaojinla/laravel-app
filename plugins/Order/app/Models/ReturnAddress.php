@@ -4,16 +4,16 @@
 namespace Plugins\Order\App\Models;
 
 use App\Models\Model;
-use Xin\Saas\ThinkPHP\Models\OpenAppable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReturnAddress extends Model
 {
-    use OpenAppable;
+    use SoftDeletes;
 
     /**
      * @var string[]
      */
-    protected $searchMatchLikeFields = [
+    protected array $searchMatchLikeFields = [
         'mobile',
     ];
 

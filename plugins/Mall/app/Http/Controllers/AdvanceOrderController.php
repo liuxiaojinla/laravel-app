@@ -14,9 +14,9 @@ use Illuminate\Validation\ValidationException;
 use Plugins\Coupon\App\Models\UserCoupon;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\ShoppingCart;
+use Plugins\Order\App\Jobs\OrderAutoClose;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderGoods;
-use plugins\order\job\OrderAutoClose;
 use Xin\Hint\Facades\Hint;
 
 class AdvanceOrderController extends Controller
