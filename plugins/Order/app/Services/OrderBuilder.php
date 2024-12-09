@@ -126,14 +126,6 @@ class OrderBuilder
     }
 
     /**
-     * @return Collection
-     */
-    public function orderGoodsList()
-    {
-        return $this->orderGoodsList;
-    }
-
-    /**
      * @param Collection $orderGoodsList
      * @return $this
      */
@@ -142,32 +134,6 @@ class OrderBuilder
         $this->orderGoodsList = $orderGoodsList;
 
         return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function goodsTotalPrice()
-    {
-        return $this->orderGoodsList()->reduce(function ($result, $item) {
-            return $result + $item['total_price'];
-        }, 0);
-    }
-
-    /**
-     * @return array
-     */
-    public function order()
-    {
-        if (!$this->order) {
-            $order = new Order();
-            $order->user_id = $this->user['id'];
-            $order->total_price = $this->goodsTotalPrice();
-            $order->pay_price = $this->goodsTotalPrice();
-            $this->order = $order;
-        }
-
-        return $this->order;
     }
 
     /**
@@ -190,17 +156,6 @@ class OrderBuilder
     }
 
     /**
-     * @param callable $handler
-     * @return $this
-     */
-    public function addHandler($handler)
-    {
-        $this->middlewareManager->push($handler);
-
-        return $this;
-    }
-
-    /**
      * @param array $handlers
      * @return $this
      */
@@ -218,20 +173,14 @@ class OrderBuilder
     }
 
     /**
-     * @param Order $order
-     * @return Order
+     * @param callable $handler
+     * @return $this
      */
-    protected function optimize(Order $order)
+    public function addHandler($handler)
     {
-        if ($order['total_price'] < 0) {
-            $order['total_price'] = 0;
-        }
+        $this->middlewareManager->push($handler);
 
-        if ($order['pay_price'] < 0) {
-            $order['pay_price'] = 0;
-        }
-
-        return $order;
+        return $this;
     }
 
     /**
@@ -283,5 +232,56 @@ class OrderBuilder
                 $handler->validate($payload);
             }
         }
+    }
+
+    /**
+     * @param Order $order
+     * @return Order
+     */
+    protected function optimize(Order $order)
+    {
+        if ($order['total_price'] < 0) {
+            $order['total_price'] = 0;
+        }
+
+        if ($order['pay_price'] < 0) {
+            $order['pay_price'] = 0;
+        }
+
+        return $order;
+    }
+
+    /**
+     * @return array
+     */
+    public function order()
+    {
+        if (!$this->order) {
+            $order = new Order();
+            $order->user_id = $this->user['id'];
+            $order->total_price = $this->goodsTotalPrice();
+            $order->pay_price = $this->goodsTotalPrice();
+            $this->order = $order;
+        }
+
+        return $this->order;
+    }
+
+    /**
+     * @return float
+     */
+    public function goodsTotalPrice()
+    {
+        return $this->orderGoodsList()->reduce(function ($result, $item) {
+            return $result + $item['total_price'];
+        }, 0);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function orderGoodsList()
+    {
+        return $this->orderGoodsList;
     }
 }

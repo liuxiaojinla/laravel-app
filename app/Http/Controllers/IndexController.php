@@ -14,10 +14,13 @@ use App\Models\Agreement;
 use App\Models\Notice;
 use App\Models\SinglePage;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Translation\Translator;
 use Xin\Hint\Facades\Hint;
 use Xin\Setting\Facades\Setting;
 use Xin\Support\Fluent;
+use Xin\Support\Reflect;
 
 class IndexController extends Controller
 {
@@ -25,7 +28,7 @@ class IndexController extends Controller
     /**
      * 获取首页数据
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -56,9 +59,45 @@ class IndexController extends Controller
     }
 
     /**
+     * 获取公告列表
+     *
+     * @return Response
+     */
+    public function notices()
+    {
+        $data = Notice::query()->where([
+            ['status', '=', 1,],
+            ['begin_time', '<', $this->request->timeFormat(),],
+            ['end_time', '>', $this->request->timeFormat(),],
+        ])->get();
+
+        return Hint::result($data);
+    }
+
+    /**
+     * 获取广告位列表
+     *
+     * @return Response
+     */
+    public function banners()
+    {
+        $name = trim($this->request->input('name', ''));
+        $name = $name ?: 'mobile_home';
+        $advertisementId = AdvertisementPosition::query()->where('name', $name)->value('id') ?: 0;
+        $data = AdvertisementItem::simple()->where([
+            ['status', '=', 1,],
+            ['begin_time', '<', $this->request->time(),],
+            ['end_time', '>', $this->request->time(),],
+            ['advertisement_id', '=', $advertisementId],
+        ])->oldest('sort')->latest('id')->get();
+
+        return Hint::result($data);
+    }
+
+    /**
      * 获取系统配置
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function config()
     {
@@ -67,7 +106,7 @@ class IndexController extends Controller
 
     /**
      * 获取协议
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function agreement()
     {
@@ -81,7 +120,7 @@ class IndexController extends Controller
     /**
      * 关于我们
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function about()
     {
@@ -92,7 +131,7 @@ class IndexController extends Controller
 
     /**
      * 获取城市数据
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function regions()
     {
@@ -106,5 +145,20 @@ class IndexController extends Controller
         })->get();
 
         return Hint::result($regions);
+    }
+
+    /**
+     * 多语言配置
+     * @return Response
+     * @throws \ReflectionException
+     */
+    public function languages()
+    {
+        /** @var Translator $translator */
+        $translator = $this->app['translator'];
+        $translator->load('*', '*', 'en');
+        $translator->load('*', '*', 'zh_CN');
+        $languages = Reflect::getPropertyValue($translator, 'loaded')['*']['*'];
+        return Hint::result($languages);
     }
 }

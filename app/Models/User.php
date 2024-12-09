@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Concerns\UseTableNameAsMorphClass;
 use App\Models\User\Identity as UserIdentity;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,7 +42,7 @@ use Xin\LaravelFortify\Model\Modelable;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, Modelable;
+    use HasApiTokens, HasFactory, Notifiable, Modelable, UseTableNameAsMorphClass;
 
     // 微信小程序用户
     const ORIGIN_WECHAT_MINIAPP = 1;
