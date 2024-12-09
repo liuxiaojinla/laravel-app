@@ -1,12 +1,10 @@
 {
     "name": "nwidart/activity",
     "description": "",
-
     "extra": {
         "laravel": {
             "providers": [],
             "aliases": {
-
             }
         }
     },

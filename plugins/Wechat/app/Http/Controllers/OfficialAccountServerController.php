@@ -46,6 +46,18 @@ class OfficialAccountServerController extends Controller
     }
 
     /**
+     * 自定义菜单事件
+     * @param Message $message
+     * @param \Closure $next
+     * @return string
+     * @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_event_pushes.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%8F%9C%E5%8D%95%E4%BA%8B%E4%BB%B6
+     */
+    public function onMenuClick(Message $message, \Closure $next)
+    {
+        return $message['EventKey'];
+    }
+
+    /**
      * 文本消息
      * @param Message $message
      * @param \Closure $next
@@ -145,19 +157,6 @@ class OfficialAccountServerController extends Controller
         }
 
         return '感谢您关注!';
-    }
-
-
-    /**
-     * 自定义菜单事件
-     * @param Message $message
-     * @param \Closure $next
-     * @return string
-     * @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_event_pushes.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%8F%9C%E5%8D%95%E4%BA%8B%E4%BB%B6
-     */
-    public function onMenuClick(Message $message, \Closure $next)
-    {
-        return $message['EventKey'];
     }
 
 }

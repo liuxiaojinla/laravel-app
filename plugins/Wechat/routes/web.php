@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Plugins\Wechat\app\Http\Controllers\OfficialAccountServerController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes

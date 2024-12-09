@@ -17,5 +17,5 @@ Route::group([], function () {
 });
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::get('mall', fn (Request $request) => $request->user())->name('mall');
+    Route::get('mall', fn(Request $request) => $request->user())->name('mall');
 });

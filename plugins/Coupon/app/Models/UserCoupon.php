@@ -1,21 +1,20 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Coupon\App\Models;
 
 use App\Exceptions\Error;
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Xin\LaravelFortify\Validation\ValidationException;
 
 /**
  * @property Coupon $coupon
  * @property-read int $user_id
+ * @property int $disabled
+ * @property float $money
  */
 class UserCoupon extends Model
 {
@@ -38,6 +37,28 @@ class UserCoupon extends Model
     ];
 
     /**
+     * 获取有效的列表
+     *
+     * @param int $userId
+     * @return Collection
+     */
+    public static function getAvailableList($userId)
+    {
+        return static::with('coupon')->where([
+            'user_id' => $userId,
+            'status'  => UserCoupon::STATUS_WAIT,
+        ])
+            ->where('expire_time', '>', now()->getTimestamp())
+            ->get()->sort(function ($it1, $it2) {
+                if ($it1->coupon->money == $it2->coupon->money) {
+                    return 0;
+                }
+
+                return $it1->coupon->money > $it2->coupon->money ? -1 : 1;
+            })->values();
+    }
+
+    /**
      * 关联用户模型
      *
      * @return BelongsTo
@@ -55,26 +76,6 @@ class UserCoupon extends Model
     public function coupon()
     {
         return $this->belongsTo(Coupon::class)->withTrashed();
-    }
-
-    /**
-     * 获取有效的列表
-     *
-     * @param int $userId
-     * @return UserCoupon[]
-     */
-    public static function getAvailableList($userId)
-    {
-        return static::with('coupon')->where([
-            'user_id' => $userId,
-            'status'  => UserCoupon::STATUS_WAIT,
-        ])->where('expire_time', '>', now()->getTimestamp())->select()->sort(function ($it1, $it2) {
-            if ($it1->coupon->money == $it2->coupon->money) {
-                return 0;
-            }
-
-            return $it1->coupon->money > $it2->coupon->money ? -1 : 1;
-        })->values();
     }
 
     /**

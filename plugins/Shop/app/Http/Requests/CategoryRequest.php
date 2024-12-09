@@ -46,6 +46,23 @@ class CategoryRequest extends FormRequest
     protected $scene = [];
 
     /**
+     * 验证规则
+     *
+     * @return string[]
+     */
+    public function rules()
+    {
+        return [
+            'title' => 'require|length:2,48',
+            'pid'   => [
+                'integer',
+                // 验证父级是不是自己
+                $this->checkOneself(...),
+            ],
+        ];
+    }
+
+    /**
      * 验证父级是不是自己
      *
      * @param string $attribute
@@ -66,22 +83,5 @@ class CategoryRequest extends FormRequest
         } elseif (!Category::query()->where('id', $pid)->exists()) {
             $fail("父级分类不存在。");
         }
-    }
-
-    /**
-     * 验证规则
-     *
-     * @return string[]
-     */
-    public function rules()
-    {
-        return [
-            'title' => 'require|length:2,48',
-            'pid'   => [
-                'integer',
-                // 验证父级是不是自己
-                $this->checkOneself(...),
-            ],
-        ];
     }
 }

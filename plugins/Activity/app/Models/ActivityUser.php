@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Activity\App\Models;
 
@@ -33,6 +29,19 @@ class ActivityUser extends Pivot
      * @var string
      */
     protected $updateTime = false;
+
+    /**
+     * @inerhitDoc
+     */
+    public static function getSearchFields()
+    {
+        return array_merge(self::getBasicSearchFields(), [
+            'activity_id',
+            'user_id',
+            'user_nickname',
+            'user_mobile',
+        ]);
+    }
 
     /**
      * 参与活动
@@ -78,18 +87,5 @@ class ActivityUser extends Pivot
     {
         $subQuery = User::query()->select('id')->where('nickname', 'like', "%{$value}%");
         $query->whereIn('user_id', $subQuery);
-    }
-
-    /**
-     * @inerhitDoc
-     */
-    public static function getSearchFields()
-    {
-        return array_merge(self::getBasicSearchFields(), [
-            'activity_id',
-            'user_id',
-            'user_nickname',
-            'user_mobile',
-        ]);
     }
 }

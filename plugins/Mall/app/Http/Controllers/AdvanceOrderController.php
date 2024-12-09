@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Mall\App\Http\Controllers;
 
@@ -30,26 +26,24 @@ class AdvanceOrderController extends Controller
      * 创建订单 - 根据商品
      *
      * @return Response
+     * @throws ValidationException
      */
     public function fromGoods()
     {
         $goodsId = $this->request->validId('goods_id');
         $goodsSkuId = $this->request->validId('goods_sku_id');
-        $goodsNum = $this->request->param('goods_num/d', 1);
+        $goodsNum = $this->request->integer('goods_num', 1);
         $isSample = $this->request->integer('sample', 0);
-        $isVipUser = $this->request->user('is_vip', 0);
-        $belongDistributorId = $this->request->user('belong_distributor_id', 0);
+        $isVipUser = $this->auth->user()?->is_vip ?? 0;
+        $belongDistributorId = $this->request->user()?->belong_distributor_id ?? 0;
         if ($goodsNum < 1) {
             throw Error::validationException('商品数量错误！');
         }
 
-        $goods = Goods::getPlainById($goodsId, [
-            'field' => function (array $fields) {
-                $fields[] = 'spec_list';
-
-                return $fields;
-            },
-        ]);
+        $goods = Goods::simple(function (array $fields) {
+            $fields[] = 'spec_list';
+            return $fields;
+        })->where('id', $goodsId)->first();
         if (empty($goods)) {
             throw Error::validationException('商品已下架');
         }
@@ -88,17 +82,18 @@ class AdvanceOrderController extends Controller
      * @return Response
      * @throws ValidationException
      */
-    private function order($orderGoodsList)
+    private function order(Collection $orderGoodsList)
     {
         if (!$this->request->isPost()) {
             return $this->toAdvance($orderGoodsList);
         }
 
         $isSample = $this->request->integer('sample', 0);
-        $belongDistributorId = $this->request->user('belong_distributor_id', 0);
+        $userId = $this->auth->id();
+        $belongDistributorId = $this->auth->user()?->belong_distributor_id ?? 0;
         $data = $this->request->post();
-        $data['app_id'] = $this->request->appId();
-        $data['user_id'] = $this->auth->id();
+
+        $data['user_id'] = $userId;
         $data['distributor_id'] = $belongDistributorId;
         $data['is_sample'] = $isSample;
         $data['orderable_type'] = 'goods';
@@ -124,11 +119,11 @@ class AdvanceOrderController extends Controller
     /**
      * 生成预下单相应数据
      *
-     * @param iterable $orderGoodsList
+     * @param Collection $orderGoodsList
      * @return Response
      * @throws ValidationException
      */
-    private function toAdvance($orderGoodsList)
+    private function toAdvance(Collection $orderGoodsList)
     {
         $totalAmount = $orderGoodsList->reduce(function ($total, $item) {
             return $total + $item['total_price'];
@@ -186,18 +181,17 @@ class AdvanceOrderController extends Controller
     private function loadUserAddress()
     {
         $addressId = $this->request->integer('address_id', 0);
+        $userId = $this->auth->id();
+
         if ($addressId) {
-            $info = Address::getPlain([
-                'id'      => $addressId,
-                'user_id' => $this->auth->getUserId(),
-            ]);
+            $info = Address::simple()->where('id', $addressId)->where('user_id', $userId)->first();
             if (empty($info)) {
                 throw Error::validationException("地址信息不存在，请重新选择！");
             }
         } else {
-            $info = Address::getUserDefaultPlainInfo($this->auth->getUserId());
+            $info = Address::getUserDefaultPlainInfo($userId);
             if (!empty($info)) {
-                // $info['phone'] = substr_replace($info['phone'], '*****', 3, 5);
+                $info['phone'] = substr_replace($info['phone'], '*****', 3, 5);
             }
         }
 

@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace plugins\order\api\controller;
 
@@ -23,7 +19,6 @@ class IndexController extends Controller
      *
      * @query state 0.全部 1.待付款 2.待发货 3.待收货 4.待评价
      * @return Response
-
      */
     public function index()
     {

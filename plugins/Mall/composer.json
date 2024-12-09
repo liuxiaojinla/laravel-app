@@ -1,12 +1,10 @@
 {
     "name": "nwidart/mall",
     "description": "",
-
     "extra": {
         "laravel": {
             "providers": [],
             "aliases": {
-
             }
         }
     },

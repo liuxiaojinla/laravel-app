@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Plugins\Shop\App\Http\Controllers\IndexController;
-use Plugins\Shop\App\Http\Controllers\Manager\IndexController as ManagerIndexController;
-use Plugins\Shop\App\Http\Controllers\Manager\ConfigController as ManagerConfigController;
 use Plugins\Shop\App\Http\Controllers\Manager\CashoutController as ManagerCashoutController;
+use Plugins\Shop\App\Http\Controllers\Manager\ConfigController as ManagerConfigController;
+use Plugins\Shop\App\Http\Controllers\Manager\IndexController as ManagerIndexController;
 use Plugins\Shop\App\Http\Controllers\PayController;
 use Plugins\Shop\App\Http\Controllers\PayNotifyController;
 

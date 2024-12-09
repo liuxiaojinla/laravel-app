@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Plugins\Order\app\Http\Controllers\OrderController;
 
 /*

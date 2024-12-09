@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Order\App\Models;
 
@@ -14,7 +10,6 @@ use plugins\order\event\OrderChangeStatusEvent;
 use plugins\order\event\RefundChangeStatusEvent;
 use think\exception\ValidateException;
 use think\facade\Event;
-use Xin\LaravelFortify\Request\FormRequest;
 
 trait OrderRefundActions
 {

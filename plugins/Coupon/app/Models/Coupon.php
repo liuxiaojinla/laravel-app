@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Coupon\App\Models;
 
@@ -72,61 +68,6 @@ class Coupon extends Model
     public function shops()
     {
         return $this->morphToMany(Shop::class, 'shopable');
-    }
-
-    /**
-     * 状态文本（获取器）
-     *
-     * @return string
-     */
-    protected function getStatusTextAttr()
-    {
-        $status = $this->getData('status');
-
-        return CouponStatus::text($status);
-    }
-
-    /**
-     * 优惠券类型文本获取器
-     *
-     * @return string
-     */
-    protected function getTypeTextAttr()
-    {
-        $type = $this->getOrigin('type');
-
-        return CouponType::text($type);
-    }
-
-    /**
-     * 获取优惠券使用限制提示
-     *
-     * @return string
-     */
-    protected function getUseTipsAttr()
-    {
-        $minUseMoney = $this->getOrigin('min_use_money');
-
-        return "满{$minUseMoney}元可用";
-    }
-
-    /**
-     * 获取优惠券优惠金额
-     *
-     * @return string
-     */
-    protected function getNumberTextAttr()
-    {
-        $type = $this->getOrigin('type');
-        if ($type == CouponType::FULL_MINUS) {
-            $number = $this->getOrigin('money');
-
-            return "￥{$number}";
-        } else {
-            $number = bcmul($this->getOrigin('discount'), 10, 1);
-
-            return "{$number}折";
-        }
     }
 
     /**
@@ -218,6 +159,61 @@ class Coupon extends Model
         }
 
         throw Error::validationException("不支持的优惠券类型！");
+    }
+
+    /**
+     * 状态文本（获取器）
+     *
+     * @return string
+     */
+    protected function getStatusTextAttr()
+    {
+        $status = $this->getData('status');
+
+        return CouponStatus::text($status);
+    }
+
+    /**
+     * 优惠券类型文本获取器
+     *
+     * @return string
+     */
+    protected function getTypeTextAttr()
+    {
+        $type = $this->getOrigin('type');
+
+        return CouponType::text($type);
+    }
+
+    /**
+     * 获取优惠券使用限制提示
+     *
+     * @return string
+     */
+    protected function getUseTipsAttr()
+    {
+        $minUseMoney = $this->getOrigin('min_use_money');
+
+        return "满{$minUseMoney}元可用";
+    }
+
+    /**
+     * 获取优惠券优惠金额
+     *
+     * @return string
+     */
+    protected function getNumberTextAttr()
+    {
+        $type = $this->getOrigin('type');
+        if ($type == CouponType::FULL_MINUS) {
+            $number = $this->getOrigin('money');
+
+            return "￥{$number}";
+        } else {
+            $number = bcmul($this->getOrigin('discount'), 10, 1);
+
+            return "{$number}折";
+        }
     }
 
 }

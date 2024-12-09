@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Coupon\App\Admin\Controllers;
 
@@ -65,6 +61,24 @@ class IndexController extends Controller
     }
 
     /**
+     * @param Coupon $model
+     */
+    protected function afterUpdate($model, $data)
+    {
+        if (Module::find('shop')) {
+            if (!isset($data['shop'])) {
+                $data['shop'] = [];
+            }
+            $shopIds = array_unique($data['shop']);
+            $shops = [];
+            foreach ($shopIds as $shopId) {
+                $shops[$shopId] = [];
+            }
+            $model->shops()->sync($shops);
+        }
+    }
+
+    /**
      * 更新数据
      * @return Response
      */
@@ -121,25 +135,6 @@ class IndexController extends Controller
         Coupon::setManyValue($ids, $field, $value);
 
         return Hint::success("更新成功！");
-    }
-
-
-    /**
-     * @param Coupon $model
-     */
-    protected function afterUpdate($model, $data)
-    {
-        if (Module::find('shop')) {
-            if (!isset($data['shop'])) {
-                $data['shop'] = [];
-            }
-            $shopIds = array_unique($data['shop']);
-            $shops = [];
-            foreach ($shopIds as $shopId) {
-                $shops[$shopId] = [];
-            }
-            $model->shops()->sync($shops);
-        }
     }
 
     /**

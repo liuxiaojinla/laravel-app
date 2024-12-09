@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Mall\App\Http\Controllers;
 
@@ -19,9 +15,7 @@ class GoodsAppraiseController extends Controller
 
     /**
      * 获取商品评价列表
-     *
      * @return Response
-
      */
     public function index()
     {
@@ -57,7 +51,7 @@ class GoodsAppraiseController extends Controller
             return Hint::result($order);
         }
 
-        $data = $this->request->param('data/a');
+        $data = $this->request->input('data');
         GoodsAppraise::fastCreate($order, $data);
 
         return Hint::success("已评价！");

@@ -24,14 +24,6 @@ class ShopConfigService
     protected $cachePrefix = 'shop_config';
 
     /**
-     * @inerhitDoc
-     */
-    protected function newQuery()
-    {
-        return ShopConfig::query();
-    }
-
-    /**
      * 根据shop_id获取配置
      * @inerhitDoc
      */
@@ -47,7 +39,6 @@ class ShopConfigService
             ]);
         }
     }
-
 
     /**
      * 设置门店配置信息
@@ -67,5 +58,13 @@ class ShopConfigService
         $this->updateCache($shopConfig);
 
         return $shopConfig;
+    }
+
+    /**
+     * @inerhitDoc
+     */
+    protected function newQuery()
+    {
+        return ShopConfig::query();
     }
 }

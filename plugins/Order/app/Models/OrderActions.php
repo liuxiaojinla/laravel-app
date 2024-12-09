@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Order\App\Models;
 
@@ -181,7 +177,6 @@ trait OrderActions
      * 确认取消订单
      *
      * @return bool
-
      */
     public function confirmCancel()
     {

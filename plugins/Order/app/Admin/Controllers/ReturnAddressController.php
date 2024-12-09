@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Order\App\Admin\Controllers;
 
@@ -18,7 +14,6 @@ class ReturnAddressController extends Controller
 
     /**
      * 数据列表
-
      */
     public function index()
     {

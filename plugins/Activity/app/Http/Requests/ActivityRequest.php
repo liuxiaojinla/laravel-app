@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Activity\App\Http\Requests;
 
@@ -47,8 +43,8 @@ class ActivityRequest extends FormRequest
      * @var array
      */
     protected $message = [
-        'start_time.after'   => '活动开始时间必须是15分钟后',
-        'end_time.after' => '活动结束时间必须大于开始时间',
+        'start_time.after' => '活动开始时间必须是15分钟后',
+        'end_time.after'   => '活动结束时间必须大于开始时间',
     ];
 
     /**

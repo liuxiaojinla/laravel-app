@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Mall\App\Admin\Controllers;
 
@@ -25,10 +21,8 @@ class BrandController extends Controller
     {
         $search = $this->request->query();
         $data = GoodsBrand::simple()->search($search)
-            ->order([
-                'sort' => 'asc',
-                'id'   => 'desc',
-            ])
+            ->oldest('sort')
+            ->latest('id')
             ->paginate();
 
         return Hint::result($data);

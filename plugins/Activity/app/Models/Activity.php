@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Activity\App\Models;
 
@@ -35,6 +31,18 @@ class Activity extends Model
         'start_time' => 'timestamp',
         'end_time'   => 'timestamp',
     ];
+
+    /**
+     * @inerhitDoc
+     */
+    public static function getSearchFields()
+    {
+        return array_merge(parent::getSearchFields(), [
+            'user_id',
+            'user_nickname',
+            'user_mobile',
+        ]);
+    }
 
     /**
      * 创建人
@@ -102,18 +110,6 @@ class Activity extends Model
         $query->whereIn('user_id', Db::raw(
             User::query()->select('id')->where('nickname', 'like', "%{$value}%")->toRawSql()
         ));
-    }
-
-    /**
-     * @inerhitDoc
-     */
-    public static function getSearchFields()
-    {
-        return array_merge(parent::getSearchFields(), [
-            'user_id',
-            'user_nickname',
-            'user_mobile',
-        ]);
     }
 
 }

@@ -9,6 +9,9 @@
 
 namespace Plugins\Mall\App\Http\Requests;
 
+use Closure;
+use Illuminate\Validation\Validator;
+use Plugins\Mall\App\Models\GoodsClass;
 use Xin\LaravelFortify\Request\FormRequest;
 
 /**
@@ -16,17 +19,6 @@ use Xin\LaravelFortify\Request\FormRequest;
  */
 class GoodsClassRequest extends FormRequest
 {
-
-    /**
-     * 验证规则
-     *
-     * @var array
-     */
-    protected $rule = [
-        'title' => 'require|length:2,48|unique:goods_class',
-        'cover' => 'require',
-        'pid'   => 'checkOneself',
-    ];
 
     /**
      * 字段信息
@@ -57,16 +49,42 @@ class GoodsClassRequest extends FormRequest
     protected $scene = [];
 
     /**
+     * 验证规则
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'title' => ['required', 'between:2,48', 'unique:goods_class'],
+            'cover' => ['required'],
+            'pid'   => [
+                $this->checkOneself(...),
+            ],
+        ];
+    }
+
+    /**
      * 验证父级是不是自己
      *
+     * @param string $attribute
      * @param string $pid
-     * @param mixed $rule
-     * @param array $data
-     * @return bool
+     * @param Closure $fail
+     * @param Validator $validator
+     * @return void
      */
-    protected function checkOneself($pid, $rule, $data)
+    protected function checkOneself(string $attribute, $pid, Closure $fail, Validator $validator)
     {
-        return !isset($data['id']) || $data['id'] == 0 || $data['id'] != $pid;
+        $id = $validator->getValue('id');
+        if (empty($pid)) {
+            return;
+        }
+
+        if ($id == $pid) {
+            $fail("父级分类不能是自己。");
+        } elseif (!GoodsClass::query()->where('id', $pid)->exists()) {
+            $fail("父级分类不存在。");
+        }
     }
 
 }

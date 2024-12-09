@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Order\App\Admin\Controllers;
 
@@ -47,7 +43,6 @@ class VerifyController extends Controller
      * 核销记录
      *
      * @return string
-
      */
     public function logs()
     {

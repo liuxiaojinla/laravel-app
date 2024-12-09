@@ -61,22 +61,22 @@ class ShopRequest extends FormRequest
      */
     public function rules()
     {
-//        return function ($data) {
-//            if (isset($data['region'])) {
-//                $region = (array)json_decode($data['region'], true);
-//                unset($data['region']);
-//                $data = array_merge($region, $data);
-//            }
-//
-//            if (isset($data['location'])) {
-//                $location = explode(',', $data['location'], 2);
-//                unset($data['location']);
-//                $data['lng'] = $location[0] ?? '';
-//                $data['lat'] = $location[1] ?? '';
-//            }
-//
-//            return $data;
-//        };
+        //        return function ($data) {
+        //            if (isset($data['region'])) {
+        //                $region = (array)json_decode($data['region'], true);
+        //                unset($data['region']);
+        //                $data = array_merge($region, $data);
+        //            }
+        //
+        //            if (isset($data['location'])) {
+        //                $location = explode(',', $data['location'], 2);
+        //                unset($data['location']);
+        //                $data['lng'] = $location[0] ?? '';
+        //                $data['lat'] = $location[1] ?? '';
+        //            }
+        //
+        //            return $data;
+        //        };
         return [
             'title'       => 'required|length:2,48',
             'logo'        => 'required',

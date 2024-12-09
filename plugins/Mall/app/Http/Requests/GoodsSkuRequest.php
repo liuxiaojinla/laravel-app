@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Mall\App\Http\Requests;
 
@@ -12,20 +8,6 @@ use Xin\LaravelFortify\Request\FormRequest;
 class GoodsSkuRequest extends FormRequest
 {
 
-    /**
-     * 验证规则
-     *
-     * @var array
-     */
-    protected $rule = [
-        'spec_sku_id'  => 'require',
-        'price'        => 'require|egt:0|elt:99999999',
-        'market_price' => 'min:0|egt:price|elt:99999999',
-        'sample_price' => 'require|egt:0|elt:price',
-        'vip_price'    => 'require|egt:0|elt:price',
-        'stock'        => 'require|egt:1',
-        'stock_alarm'  => 'elt:stock',
-    ];
 
     /**
      * 字段信息
@@ -54,4 +36,21 @@ class GoodsSkuRequest extends FormRequest
         'stock_alarm.elt'  => '商品库存预警值必须大于必须小于商品库存',
     ];
 
+    /**
+     * 验证规则
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'spec_sku_id'  => ['required'],
+            'price'        => ['required', 'egt:0', 'elt:99999999'],
+            'market_price' => ['min:0', 'egt:price', 'elt:99999999'],
+            'sample_price' => ['required', 'egt:0', 'elt:price'],
+            'vip_price'    => ['required', 'egt:0', 'elt:price'],
+            'stock'        => ['required', 'egt:1'],
+            'stock_alarm'  => ['elt:stock'],
+        ];
+    }
 }

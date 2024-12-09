@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Mall\App\Http\Controllers;
 
@@ -11,6 +7,7 @@ use App\Exceptions\Error;
 use App\Http\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\GoodsSku;
@@ -27,8 +24,10 @@ class ShoppingCartController extends Controller
      */
     public function index()
     {
-        $isUserVip = $this->request->user('is_vip', 0);
         $userId = $this->auth->id();
+        $isUserVip = $this->auth->user()?->is_vip ?? false;
+
+        /** @var LengthAwarePaginator $data */
         $data = ShoppingCart::with([
             'goods' => function (Builder $query) {
             },
@@ -36,13 +35,14 @@ class ShoppingCartController extends Controller
         ])->where([
             'user_id' => $userId,
         ])->latest('update_time')
-            ->paginate()
-            ->each(function (ShoppingCart $cart) use ($isUserVip) {
-                if ($cart->goods && $cart->goodsSku) {
-                    $cart->goods->append(['tags']);
-                    $cart['goods_show_price'] = $isUserVip ? $cart->goods_vip_price : $cart->goods_price;
-                }
-            });
+            ->paginate();
+
+        $data->each(function (ShoppingCart $cart) use ($isUserVip) {
+            if ($cart->goods && $cart->goodsSku) {
+                $cart->goods->append(['tags']);
+                $cart['goods_show_price'] = $isUserVip ? $cart->goods_vip_price : $cart->goods_price;
+            }
+        });
 
         return Hint::result($data);
     }
@@ -66,9 +66,8 @@ class ShoppingCartController extends Controller
 
         // 获取商品信息
         $goods = Goods::query()->where([
-            'id'     => $goodsId,
-            'app_id' => $this->request->appId(),
-        ])->field(array_merge(Goods::getSimpleFields(), ['spec_list']))->firstOrFail();
+            'id' => $goodsId,
+        ])->select(array_merge(Goods::getSimpleFields(), ['spec_list']))->firstOrFail();
 
         // 获取SKU信息
         $goodsSku = GoodsSku::query()->where([
@@ -124,7 +123,7 @@ class ShoppingCartController extends Controller
         ShoppingCart::query()->where([
             'id'      => $id,
             'user_id' => $userId,
-        ])->save([
+        ])->update([
             'goods_num' => $count,
         ]);
 

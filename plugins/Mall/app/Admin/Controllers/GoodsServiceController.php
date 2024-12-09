@@ -1,9 +1,5 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Mall\App\Admin\Controllers;
 
@@ -28,7 +24,6 @@ class GoodsServiceController extends Controller
         $data = GoodsService::simple()->search($search)
             ->orderByDesc('id')
             ->paginate();
-
 
         return Hint::result($data);
     }

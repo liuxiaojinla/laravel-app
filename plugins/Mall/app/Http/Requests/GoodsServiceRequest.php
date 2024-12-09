@@ -17,15 +17,6 @@ use Xin\LaravelFortify\Request\FormRequest;
 class GoodsServiceRequest extends FormRequest
 {
 
-    /**
-     * 验证规则
-     *
-     * @var array
-     */
-    protected $rule = [
-        'title'       => 'require|length:2,48|unique:goods_service,app_id^title',
-        'description' => 'require',
-    ];
 
     /**
      * 字段信息
@@ -44,4 +35,16 @@ class GoodsServiceRequest extends FormRequest
      */
     protected $scene = [];
 
+    /**
+     * 验证规则
+     *
+     * @return array[]
+     */
+    public function rules()
+    {
+        return [
+            'title'       => ['required', 'between:2,48', 'unique:goods_service,app_id^title'],
+            'description' => ['required'],
+        ];
+    }
 }

@@ -1,17 +1,15 @@
 <?php
-/**
- * Talents come from diligence, and knowledge is gained by accumulation.
- *
- * @author: 晋<657306123@qq.com>
- */
+
 
 namespace Plugins\Mall\App\Http\Controllers;
 
 use App\Http\Controller;
 use App\Models\User\Browse;
 use App\Models\User\Favorite;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
 use Plugins\Mall\App\Models\Goods;
@@ -27,36 +25,42 @@ class GoodsController extends Controller
      */
     public function index()
     {
-        $isUserVip = $this->request->user('is_vip', 0, AuthVerifyType::NOT);
+        $isUserVip = $this->auth->user()?->is_vip ?? false;
         $type = $this->request->input('type', 'new', 'trim');
 
-        $order = [
-            'top_time' => 'desc',
-        ];
-        if ('new' == $type) {
-            $order['create_time'] = 'desc';
-        } elseif ('hot' == $type) {
-            $order['sale_count'] = 'desc';
-        } elseif ('discount' == $type) {
-            $order['view_count'] = 'desc';
-        } elseif ('good' == $type) {
-            $order['good_time'] = 'desc';
-        } elseif ('view' == $type) {
-            $order['view_count'] = 'desc';
-        }
 
         $search = $this->request->query();
-        $data = Goods::query()->where([
-            'app_id' => $this->request->appId(),
+
+        /** @var LengthAwarePaginator $data */
+        $data = Goods::simple()->where([
             'status' => 1,
         ])
             ->search($search)
-            ->when($type == 'good', [['good_time', '<>', 0]])
-            ->when($type == 'discount', [['recommend_way', '=', 2]])
-            ->order($order)->paginate()
-            ->each(function (Goods $goods) use ($isUserVip) {
-                $goods['show_price'] = $isUserVip ? $goods->vip_price : $goods->price;
-            });
+            ->when($type == 'good', function (Builder $query) {
+                $query->where('good_time', '<>', 0);
+            })
+            ->when($type == 'discount', function (Builder $query) {
+                $query->where('recommend_way', '=', 2);
+            })
+            ->where(function (Builder $query) use ($type) {
+                if ('new' == $type) {
+                    $query->orderByDesc('create_time');
+                } elseif ('hot' == $type) {
+                    $query->orderByDesc('sale_count');
+                } elseif ('discount' == $type) {
+                    $query->orderByDesc('view_count');
+                } elseif ('good' == $type) {
+                    $query->orderByDesc('good_time');
+                } elseif ('view' == $type) {
+                    $query->orderByDesc('view_count');
+                } else {
+                    $query->orderByDesc('top_time');
+                }
+            })->paginate();
+
+        $data->each(function (Goods $goods) use ($isUserVip) {
+            $goods['show_price'] = $isUserVip ? $goods->vip_price : $goods->price;
+        });
 
         return Hint::result($data);
     }
@@ -70,8 +74,8 @@ class GoodsController extends Controller
     public function detail()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->id(AuthVerifyType::NOT);
-        $isUserVip = $this->request->user('is_vip', 0, AuthVerifyType::NOT);
+        $userId = $this->auth->id();
+        $isUserVip = $this->auth->user()?->is_vip ?? false;
         $distributorId = $this->request->integer('distributor_id', 0);
 
         $info = Goods::with([

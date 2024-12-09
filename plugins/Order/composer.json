@@ -1,12 +1,10 @@
 {
     "name": "nwidart/order",
     "description": "",
-
     "extra": {
         "laravel": {
             "providers": [],
             "aliases": {
-
             }
         }
     },
