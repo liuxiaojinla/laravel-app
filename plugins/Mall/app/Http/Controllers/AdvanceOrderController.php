@@ -254,7 +254,7 @@ class AdvanceOrderController extends Controller
         $isVipUser = $this->request->user('is_vip', 0);
         $belongDistributorId = $this->request->user('belong_distributor_id', 0);
 
-        $orderGoodsList = ShoppingCart::query()->where('id', 'in', $cartIdList)->where('user_id', $userId)->select()
+        $orderGoodsList = ShoppingCart::query()->where('id', 'in', $cartIdList)->where('user_id', $userId)->get()
             ->map(function (ShoppingCart $shoppingCart) use ($isVipUser, $belongDistributorId) {
                 $orderGoods = $shoppingCart->toOrderGoods($this->request->isPost(), [
                     'is_vip' => $isVipUser,

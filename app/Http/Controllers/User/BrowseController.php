@@ -9,6 +9,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controller;
 use App\Models\User\Browse;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Xin\Hint\Facades\Hint;
 
 class BrowseController extends Controller
@@ -21,9 +22,9 @@ class BrowseController extends Controller
      */
     public function index()
     {
-        $topicType = $this->request->param('topic_type');
+        $topicType = $this->request->string('topic_type')->toString();
         $userId = $this->auth->id();
-        $withUser = $this->request->param('with_user');
+        $withUser = $this->request->string('with_user')->toString();
 
         MorphMaker::maker(Browse::class);
 
@@ -33,16 +34,18 @@ class BrowseController extends Controller
         if ($withUser) {
             $withs[] = 'user';
         }
+
+        /** @var LengthAwarePaginator $data */
         $data = Browse::with($withs)->where('user_id', $userId)
             ->when($topicType, ['topic_type' => $topicType])
-            ->orderByDesc('id')->paginate()
-            ->each(function (Browse $item) {
-                if (empty($item->browseable)) {
-                    $item->delete();
-                } elseif (method_exists($item->browseable, 'onMorphToRead')) {
-                    $item->browseable->onMorphToRead();
-                }
-            });
+            ->orderByDesc('id')->paginate();
+        $data->each(function (Browse $item) {
+            if (empty($item->browseable)) {
+                $item->delete();
+            } elseif (method_exists($item->browseable, 'onMorphToRead')) {
+                $item->browseable->onMorphToRead();
+            }
+        });
 
         return Hint::result($data);
     }

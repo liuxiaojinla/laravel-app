@@ -53,7 +53,7 @@ class ShoppingCartController extends Controller
      * @return Response
      * @throws ValidationException
      */
-    public function create()
+    public function store()
     {
         $goodsId = $this->request->validId('goods_id');
         $goodsSkuId = $this->request->validId('goods_sku_id');

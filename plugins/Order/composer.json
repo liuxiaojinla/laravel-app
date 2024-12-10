@@ -15,10 +15,5 @@
             "Plugins\\Order\\Database\\Factories\\": "database/factories/",
             "Plugins\\Order\\Database\\Seeders\\": "database/seeders/"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Plugins\\Order\\Tests\\": "tests/"
-        }
     }
 }

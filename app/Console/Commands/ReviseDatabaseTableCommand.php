@@ -29,7 +29,7 @@ class ReviseDatabaseTableCommand extends Command
      */
     public function handle()
     {
-        $excludeTables = ['menus'];
+        $excludeTables = ['menus', 'goods_skus'];
         foreach ($this->getTables() as $tableName) {
             $tableNameComplex = in_array($tableName, $excludeTables) ? $tableName : Str::pluralStudly($tableName);
             if ($tableNameComplex != $tableName) {

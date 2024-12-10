@@ -79,13 +79,12 @@ class GoodsController extends Controller
         $distributorId = $this->request->integer('distributor_id', 0);
 
         $info = Goods::with([
-            'category', 'sku_list',
-            'evaluate_list.user' => function (Relation $query) {
+            'category', 'skuList',
+            'evaluateList.user' => function (Relation $query) {
                 $query->where('status', 1)->limit(0, 10);
             },
         ])->where([
             'id'     => $id,
-            'app_id' => $this->request->appId(),
         ])->firstOrFail();
         $info = Goods::checkStatus($info);
 

@@ -4,6 +4,7 @@
 namespace Plugins\Mall\App\Admin\Controllers;
 
 use App\Admin\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Plugins\Mall\App\Http\Requests\GoodsCategoryRequest;
 use Plugins\Mall\App\Models\Goods;
@@ -30,6 +31,18 @@ class CategoryController extends Controller
         return Hint::result($data);
     }
 
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return mixed
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = GoodsCategory::query()->with([
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
+    }
 
     /**
      * 创建数据

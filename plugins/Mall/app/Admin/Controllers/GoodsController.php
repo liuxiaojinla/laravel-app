@@ -5,11 +5,14 @@ namespace Plugins\Mall\App\Admin\Controllers;
 
 use App\Admin\Controller;
 use App\Exceptions\Error;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Plugins\Mall\App\Http\Requests\GoodsRequest;
 use Plugins\Mall\App\Models\Goods;
+use Plugins\Mall\App\Models\GoodsBrand;
 use Plugins\Mall\App\Models\GoodsSku;
 use Xin\Hint\Facades\Hint;
 
@@ -39,6 +42,18 @@ class GoodsController extends Controller
         return Hint::result($data);
     }
 
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return mixed
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = Goods::query()->with([
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
+    }
 
     /**
      * 创建商品
@@ -126,6 +141,26 @@ class GoodsController extends Controller
         });
 
         return Hint::success("更新成功！", (string)url('index'), $info);
+    }
+
+    /**
+     * 删除数据
+     * @return Response
+     */
+    public function delete()
+    {
+        $ids = $this->request->validIds();
+        $isForce = $this->request->integer('force', 0);
+
+        Goods::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
+        });
+
+        return Hint::success('删除成功！', null, $ids);
     }
 
     /**

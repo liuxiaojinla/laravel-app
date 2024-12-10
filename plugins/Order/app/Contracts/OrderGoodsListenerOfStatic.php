@@ -4,6 +4,8 @@
 namespace Plugins\Order\App\Contracts;
 
 
+use Plugins\Order\App\Models\OrderGoods;
+
 interface OrderGoodsListenerOfStatic
 {
 

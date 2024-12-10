@@ -37,7 +37,7 @@ class GoodsAppraiseController extends Controller
      * @return Response
      * @throws ValidationException
      */
-    public function create()
+    public function store()
     {
         $orderId = $this->request->validId('order_id');
         $userId = $this->auth->id();

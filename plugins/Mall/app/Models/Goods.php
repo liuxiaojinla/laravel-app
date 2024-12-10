@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\ValidationException;
 use PDOException;
 use Plugins\Order\App\Contracts\OrderListenerOfStatic;
+use Plugins\Order\App\Models\Order;
+use Plugins\Order\App\Models\OrderGoods;
 
 /**
  * @property-read int id
@@ -147,6 +149,7 @@ class Goods extends Model implements OrderListenerOfStatic
      * @param mixed $info
      * @param array $options
      * @return static
+     * @throws ValidationException
      */
     public static function checkStatus($info, $options = [])
     {
@@ -173,7 +176,7 @@ class Goods extends Model implements OrderListenerOfStatic
     public function category()
     {
         return $this->belongsTo(GoodsCategory::class, "category_id")
-            ->field('id,title,cover');
+            ->select(['id', 'title', 'cover']);
     }
 
     /**
@@ -183,7 +186,7 @@ class Goods extends Model implements OrderListenerOfStatic
      */
     public function skuList()
     {
-        return $this->hasMany(GoodsSku::class)->withoutField(['update_time', 'create_time']);
+        return $this->hasMany(GoodsSku::class);
     }
 
     /**
@@ -193,7 +196,7 @@ class Goods extends Model implements OrderListenerOfStatic
      */
     public function evaluateList()
     {
-        return $this->hasMany(GoodsAppraise::class)->order('id desc');
+        return $this->hasMany(GoodsAppraise::class)->orderByDesc('id');
     }
 
     /**
@@ -205,7 +208,7 @@ class Goods extends Model implements OrderListenerOfStatic
     public function loadServices($refresh = false)
     {
         if ($this->goodsServices === null || $refresh) {
-            $serviceIds = $this->getData('service_ids');
+            $serviceIds = $this->getRawOriginal('service_ids');
             if (empty($serviceIds)) {
                 $this->goodsServices = [];
             } else {

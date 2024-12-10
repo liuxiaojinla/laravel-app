@@ -5,7 +5,7 @@
     "keywords": [],
     "priority": 0,
     "providers": [
-        "Plugins\\Order\\app\\Providers\\OrderServiceProvider"
+        "Plugins\\Order\\App\\Providers\\AppServiceProvider"
     ],
     "files": []
 }
