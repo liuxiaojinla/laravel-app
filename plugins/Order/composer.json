@@ -1,5 +1,5 @@
 {
-    "name": "nwidart/order",
+    "name": "plugins/order",
     "description": "",
     "extra": {
         "laravel": {

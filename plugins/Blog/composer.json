@@ -21,10 +21,5 @@
             "Plugins\\Blog\\Database\\Factories\\": "database/factories/",
             "Plugins\\Blog\\Database\\Seeders\\": "database/seeders/"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Plugins\\Blog\\Tests\\": "tests/"
-        }
     }
 }

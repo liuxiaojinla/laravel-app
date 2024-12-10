@@ -1,5 +1,5 @@
 {
-    "name": "nwidart/mall",
+    "name": "plugins/mall",
     "description": "",
     "extra": {
         "laravel": {
@@ -14,11 +14,6 @@
             "Plugins\\Mall\\App\\": "app/",
             "Plugins\\Mall\\Database\\Factories\\": "database/factories/",
             "Plugins\\Mall\\Database\\Seeders\\": "database/seeders/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Plugins\\Mall\\Tests\\": "tests/"
         }
     }
 }

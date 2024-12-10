@@ -1,7 +1,7 @@
 <?php
 
 
-namespace plugins\order\api\controller;
+namespace Plugins\Order\App\Http\Controllers;
 
 use Plugins\Order\App\Enums\PayType;
 use Plugins\Order\App\Models\OrderRefund;

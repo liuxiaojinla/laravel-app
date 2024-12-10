@@ -1,11 +1,13 @@
 <?php
 
 
-namespace plugins\order\api\controller;
+namespace Plugins\Order\App\Http\Controllers;
 
 use App\Http\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Models\OrderRefund;
-use think\db\exception\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;
 
 /**
@@ -21,12 +23,13 @@ class RefundController extends Controller
      */
     public function index()
     {
-        $userId = $this->auth->getUserId();
-        $data = OrderRefund::with([
-            'master_order', 'order_goods_list',
-        ])->where([
-            'user_id' => $userId,
-        ])->order('create_time desc')
+        $userId = $this->auth->id();
+        $data = OrderRefund::simple()
+            ->with([
+                'master_order', 'order_goods_list',
+            ])->where([
+                'user_id' => $userId,
+            ])->orderByDesc('create_time')
             ->paginate();
 
         return Hint::result($data);
@@ -36,13 +39,11 @@ class RefundController extends Controller
      * 退款单详情
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
      */
     public function detail()
     {
         $id = $this->request->validId();
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
         /** @var OrderRefund $info */
         $info = OrderRefund::with([
@@ -59,8 +60,6 @@ class RefundController extends Controller
      * 删除订单
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
      */
     public function delete()
     {
@@ -84,8 +83,6 @@ class RefundController extends Controller
      * @param int|null $id
      * @param array $with
      * @return OrderRefund
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
      */
     protected function findIsEmptyAssert($id = null, $with = [])
     {
@@ -93,7 +90,7 @@ class RefundController extends Controller
             $id = $this->request->validId();
         }
 
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
         /** @var OrderRefund $info */
         $info = OrderRefund::with($with)->where([
             'id'      => $id,
@@ -110,8 +107,7 @@ class RefundController extends Controller
      * 取消订单
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
+     * @throws ValidationException
      */
     public function cancel()
     {
@@ -129,8 +125,7 @@ class RefundController extends Controller
      * 用户发货
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
+     * @throws ValidationException
      */
     public function delivery()
     {

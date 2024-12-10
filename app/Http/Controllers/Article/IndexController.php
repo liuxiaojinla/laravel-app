@@ -61,7 +61,7 @@ class IndexController extends Controller
             throw new ModelNotFoundException("文章不存在！", 'Article');
         }
         Article::withoutTimestamps(function () use ($info) {
-            $info->newQuery()->increment('view_count');
+            $info->increment('view_count');
             $info->view_count += 1;
         });
 

@@ -6,6 +6,7 @@ namespace Plugins\Order\App\Admin\Controllers;
 use App\Admin\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Enums\RefundStatus;
 use Plugins\Order\App\Models\OrderRefund;
 use Plugins\Order\App\Models\ReturnAddress;
@@ -61,6 +62,7 @@ class RefundController extends Controller
      * 审核申请取消订单
      *
      * @return Response
+     * @throws ValidationException
      */
     public function audit()
     {
@@ -94,6 +96,7 @@ class RefundController extends Controller
      * 商家主动拒绝
      *
      * @return Response
+     * @throws ValidationException
      */
     public function refuse()
     {
@@ -111,6 +114,7 @@ class RefundController extends Controller
      * 商家确认收货
      *
      * @return Response
+     * @throws ValidationException
      */
     public function receipt()
     {
@@ -127,6 +131,7 @@ class RefundController extends Controller
      * 退款
      *
      * @return Response
+     * @throws ValidationException
      */
     public function refund()
     {

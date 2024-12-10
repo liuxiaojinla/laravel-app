@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Plugins\Coupon\App\Models\UserCoupon;
@@ -111,7 +112,7 @@ class Order extends Model
         // 计算订单金额
         $orderData['pay_amount'] = static::calcPayAmount($orderData);
 
-        return self::transaction(function () use (&$orderData, &$orderGoodsList) {
+        return DB::transaction(function () use (&$orderData, &$orderGoodsList) {
             /** @var static $order */
             $order = static::query()->create($orderData);
             $order->goods_list = static::createGoodsList($order, $orderGoodsList);

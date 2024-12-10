@@ -5,12 +5,13 @@ namespace Plugins\Order\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
 use Plugins\Order\App\Models\Express;
 use Plugins\Order\App\Models\Order;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Str;
 
-class ExpressController extends Controller
+class LogisticsController extends Controller
 {
 
     /**
@@ -20,11 +21,9 @@ class ExpressController extends Controller
      */
     public function index()
     {
-        $data = Express::getList([
+        $data = Express::simple()->where([
             'status' => 1,
-        ], [
-            'order' => 'sort asc',
-        ]);
+        ])->orderByDesc('sort')->get();
 
         return Hint::result($data);
     }

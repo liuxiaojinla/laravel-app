@@ -1,14 +1,16 @@
 <?php
 
 
-namespace plugins\order\api\controller;
+namespace Plugins\Order\App\Http\Controllers;
 
+use App\Exceptions\Error;
 use App\Http\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Enums\RefundAuditStatus as RefundAuditStatusEnum;
 use Plugins\Order\App\Enums\RefundStatus as RefundStatusEnum;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderRefund;
-use think\exception\ValidateException;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Str;
 
@@ -22,11 +24,12 @@ class RefundApplyController extends Controller
      * 退款申请
      *
      * @return Response
+     * @throws ValidationException
      */
     public function index()
     {
         $orderId = $this->request->validId('order_id');
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
 
         // 查找订单商品是否存在
         /** @var Order $order */
@@ -71,6 +74,9 @@ class RefundApplyController extends Controller
         return Hint::success('已申请！', null, $refund);
     }
 
+    /**
+     * @return array[]
+     */
     private function loadApplyDescList()
     {
         return [

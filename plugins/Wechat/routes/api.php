@@ -15,6 +15,6 @@ use Plugins\Wechat\App\Http\Controllers\OpenPlatformServerController;
 */
 
 // 微信开放平台
-Route::addRoute('GET|POST', 'wechat/open_platform', [
+Route::match('GET|POST', 'wechat/open_platform', [
     OpenPlatformServerController::class, 'index',
 ])->name('wechat.open_platform.server');

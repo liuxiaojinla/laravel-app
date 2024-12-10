@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Xin\LaravelFortify\Model\Relation;
 
 /**
  * 收藏模型
@@ -46,9 +47,7 @@ class Favorite extends Pivot
      */
     public function favoriteable()
     {
-        return $this->morphTo([
-            'topic_type', 'topic_id',
-        ], Morph::getTypeList());
+        return $this->morphTo(__FUNCTION__, 'topic_type', 'topic_id');
     }
 
     /**
@@ -82,15 +81,15 @@ class Favorite extends Pivot
      */
     public static function favorite($topicType, $topicId, $userId)
     {
-        Morph::checkExist($topicType, $topicId);
+        Relation::firstOrFail($topicType, $topicId);
 
-        $info = static::create([
+        $info = static::query()->create([
             'topic_type' => $topicType,
             'topic_id'   => $topicId,
             'user_id'    => $userId,
         ]);
 
-        Morph::callMethod($topicType, 'onFavorite', [1, $info]);
+        Relation::call($topicType, 'onFavorite', ['result' => 1, $info]);
 
         return true;
     }
@@ -105,7 +104,7 @@ class Favorite extends Pivot
      */
     public static function unFavorite($topicType, $topicId, $userId)
     {
-        $flag = static::where([
+        $flag = static::query()->where([
             'topic_type' => $topicType,
             'topic_id'   => $topicId,
             'user_id'    => $userId,
@@ -114,8 +113,9 @@ class Favorite extends Pivot
             return false;
         }
 
-        Morph::callMethod($topicType, 'onFavorite', [
-            0, new static([
+        Relation::call($topicType, 'onFavorite', [
+            'result' => 0,
+            new static([
                 'topic_type' => $topicType,
                 'topic_id'   => $topicId,
                 'user_id'    => $userId,
@@ -144,15 +144,17 @@ class Favorite extends Pivot
      * @param string $type
      * @param int $topicId
      * @param int $userId
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     * @return static|null
      */
     public static function findFavorite($type, $topicId, $userId)
     {
-        return static::query()->where([
+        $info = static::query()->where([
             'topic_type' => $type,
             'topic_id'   => $topicId,
             'user_id'    => $userId,
         ])->first();
+
+        return value($info);
     }
 
 }

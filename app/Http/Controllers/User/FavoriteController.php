@@ -9,11 +9,15 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controller;
 use App\Models\User\Favorite;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use LogicException;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Model\Relation as RelationUtil;
 
 class FavoriteController extends Controller
 {
@@ -25,23 +29,36 @@ class FavoriteController extends Controller
      */
     public function index()
     {
-        $topicType = $this->request->param('topic_type');
+        //        SqlDebug::debug();
+        $topicType = $this->request->string('topic_type')->trim()->toString();
         $userId = $this->auth->id();
 
-        MorphMaker::maker(Favorite::class);
-
+        /** @var LengthAwarePaginator $data */
         $data = Favorite::with([
-            'favoriteable',
-        ])->where('user_id', $userId)
-            ->when($topicType, ['topic_type' => $topicType])
-            ->order('id desc')->paginate()
-            ->each(function (Favorite $item) {
-                if (empty($item->favoriteable)) {
-                    $item->delete();
-                } elseif (method_exists($item->favoriteable, 'onMorphToRead')) {
-                    $item->favoriteable->onMorphToRead();
-                }
-            });
+            'favoriteable' => function (MorphTo $morphTo) use ($topicType) {
+                $morphTo->constrain(
+                    RelationUtil::morphToConstrain([
+                        $topicType,
+                    ])
+                );
+            },
+        ])
+            ->where('user_id', $userId)
+            ->when($topicType, function (Builder $query) use ($topicType) {
+                $query->where('topic_type', $topicType);
+            })
+            ->orderByDesc('id')
+            ->paginate();
+
+        $data->each(function (Favorite $item) {
+            if (empty($item->favoriteable)) {
+                $item->delete();
+            } elseif (method_exists($item->favoriteable, 'onMorphToRead')) {
+                $item->favoriteable->onMorphToRead([
+                    'user' => $this->auth->user(),
+                ]);
+            }
+        });
 
         return Hint::result($data);
     }

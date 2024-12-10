@@ -9,8 +9,13 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controller;
 use App\Models\User\Browse;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Xin\Hint\Facades\Hint;
+use Xin\LaravelFortify\Support\SqlDebug;
+use \Xin\LaravelFortify\Model\Relation as RelationUtil;
 
 class BrowseController extends Controller
 {
@@ -26,10 +31,14 @@ class BrowseController extends Controller
         $userId = $this->auth->id();
         $withUser = $this->request->string('with_user')->toString();
 
-        MorphMaker::maker(Browse::class);
-
         $withs = [
-            'browseable',
+            'browseable' => function (MorphTo $morphTo) use ($topicType) {
+                $morphTo->constrain(
+                    RelationUtil::morphToConstrain([
+                        $topicType
+                    ])
+                );
+            },
         ];
         if ($withUser) {
             $withs[] = 'user';
@@ -37,13 +46,17 @@ class BrowseController extends Controller
 
         /** @var LengthAwarePaginator $data */
         $data = Browse::with($withs)->where('user_id', $userId)
-            ->when($topicType, ['topic_type' => $topicType])
+            ->when($topicType, function (Builder $query) use ($topicType) {
+                $query->where('topic_type', $topicType);
+            })
             ->orderByDesc('id')->paginate();
         $data->each(function (Browse $item) {
             if (empty($item->browseable)) {
                 $item->delete();
             } elseif (method_exists($item->browseable, 'onMorphToRead')) {
-                $item->browseable->onMorphToRead();
+                $item->browseable->onMorphToRead([
+                    'user' => $this->auth->user(),
+                ]);
             }
         });
 

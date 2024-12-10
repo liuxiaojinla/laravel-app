@@ -1,13 +1,17 @@
 <?php
 
 
-namespace plugins\order\api\controller;
+namespace Plugins\Order\App\Http\Controllers;
 
 use App\Http\Controller;
+use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Enums\PayType as PayTypeEnum;
 use Plugins\Order\App\Models\Order;
 use plugins\order\service\PayService;
-use think\db\exception\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Str;
 
@@ -18,8 +22,7 @@ class OrderPaidController extends Controller
      * 支付订单
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
+     * @throws ValidationException
      */
     public function index()
     {
@@ -29,7 +32,7 @@ class OrderPaidController extends Controller
             PayTypeEnum::ALIPAY,
         ]);
 
-        /** @var \app\common\model\User $user */
+        /** @var User $user */
         $user = $this->auth->getUser();
 
         // 订单信息
@@ -61,8 +64,6 @@ class OrderPaidController extends Controller
      * @param int|null $id
      * @param array $with
      * @return Order
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
      */
     protected function findIsEmptyAssert($id = null, $with = [])
     {
@@ -70,7 +71,7 @@ class OrderPaidController extends Controller
             $id = $this->request->validId();
         }
 
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
         /** @var Order $info */
         $info = Order::with($with)->where([
             'id' => $id,
@@ -86,12 +87,12 @@ class OrderPaidController extends Controller
      * 余额支付
      *
      * @param Order $info
-     * @param \app\common\model\User $user
+     * @param User $user
      * @return Response
      */
     protected function balance(Order $info, $user)
     {
-        Order::transaction(function () use ($info, $user) {
+        DB::transaction(function () use ($info, $user) {
             $payAmount = $info->pay_amount;
             $user->consume($payAmount, '订单余额付款！');
             $info->setPaid(PayTypeEnum::BALANCE, Str::makeOrderSn());
@@ -106,14 +107,14 @@ class OrderPaidController extends Controller
      * 微信支付
      *
      * @param Order $info
-     * @param \app\common\model\User $user
+     * @param User $user
      * @return Response
      */
     protected function wechat(Order $info, $user)
     {
         $payService = PayService::ofAppId($this->request->appId());
 
-        $notifyUrl = $this->request->domain() . plugin_url('order_paid_notify/wechat');
+        $notifyUrl = $this->request->domain() . url('order_paid_notify/wechat');
         $orderPaymentInfo = [
             'out_trade_no' => $info->order_no,
             'body'         => '购买商品',

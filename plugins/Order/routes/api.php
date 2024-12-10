@@ -1,7 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Plugins\Order\App\Http\Controllers\IndexController;
+use Plugins\Order\App\Http\Controllers\LogisticsController;
+use Plugins\Order\App\Http\Controllers\OrderPaidController;
+use Plugins\Order\App\Http\Controllers\OrderPaidNotifyController;
+use Plugins\Order\App\Http\Controllers\OrderRefundNotifyController;
+use Plugins\Order\App\Http\Controllers\RefundApplyController;
+use Plugins\Order\App\Http\Controllers\RefundController;
+use Plugins\Order\App\Models\Express;
 
 /*
     |--------------------------------------------------------------------------
@@ -13,12 +20,34 @@ use Illuminate\Support\Facades\Route;
     | is assigned the "api" middleware group. Enjoy building your API!
     |
 */
-
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::get('order', fn(Request $request) => $request->user())->name('order');
+Route::middleware(['auth:sanctum'])->prefix('order')->name('order.')->group(function () {
+    Route::get('/lists', [IndexController::class, 'index'])->name('lists');
+    Route::get('/info', [IndexController::class, 'detail'])->name('info');
+    Route::post('/delete', [IndexController::class, 'delete'])->name('delete');
+    Route::post('/cancel', [IndexController::class, 'cancel'])->name('cancel');
+    Route::post('/receipt', [IndexController::class, 'receipt'])->name('receipt');
 });
 
-
-Route::group([], function () {
-    Route::resource('order', OrderController::class)->names('order');
+Route::middleware(['auth:sanctum'])->prefix('logistics')->name('logistics.')->group(function () {
+    Route::get('/expresses', [LogisticsController::class, 'index'])->name('lists');
+    Route::get('/tracks', [LogisticsController::class, 'tracks'])->name('tracks');
 });
+
+Route::middleware(['auth:sanctum'])->prefix('paid')->name('paid.')->group(function () {
+    Route::get('/lists', [OrderPaidController::class, 'index'])->name('lists');
+    Route::get('/info', [OrderPaidController::class, 'detail'])->name('info');
+    Route::post('/delete', [OrderPaidController::class, 'delete'])->name('delete');
+    Route::post('/cancel', [OrderPaidController::class, 'cancel'])->name('cancel');
+    Route::post('/receipt', [OrderPaidController::class, 'receipt'])->name('receipt');
+});
+Route::match('GET|POST', '/paid_notify', [OrderPaidNotifyController::class, 'receipt'])->name('paid_notify');
+
+Route::middleware(['auth:sanctum'])->prefix('refund')->name('refund.')->group(function () {
+    Route::get('/lists', [RefundController::class, 'index'])->name('lists');
+    Route::get('/info', [RefundController::class, 'detail'])->name('info');
+    Route::post('/delete', [RefundController::class, 'delete'])->name('delete');
+    Route::post('/cancel', [RefundController::class, 'cancel'])->name('cancel');
+    Route::post('/delivery', [RefundController::class, 'delivery'])->name('delivery');
+    Route::post('/apply', [RefundApplyController::class, 'index'])->name('apply');
+});
+Route::match('GET|POST', '/refund_notify', [OrderRefundNotifyController::class, 'receipt'])->name('refund_notify');

@@ -113,6 +113,7 @@ class IndexController extends Controller
      * 修改价格
      *
      * @return Response
+     * @throws ValidationException
      */
     public function changeAmount()
     {
@@ -155,6 +156,7 @@ class IndexController extends Controller
      * 审核申请取消订单
      *
      * @return Response
+     * @throws ValidationException
      */
     public function confirmCancel()
     {
@@ -197,6 +199,7 @@ class IndexController extends Controller
      * 确认发货
      *
      * @return Response
+     * @throws ValidationException
      */
     public function send()
     {

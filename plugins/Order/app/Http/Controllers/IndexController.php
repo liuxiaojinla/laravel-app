@@ -1,14 +1,16 @@
 <?php
 
 
-namespace plugins\order\api\controller;
+namespace Plugins\Order\App\Http\Controllers;
 
 use App\Http\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Enums\DeliveryStatus;
 use Plugins\Order\App\Enums\DeliveryType;
 use Plugins\Order\App\Enums\PayType;
 use Plugins\Order\App\Models\Order;
-use think\db\exception\ModelNotFoundException;
 use Xin\Hint\Facades\Hint;
 
 class IndexController extends Controller
@@ -22,15 +24,14 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $search = $this->request->get();
-        $data = Order::with([
+        $search = $this->request->query();
+        $data = Order::simple()->with([
             'goods_list',
-        ])->simple()->search($search)
+        ])->search($search)
             ->where([
-                'app_id'  => $this->request->appId(),
-                'user_id' => $this->auth->getUserId(),
+                'user_id' => $this->auth->id(),
             ])
-            ->order('id desc')->paginate();
+            ->orderByDesc('id')->paginate();
 
         return Hint::result($data);
     }
@@ -39,8 +40,6 @@ class IndexController extends Controller
      * 订单详情
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
      */
     public function detail()
     {
@@ -65,8 +64,6 @@ class IndexController extends Controller
      * @param int|null $id
      * @param array $with
      * @return Order
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
      */
     protected function findIsEmptyAssert($id = null, $with = [])
     {
@@ -74,7 +71,7 @@ class IndexController extends Controller
             $id = $this->request->validId();
         }
 
-        $userId = $this->auth->getUserId();
+        $userId = $this->auth->id();
         /** @var Order $info */
         $info = Order::with($with)->where([
             'id' => $id,
@@ -95,8 +92,6 @@ class IndexController extends Controller
      * 删除订单
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
      */
     public function delete()
     {
@@ -118,8 +113,7 @@ class IndexController extends Controller
      * 取消订单
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
+     * @throws ValidationException
      */
     public function cancel()
     {
@@ -137,8 +131,7 @@ class IndexController extends Controller
      * 确认收货
      *
      * @return Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws ModelNotFoundException
+     * @throws ValidationException
      */
     public function receipt()
     {

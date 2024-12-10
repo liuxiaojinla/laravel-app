@@ -6,6 +6,7 @@ namespace Plugins\Order\App\Admin\Controllers;
 use App\Admin\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Models\Order;
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Radix;
@@ -76,6 +77,7 @@ class VerifyController extends Controller
      * 订单核销
      *
      * @return Response
+     * @throws ValidationException
      */
     public function verify()
     {

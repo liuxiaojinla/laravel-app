@@ -133,17 +133,6 @@ class Goods extends Model implements OrderListenerOfStatic
     }
 
     /**
-     * @inheritDoc
-     * @return static
-     */
-    protected static function resolvePlain($info, $options = [])
-    {
-        $info = parent::resolvePlain($info, $options);
-
-        return static::checkStatus($info, $options);
-    }
-
-    /**
      * 校验商品状态
      *
      * @param mixed $info
@@ -238,16 +227,14 @@ class Goods extends Model implements OrderListenerOfStatic
     /**
      * 多态数据查询读取的数据
      */
-    public function onMorphToRead()
+    public function onMorphToRead(array $params = [])
     {
-        $this->invoke(function (Request $request) {
-            $isUserVip = $request->user('is_vip', 0, AuthVerifyType::NOT);
+        $isUserVip = $params['user']?->is_vip ?? 0;
 
-            $showPrice = $isUserVip ? $this->getRawOriginal('vip_price') : $this->getRawOriginal('price');
-            $this->set('show_price', $showPrice);
+        $showPrice = $isUserVip ? $this->getRawOriginal('vip_price') : $this->getRawOriginal('price');
+        $this->setAttribute('show_price', $showPrice);
 
-            $this->append(['tags']);
-        });
+        //            $this->append(['tags']);
     }
 
     /**

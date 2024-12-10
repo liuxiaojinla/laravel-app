@@ -4,9 +4,11 @@
 namespace Plugins\Order\App\Admin\Controllers;
 
 use App\Admin\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Http\Requests\ReturnAddressRequest;
+use Plugins\Order\App\Models\Express;
 use Plugins\Order\App\Models\ReturnAddress;
 use Xin\Hint\Facades\Hint;
 
@@ -26,6 +28,20 @@ class ReturnAddressController extends Controller
 
         return Hint::result($data);
     }
+
+    /**
+     * 数据详情
+     * @param Request $request
+     * @return Response
+     */
+    public function info(Request $request)
+    {
+        $id = $request->validId();
+        $info = ReturnAddress::query()->with([
+        ])->where('id', $id)->firstOrFail();
+        return Hint::result($info);
+    }
+
 
     /**
      * 创建数据

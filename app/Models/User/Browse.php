@@ -23,17 +23,15 @@ class Browse extends Pivot
     /**
      * @var string
      */
-    protected $name = 'user_browse';
+    protected $table = 'user_browses';
 
     /**
      * @var bool
      */
-    protected $autoWriteTimestamp = true;
+    public $timestamps = true;
 
-    /**
-     * @var bool
-     */
-    protected $updateTime = false;
+    // 关闭自动更新
+    public const UPDATED_AT = null;
 
     /**
      * 关联用户模型
@@ -42,7 +40,7 @@ class Browse extends Pivot
      */
     public function user()
     {
-        return $this->belongsTo(User::class)->select(User::getPublicFields());
+        return $this->belongsTo(User::class)->select(User::getSimpleFields());
     }
 
     /**
@@ -52,9 +50,7 @@ class Browse extends Pivot
      */
     public function browseable()
     {
-        return $this->morphTo([
-            'topic_type', 'topic_id',
-        ], Morph::getTypeList());
+        return $this->morphTo(__FUNCTION__, 'topic_type', 'topic_id');
     }
 
     /**
@@ -63,28 +59,26 @@ class Browse extends Pivot
      * @param string $type
      * @param int $topicId
      * @param int $userId
-     * @return static|array
+     * @return static
      */
     public static function attach($type, $topicId, $userId)
     {
         /** @var static $info */
-        $info = static::where([
+        $info = static::query()->where([
             'topic_type' => $type,
             'topic_id'   => $topicId,
             'user_id'    => $userId,
-        ])->find();
+        ])->first();
 
         if (empty($info)) {
-            return static::create([
+            $info = static::query()->create([
                 'topic_type' => $type,
                 'topic_id'   => $topicId,
                 'user_id'    => $userId,
                 'view_count' => 1,
             ]);
         } else {
-            $info->inc('view_count')->update([
-                'update_time' => time(),
-            ]);
+            $info->increment('view_count');
             $info->view_count++;
         }
 
