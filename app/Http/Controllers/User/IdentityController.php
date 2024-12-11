@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controller;
-use App\Models\User\Identity;
+use App\Models\User\UserIdentity;
 use Xin\Hint\Facades\Hint;
 
 class IdentityController extends Controller
@@ -23,7 +23,7 @@ class IdentityController extends Controller
     {
         $userId = $this->auth->id();
 
-        $info = Identity::query()->where([
+        $info = UserIdentity::query()->where([
             'user_id' => $userId,
         ])->firstOrFail();
 
@@ -39,8 +39,8 @@ class IdentityController extends Controller
     {
         $userId = $this->auth->id();
 
-        /** @var Identity $info */
-        $info = Identity::query()->where([
+        /** @var UserIdentity $info */
+        $info = UserIdentity::query()->where([
             'user_id' => $userId,
         ])->first();
         if ($info && $info->status != 2) {
@@ -70,7 +70,7 @@ class IdentityController extends Controller
         $data['user_id'] = $userId;
         $data['app_id'] = $this->request->appId();
 
-        $info = $info ?: new Identity();
+        $info = $info ?: new UserIdentity();
         if ($info->save($data) === false) {
             return Hint::error("提交失败！");
         }

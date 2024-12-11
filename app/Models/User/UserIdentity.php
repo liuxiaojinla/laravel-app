@@ -13,12 +13,8 @@ use App\Models\Model;
  * @property-read int id
  * @property int status
  */
-class Identity extends Model
+class UserIdentity extends Model
 {
 
-	/**
-	 * @var string
-	 */
-	protected $name = 'user_identity';
 
 }

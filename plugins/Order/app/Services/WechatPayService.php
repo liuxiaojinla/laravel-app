@@ -1,7 +1,7 @@
 <?php
 
 
-namespace plugins\order\service;
+namespace Plugins\Order\App\Services;
 
 use Plugins\Order\App\Enums\PayType;
 use Xin\Support\Str;

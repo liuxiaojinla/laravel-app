@@ -12,6 +12,7 @@ use Plugins\Order\App\Enums\DeliveryType as DeliveryTypeEnum;
 use Plugins\Order\App\Enums\OrderStatus as OrderStatusEnum;
 use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
 use Plugins\Order\App\Enums\ReceiptStatus as ReceiptStatusEnum;
+use Plugins\Order\App\Events\OrderChangeStatusEvent;
 use Plugins\Order\App\Jobs\OrderAutoReceive;
 use Xin\Support\Str;
 

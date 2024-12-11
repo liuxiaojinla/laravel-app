@@ -1,12 +1,11 @@
 <?php
 
-namespace Plugins\Order\app\Services;
+namespace Plugins\Order\App\Services;
 
 use App\Models\Order\Order;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Middleware\MiddlewareManager;
 
 class OrderBuilder
 {

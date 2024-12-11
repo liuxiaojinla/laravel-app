@@ -6,17 +6,33 @@ namespace Plugins\Order\App\Http\Controllers;
 use App\Http\Controller;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Enums\PayType as PayTypeEnum;
 use Plugins\Order\App\Models\Order;
-use plugins\order\service\PayService;
 use Xin\Hint\Facades\Hint;
+use Xin\Payment\Contracts\Factory as PaymentFactory;
 use Xin\Support\Str;
+use Yansongda\Artful\Exception\InvalidConfigException;
 
 class OrderPaidController extends Controller
 {
+    /**
+     * @var PaymentFactory
+     */
+    protected $payment;
+
+    /**
+     * @param Application $app
+     * @param PaymentFactory $payment
+     */
+    public function __construct(Application $app, PaymentFactory $payment)
+    {
+        parent::__construct($app);
+        $this->payment = $payment;
+    }
 
     /**
      * 支付订单
@@ -33,7 +49,7 @@ class OrderPaidController extends Controller
         ]);
 
         /** @var User $user */
-        $user = $this->auth->getUser();
+        $user = $this->auth->user();
 
         // 订单信息
         $info = $this->findIsEmptyAssert();
@@ -112,9 +128,8 @@ class OrderPaidController extends Controller
      */
     protected function wechat(Order $info, $user)
     {
-        $payService = PayService::ofAppId($this->request->appId());
 
-        $notifyUrl = $this->request->domain() . url('order_paid_notify/wechat');
+        $notifyUrl = $this->request->root() . url('order_paid_notify/wechat');
         $orderPaymentInfo = [
             'out_trade_no' => $info->order_no,
             'body'         => '购买商品',
@@ -123,7 +138,11 @@ class OrderPaidController extends Controller
             'notify_url'   => $notifyUrl,
         ];
 
-        $result = $payService->wechat()->miniapp($orderPaymentInfo);
+        try {
+            $result = $this->payment->wechat()->mini($orderPaymentInfo);
+        } catch (InvalidConfigException $e) {
+            throw new \InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        }
 
         return Hint::result($result);
     }

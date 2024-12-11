@@ -6,6 +6,7 @@ use App\Supports\WebServer;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
@@ -36,6 +37,8 @@ class Handler extends ExceptionHandler
                     return Hint::error($response->getContent(), $response->getStatusCode());
                 }
             }
+
+            return null;
         });
     }
 
@@ -82,6 +85,21 @@ class Handler extends ExceptionHandler
     }
 
     /**
+     * Prepare a JSON response for the given exception.
+     *
+     * @param Request $request
+     * @param Throwable $e
+     * @return JsonResponse
+     */
+    protected function prepareJsonResponse($request, Throwable $e)
+    {
+        $result = $this->convertExceptionToArray($e);
+        return Hint::error(
+            $result['msg'], $result['code'], $request->url(), $result
+        );
+    }
+
+    /**
      * Convert the given exception to an array.
      *
      * @param \Throwable $e
@@ -93,8 +111,8 @@ class Handler extends ExceptionHandler
 
         $code = $this->isHttpException($e) ? $e->getStatusCode() : 0;
         $message = $e->getMessage();
-        $previous = $e->getPrevious();
 
+        $previous = $e->getPrevious();
         if ($previous instanceof ModelNotFoundException) {
             $modelClass = $e->getPrevious()->getModel();
             $prefix = $isDebug ? "[$modelClass] " : (const_exist($modelClass, 'TITLE') ? $modelClass::TITLE . ' ' : '');
@@ -110,7 +128,17 @@ class Handler extends ExceptionHandler
             'trace'     => collect($e->getTrace())->map(fn($trace) => Arr::except($trace, ['args']))->all(),
         ] : [
             'code' => $code,
-            'msg'  => $this->isHttpException($e) ? $message : 'Server Error',
+            'msg'  => $this->isSafetyException($e) ? $message : 'Server Error',
         ];
+    }
+
+    /**
+     * 是否是安全的异常
+     * @param \Throwable $e
+     * @return bool
+     */
+    protected function isSafetyException($e)
+    {
+        return $this->isHttpException($e) || $e instanceof \LogicException;
     }
 }

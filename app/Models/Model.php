@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\StyleMappings\DefaultStyle;
-use App\Models\Concerns\UseTableNameAsMorphClass;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 use Xin\LaravelFortify\Model\Modelable;
 use Xin\Support\Arr;
@@ -16,7 +15,7 @@ use Xin\Support\Arr;
  */
 class Model extends BaseModel
 {
-    use Modelable, UseTableNameAsMorphClass;
+    use Modelable;
 
     /**
      * 获取枚举字段数据

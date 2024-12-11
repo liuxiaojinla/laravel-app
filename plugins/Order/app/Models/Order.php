@@ -84,7 +84,7 @@ class Order extends Model
     public static function getSimpleFields()
     {
         return [
-            'id', 'app_id', 'user_id', 'order_no', 'adjust_amount', 'point_amount',
+            'id', 'user_id', 'order_no', 'adjust_amount', 'point_amount',
             'total_amount', 'order_status', 'orderable_type', 'orderable_id',
             'pay_amount', 'pay_no', 'pay_status', 'pay_time', 'pay_type',
             'buyer_remark', 'buyer_rate',
@@ -95,7 +95,7 @@ class Order extends Model
             'receipt_status', 'receipt_time',
             'extract_shop_id', 'extract_verifier_id', 'is_verify', 'verify_time',
             'is_allow_refund', 'is_evaluate', 'is_lock', 'transaction_id', 'coupon_amount', 'user_coupon_id',
-            'close_time', 'finish_time', 'evaluate_time', 'delete_time', 'create_time',
+            'close_time', 'finish_time', 'evaluate_time', 'deleted_at', 'created_at', 'updated_at',
         ];
     }
 
@@ -299,7 +299,7 @@ class Order extends Model
             return;
         }
 
-        Morph::callMethod($this->orderable_type, $method, $args);
+        Relation::call($this->orderable_type, $method, $args);
     }
 
     /**
@@ -571,7 +571,7 @@ class Order extends Model
             OrderStatusEnum::FINISHED  => '#39b54a',
             OrderStatusEnum::REFUNDED  => '#e03997',
         ];
-        $orderStatus = $this->getData('order_status');
+        $orderStatus = $this->getRawOriginal('order_status');
         return $stateTipColors[$orderStatus] ?? $defaultStateTipColor;
     }
 
@@ -591,7 +591,7 @@ class Order extends Model
             OrderStatusEnum::FINISHED  => '已完成',
             OrderStatusEnum::REFUNDED  => '已退款',
         ];
-        $orderStatus = $this->getData('order_status');
+        $orderStatus = $this->getRawOriginal('order_status');
         return $stateTipTexts[$orderStatus] ?? '';
     }
 
@@ -611,7 +611,7 @@ class Order extends Model
             OrderStatusEnum::FINISHED  => 'cuIcon-roundcheck',
             OrderStatusEnum::REFUNDED  => 'cuIcon-refund',
         ];
-        $orderStatus = $this->getData('order_status');
+        $orderStatus = $this->getRawOriginal('order_status');
         return $stateTipIcons[$orderStatus] ?? '';
     }
 

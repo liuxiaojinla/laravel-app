@@ -9,7 +9,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controller;
 use App\Models\User;
-use App\Models\User\Cashout as UserCashout;
+use App\Models\User\UserCashout as UserCashout;
 use App\Services\UserService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -30,7 +30,7 @@ class CashoutController extends Controller
     public function index()
     {
         $userId = $this->auth->id();
-        $date = $this->request->param('date', '', 'trim');
+        $date = $this->request->string('date', '')->trim()->toString();
 
         $data = UserCashout::query()->where([
             'user_id' => $userId,
@@ -69,8 +69,8 @@ class CashoutController extends Controller
     {
         $userId = $this->auth->id();
 
-        $field = 'status,cash_amount,cashout_amount';
-        $result = User::field($field)->where('id', $userId)->find()->toArray();
+        $fields = ['status', 'cash_amount', 'cashout_amount'];
+        $result = User::query()->select($fields)->where('id', $userId)->first()->toArray();
 
         $serviceRate = bcdiv(Config::get('web.user_service_charge'), 100, 2);
         $result['service_rate'] = (float)$serviceRate;
@@ -89,7 +89,6 @@ class CashoutController extends Controller
         $data = $this->validateApplyData();
 
         /** @var User $user */
-        // $user = $this->requset->user(null, null, User::VERIFY_IDENTITY_INFO);
         $user = $this->request->user();
         $userId = $user->id;
 
@@ -99,7 +98,6 @@ class CashoutController extends Controller
         }
 
         $data = array_merge($data, [
-            'app_id'       => $this->request->appId(),
             'user_id'      => $userId,
             'realname'     => '',//todo
             'mobile'       => '',// todo
@@ -109,7 +107,7 @@ class CashoutController extends Controller
         DB::transaction(static function () use ($user, $data) {
             $cashoutLog = UserCashout::fastCreate($data);
 
-            $flag = $user->dec('cash_amount', $data['apply_money'])->update([]);
+            $flag = $user->decrement('cash_amount', $data['apply_money']);
             if (!$flag) {
                 throw new \LogicException('申请提现失败！');
             }
@@ -133,14 +131,9 @@ class CashoutController extends Controller
     private function validateApplyData()
     {
         return $this->request->validate([
-            'apply_money',
-        ], [
-            'rules'  => [
-                'apply_money' => 'require|float|egt:0.3',
-            ],
-            'fields' => [
-                'apply_money' => '提现金额',
-            ],
+            'apply_money' => 'required|decimal:0,2|gte:0.3',
+        ], [], [
+            'apply_money' => '提现金额',
         ]);
     }
 

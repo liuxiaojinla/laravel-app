@@ -1,15 +1,10 @@
 <?php
 
 
-namespace plugins\order\service;
+namespace Plugins\Order\App\Services;
 
 use Plugins\Order\App\Models\PayLog;
-use Xin\Contracts\Payment\Factory;
-use Yansongda\Pay\Exceptions\BusinessException;
-use Yansongda\Pay\Exceptions\GatewayException;
-use Yansongda\Pay\Exceptions\InvalidConfigException;
-use Yansongda\Pay\Exceptions\InvalidGatewayException;
-use Yansongda\Pay\Exceptions\InvalidSignException;
+use Xin\Payment\Contracts\Factory as PaymentFactory;
 
 abstract class AbstractPayService
 {
@@ -19,8 +14,9 @@ abstract class AbstractPayService
      */
     protected $payService;
 
+
     /**
-     * @var \Xin\Contracts\Foundation\Payment
+     * @var PaymentFactory
      */
     protected $payment;
 
@@ -28,9 +24,9 @@ abstract class AbstractPayService
      * 微信支付器
      *
      * @param PayService $payService
-     * @param Factory $payment
+     * @param PaymentFactory $payment
      */
-    public function __construct(PayService $payService, Factory $payment)
+    public function __construct(PayService $payService, PaymentFactory $payment)
     {
         $this->payService = $payService;
         $this->payment = $payment;

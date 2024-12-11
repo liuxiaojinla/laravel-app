@@ -1,15 +1,15 @@
 <?php
 
 
-namespace plugins\order\service;
+namespace Plugins\Order\App\Services;
 
-use Xin\Contracts\Payment\Factory;
+use Xin\Payment\Contracts\Factory as PaymentFactory;
 
 class PayService
 {
 
     /**
-     * @var \Xin\Contracts\Foundation\Payment
+     * @var PaymentFactory
      */
     protected $payment;
 
@@ -21,9 +21,9 @@ class PayService
     /**
      * 支付器
      *
-     * @param Factory|null $payment
+     * @param PaymentFactory|null $payment
      */
-    public function __construct(Factory $payment = null)
+    public function __construct(PaymentFactory $payment = null)
     {
         $this->payment = $payment ?: app('payment');
     }

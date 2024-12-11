@@ -9,27 +9,24 @@ namespace App\Models\User;
 
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property-read int id
  * @property string title
  */
-class Level extends Model
+class UserLevel extends Model
 {
 
-	/**
-	 * @var string
-	 */
-	protected $name = "user_level";
 
-	/**
-	 * 关联用户
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
-	 */
-	public function users()
-	{
-		return $this->hasMany(User::class, 'level_id');
-	}
+    /**
+     * 关联用户
+     *
+     * @return HasMany
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class, 'level_id');
+    }
 
 }

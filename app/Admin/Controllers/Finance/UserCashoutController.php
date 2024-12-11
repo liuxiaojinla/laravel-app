@@ -4,7 +4,7 @@ namespace App\Admin\Controllers\Finance;
 
 use App\Admin\Controller;
 use App\Models\User;
-use App\Models\User\Cashout;
+use App\Models\User\UserCashout;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -22,7 +22,7 @@ class UserCashoutController extends Controller
     {
         $status = $request->validIntIn('status', [0, 2, 3], 0);
 
-        $data = Cashout::query()->with('user')->where([
+        $data = UserCashout::query()->with('user')->where([
             'status' => $status,
         ])->paginate();
 
@@ -38,8 +38,8 @@ class UserCashoutController extends Controller
     {
         $id = $request->validId();
 
-        /** @var Cashout $info */
-        $info = Cashout::query()->where('id', $id)->firstOrFail();
+        /** @var UserCashout $info */
+        $info = UserCashout::query()->where('id', $id)->firstOrFail();
         if (!$request->isPost()) {
             return Hint::result($info);
         }
@@ -66,10 +66,10 @@ class UserCashoutController extends Controller
         if ($data['audit_status'] == 0) { // 同意打款
             $status = $this->dispatch($data['type'], $info);
             $info->save([
-                'status'        => Cashout::STATUS_TRANSFERRED,
-                'audit_time'    => $request->time(),
-                'transfer_time' => $request->time(),
-                'refuse_msg'    => $data['refuse_msg'],
+	            'status'        => UserCashout::STATUS_TRANSFERRED,
+	            'audit_time'    => $request->time(),
+	            'transfer_time' => $request->time(),
+	            'refuse_msg'    => $data['refuse_msg'],
             ]);
         } else {
             /** @var User $user */
@@ -90,12 +90,12 @@ class UserCashoutController extends Controller
      * 开始打款
      *
      * @param int $type
-     * @param Cashout $info
+     * @param UserCashout $info
      * @return int
      */
-    private function dispatch($type, Cashout $info)
+    private function dispatch($type, UserCashout $info)
     {
-        if ($type == Cashout::TYPE_BANK) {
+        if ($type == UserCashout::TYPE_BANK) {
         } else {
             /** @var User $user */
             $openid = User::query()->where('id', $info->user_id)->value('openid');

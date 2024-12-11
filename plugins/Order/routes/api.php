@@ -20,7 +20,7 @@ use Plugins\Order\App\Models\Express;
     | is assigned the "api" middleware group. Enjoy building your API!
     |
 */
-Route::middleware(['auth:sanctum'])->prefix('order')->name('order.')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('index')->name('index.')->group(function () {
     Route::get('/lists', [IndexController::class, 'index'])->name('lists');
     Route::get('/info', [IndexController::class, 'detail'])->name('info');
     Route::post('/delete', [IndexController::class, 'delete'])->name('delete');
@@ -28,19 +28,15 @@ Route::middleware(['auth:sanctum'])->prefix('order')->name('order.')->group(func
     Route::post('/receipt', [IndexController::class, 'receipt'])->name('receipt');
 });
 
+Route::middleware(['auth:sanctum'])->prefix('paid')->name('paid.')->group(function () {
+    Route::post('', [OrderPaidController::class, 'index']);
+    Route::match('GET|POST', '/wechat_notify', [OrderPaidNotifyController::class, 'wechat'])->name('wechat_notify');
+});
+
 Route::middleware(['auth:sanctum'])->prefix('logistics')->name('logistics.')->group(function () {
     Route::get('/expresses', [LogisticsController::class, 'index'])->name('lists');
     Route::get('/tracks', [LogisticsController::class, 'tracks'])->name('tracks');
 });
-
-Route::middleware(['auth:sanctum'])->prefix('paid')->name('paid.')->group(function () {
-    Route::get('/lists', [OrderPaidController::class, 'index'])->name('lists');
-    Route::get('/info', [OrderPaidController::class, 'detail'])->name('info');
-    Route::post('/delete', [OrderPaidController::class, 'delete'])->name('delete');
-    Route::post('/cancel', [OrderPaidController::class, 'cancel'])->name('cancel');
-    Route::post('/receipt', [OrderPaidController::class, 'receipt'])->name('receipt');
-});
-Route::match('GET|POST', '/paid_notify', [OrderPaidNotifyController::class, 'receipt'])->name('paid_notify');
 
 Route::middleware(['auth:sanctum'])->prefix('refund')->name('refund.')->group(function () {
     Route::get('/lists', [RefundController::class, 'index'])->name('lists');

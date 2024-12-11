@@ -3,28 +3,45 @@
 
 namespace Plugins\Order\App\Http\Controllers;
 
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Plugins\Order\App\Enums\PayType;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\PayLog;
-use think\facade\Log;
+use Symfony\Component\HttpFoundation\Response;
+use Xin\Payment\Contracts\Factory as PaymentFactory;
+use Yansongda\Artful\Exception\ContainerException;
+use Yansongda\Artful\Exception\InvalidParamsException;
 
-class OrderPaidNotifyController
+class OrderPaidNotifyController extends Controller
 {
+    /**
+     * @var PaymentFactory
+     */
+    protected $payment;
+
+    /**
+     * @param PaymentFactory $payment
+     */
+    public function __construct(PaymentFactory $payment)
+    {
+        $this->payment = $payment;
+    }
 
     /**
      * 微信支付
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
-     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
+     * @return Response
+     * @throws ContainerException
+     * @throws InvalidParamsException
      */
     public function wechat()
     {
         Log::log('payment', file_get_contents('php://input'));
 
-        $wechat = $this->payment()->wechat();
+        $wechat = $this->payment->wechat();
 
-        $result = $wechat->verify();
+        $result = $wechat->callback();
         $payNo = $result['out_trade_no'];
         $transactionId = $result['transaction_id'];
 
@@ -39,20 +56,10 @@ class OrderPaidNotifyController
     }
 
     /**
-     * 获取支付器
-     *
-     * @return object|\think\App|\Xin\Payment\Payment
-     */
-    protected function payment()
-    {
-        return app('payment');
-    }
-
-    /**
      * 获取订单
      *
      * @param string $payNo
-     * @return array|Order|\think\Model
+     * @return Order
      */
     protected function resolveOrder($payNo, $transactionId)
     {
@@ -63,7 +70,9 @@ class OrderPaidNotifyController
             $log->setPaidStatus($transactionId);
         }
 
-        return Order::query()->where('order_no', $log['out_trade_no'])->firstOrFail();
+        $info = Order::query()->where('order_no', $log['out_trade_no'])->firstOrFail();
+
+        return value($info);
     }
 
 }

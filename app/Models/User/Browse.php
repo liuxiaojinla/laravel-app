@@ -20,38 +20,17 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class Browse extends Pivot
 {
 
-    /**
-     * @var string
-     */
-    protected $table = 'user_browses';
-
+    public const UPDATED_AT = null;
     /**
      * @var bool
      */
     public $timestamps = true;
 
     // 关闭自动更新
-    public const UPDATED_AT = null;
-
     /**
-     * 关联用户模型
-     *
-     * @return BelongsTo
+     * @var string
      */
-    public function user()
-    {
-        return $this->belongsTo(User::class)->select(User::getSimpleFields());
-    }
-
-    /**
-     * 多态关联
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-     */
-    public function browseable()
-    {
-        return $this->morphTo(__FUNCTION__, 'topic_type', 'topic_id');
-    }
+    protected $table = 'user_browses';
 
     /**
      * 挂载访问记录
@@ -100,6 +79,26 @@ class Browse extends Pivot
             'topic_type' => $type,
             'topic_id'   => $topicId,
         ])->delete();
+    }
+
+    /**
+     * 关联用户模型
+     *
+     * @return BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class)->select(User::getSimpleFields());
+    }
+
+    /**
+     * 多态关联
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function browseable()
+    {
+        return $this->morphTo(__FUNCTION__, 'topic_type', 'topic_id');
     }
 
 }

@@ -13,19 +13,16 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class TagRelation extends Pivot
 {
 
-	/**
-	 * @var string
-	 */
-	protected $name = "user_tag_relation";
+    public const UPDATED_AT = false;
+    /**
+     * @var bool
+     */
+    public $timestamps = true;
 
-	/**
-	 * @var bool
-	 */
-	protected $autoWriteTimestamp = true;
-
-	/**
-	 * @var bool
-	 */
-	protected $updateTime = false;
+    // 关闭更新时间
+    /**
+     * @var string
+     */
+    protected $name = "user_tag_relation";
 
 }

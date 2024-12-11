@@ -24,14 +24,17 @@ class IndexController extends Controller
      */
     public function index()
     {
+        $userId = $this->auth->id();
         $search = $this->request->query();
+
         $data = Order::simple()->with([
-            'goods_list',
+            'goodsList',
         ])->search($search)
             ->where([
-                'user_id' => $this->auth->id(),
+                'user_id' => $userId,
             ])
-            ->orderByDesc('id')->paginate();
+            ->orderByDesc('id')
+            ->paginate();
 
         return Hint::result($data);
     }
@@ -44,7 +47,7 @@ class IndexController extends Controller
     public function detail()
     {
         $info = $this->findIsEmptyAssert(null, [
-            'goods_list',
+            'goodsList',
         ]);
         $info['is_show_delete_action'] = $info->isCancelled() || $info->isClosed() || $info->isCompleted();
         $info['is_show_cancel_action'] = $info->isPending();

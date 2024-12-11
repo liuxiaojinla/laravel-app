@@ -31,26 +31,6 @@ class Favorite extends Pivot
     protected $table = 'user_favorites';
 
     /**
-     * 关联用户模型
-     *
-     * @return BelongsTo
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * 多态关联
-     *
-     * @return MorphTo
-     */
-    public function favoriteable()
-    {
-        return $this->morphTo(__FUNCTION__, 'topic_type', 'topic_id');
-    }
-
-    /**
      * 切换收藏
      *
      * @param string $type
@@ -72,26 +52,35 @@ class Favorite extends Pivot
     }
 
     /**
-     * 立即收藏
+     * 是否收藏
      *
-     * @param string $topicType
+     * @param string $type
      * @param int $topicId
      * @param int $userId
      * @return bool
      */
-    public static function favorite($topicType, $topicId, $userId)
+    public static function isFavorite($type, $topicId, $userId)
     {
-        Relation::firstOrFail($topicType, $topicId);
+        return static::findFavorite($type, $topicId, $userId) != null;
+    }
 
-        $info = static::query()->create([
-            'topic_type' => $topicType,
+    /**
+     * 查找收藏记录
+     *
+     * @param string $type
+     * @param int $topicId
+     * @param int $userId
+     * @return static|null
+     */
+    public static function findFavorite($type, $topicId, $userId)
+    {
+        $info = static::query()->where([
+            'topic_type' => $type,
             'topic_id'   => $topicId,
             'user_id'    => $userId,
-        ]);
+        ])->first();
 
-        Relation::call($topicType, 'onFavorite', ['result' => 1, $info]);
-
-        return true;
+        return value($info);
     }
 
     /**
@@ -126,35 +115,46 @@ class Favorite extends Pivot
     }
 
     /**
-     * 是否收藏
+     * 立即收藏
      *
-     * @param string $type
+     * @param string $topicType
      * @param int $topicId
      * @param int $userId
      * @return bool
      */
-    public static function isFavorite($type, $topicId, $userId)
+    public static function favorite($topicType, $topicId, $userId)
     {
-        return static::findFavorite($type, $topicId, $userId) != null;
+        Relation::firstOrFail($topicType, $topicId);
+
+        $info = static::query()->create([
+            'topic_type' => $topicType,
+            'topic_id'   => $topicId,
+            'user_id'    => $userId,
+        ]);
+
+        Relation::call($topicType, 'onFavorite', ['result' => 1, $info]);
+
+        return true;
     }
 
     /**
-     * 查找收藏记录
+     * 关联用户模型
      *
-     * @param string $type
-     * @param int $topicId
-     * @param int $userId
-     * @return static|null
+     * @return BelongsTo
      */
-    public static function findFavorite($type, $topicId, $userId)
+    public function user()
     {
-        $info = static::query()->where([
-            'topic_type' => $type,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
-        ])->first();
+        return $this->belongsTo(User::class);
+    }
 
-        return value($info);
+    /**
+     * 多态关联
+     *
+     * @return MorphTo
+     */
+    public function favoriteable()
+    {
+        return $this->morphTo(__FUNCTION__, 'topic_type', 'topic_id');
     }
 
 }

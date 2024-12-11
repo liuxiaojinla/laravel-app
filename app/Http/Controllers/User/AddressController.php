@@ -143,7 +143,7 @@ class AddressController extends Controller
      */
     public function delete()
     {
-        $ids = $this->request->validId();
+        $ids = $this->request->validIds();
         $userId = $this->auth->id();
 
         Address::query()->where([
