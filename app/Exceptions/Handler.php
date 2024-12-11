@@ -4,13 +4,12 @@ namespace App\Exceptions;
 
 use App\Supports\WebServer;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -90,17 +89,28 @@ class Handler extends ExceptionHandler
      */
     protected function convertExceptionToArray(Throwable $e): array
     {
+        $isDebug = config('app.debug');
+
         $code = $this->isHttpException($e) ? $e->getStatusCode() : 0;
-        return config('app.debug') ? [
+        $message = $e->getMessage();
+        $previous = $e->getPrevious();
+
+        if ($previous instanceof ModelNotFoundException) {
+            $modelClass = $e->getPrevious()->getModel();
+            $prefix = $isDebug ? "[$modelClass] " : (const_exist($modelClass, 'TITLE') ? $modelClass::TITLE . ' ' : '');
+            $message = $prefix . "数据不存在！";
+        }
+
+        return $isDebug ? [
             'code'      => $code,
-            'msg'       => $e->getMessage(),
+            'msg'       => $message,
             'exception' => get_class($e),
             'file'      => $e->getFile(),
             'line'      => $e->getLine(),
             'trace'     => collect($e->getTrace())->map(fn($trace) => Arr::except($trace, ['args']))->all(),
         ] : [
             'code' => $code,
-            'msg'  => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
+            'msg'  => $this->isHttpException($e) ? $message : 'Server Error',
         ];
     }
 }

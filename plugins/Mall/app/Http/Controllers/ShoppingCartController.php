@@ -5,7 +5,7 @@ namespace Plugins\Mall\App\Http\Controllers;
 
 use App\Exceptions\Error;
 use App\Http\Controller;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
@@ -29,17 +29,19 @@ class ShoppingCartController extends Controller
 
         /** @var LengthAwarePaginator $data */
         $data = ShoppingCart::with([
-            'goods' => function (Builder $query) {
+            'goods' => function (BelongsTo $belongsTo) {
             },
             'goodsSku',
-        ])->where([
-            'user_id' => $userId,
-        ])->latest('update_time')
+        ])
+            ->where([
+                'user_id' => $userId,
+            ])
+            ->latest('updated_at')
             ->paginate();
 
         $data->each(function (ShoppingCart $cart) use ($isUserVip) {
             if ($cart->goods && $cart->goodsSku) {
-                $cart->goods->append(['tags']);
+                //                $cart->goods->append(['tags']);
                 $cart['goods_show_price'] = $isUserVip ? $cart->goods_vip_price : $cart->goods_price;
             }
         });
@@ -65,27 +67,24 @@ class ShoppingCartController extends Controller
         }
 
         // 获取商品信息
-        $goods = Goods::query()->where([
-            'id' => $goodsId,
-        ])->select(array_merge(Goods::getSimpleFields(), ['spec_list']))->firstOrFail();
+        $goods = Goods::query()->select(array_merge(Goods::getSimpleFields(), ['spec_list']))
+            ->where(['id' => $goodsId,])->firstOrFail();
 
         // 获取SKU信息
-        $goodsSku = GoodsSku::query()->where([
-            'id' => $goodsSkuId,
-        ])->first();
+        $goodsSku = GoodsSku::query()->where(['id' => $goodsSkuId,])->first();
         if (empty($goodsSku) || $goodsSku['goods_id'] != $goodsId) {
             throw Error::validationException("商品规格信息不存在，请重新选择");
         }
 
         // 购物车是否存在
+        /** @var ShoppingCart $info */
         $info = ShoppingCart::query()->where([
             'user_id'      => $userId,
             'goods_id'     => $goodsId,
             'goods_sku_id' => $goodsSkuId,
         ])->first();
         if (empty($info)) {
-            ShoppingCart::query()->create([
-                'app_id'       => $this->request->appId(),
+            $info = ShoppingCart::query()->forceCreate([
                 'user_id'      => $userId,
                 'goods_id'     => $goodsId,
                 'goods_sku_id' => $goodsSkuId,
@@ -96,12 +95,18 @@ class ShoppingCartController extends Controller
                 'goods_num'    => $count,
             ]);
         } else {
-            $info->inc('goods_num', $count)->update([]);
+            $info->increment('goods_num', $count);
         }
 
-        return Hint::success('已加入购物车！', null, ShoppingCart::query()->where([
+        $goodsCartCount = ShoppingCart::query()->where([
             'user_id' => $userId,
-        ])->count());
+        ])->count();
+
+        return Hint::success('已加入购物车！', null, [
+            'id'          => $info->id,
+            'goods_num'   => $info->goods_num,
+            'total_count' => $goodsCartCount,
+        ]);
     }
 
     /**
@@ -113,7 +118,7 @@ class ShoppingCartController extends Controller
     public function change()
     {
         $id = $this->request->validId();
-        $count = $this->request->param('count/d');
+        $count = $this->request->integer('count');
         if ($count < 1) {
             throw Error::validationException('count param invalid.');
         }
@@ -127,7 +132,10 @@ class ShoppingCartController extends Controller
             'goods_num' => $count,
         ]);
 
-        return Hint::result($count);
+        return Hint::result([
+            'id'        => $id,
+            'goods_num' => $count,
+        ]);
     }
 
     /**
@@ -137,7 +145,7 @@ class ShoppingCartController extends Controller
      */
     public function delete()
     {
-        $ids = $this->request->validId();
+        $ids = $this->request->validIds();
         $userId = $this->auth->id();
 
         if (empty($ids)) {

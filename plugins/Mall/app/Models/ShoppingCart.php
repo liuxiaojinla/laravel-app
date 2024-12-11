@@ -5,7 +5,9 @@ namespace Plugins\Mall\App\Models;
 
 use App\Exceptions\Error;
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Models\OrderGoods;
 
 /**
@@ -26,6 +28,12 @@ class ShoppingCart extends Model
         return static::query()->where('user_id', $userId)->count();
     }
 
+    /**
+     * @param $userId
+     * @param array $cartIdList
+     * @return array
+     * @throws ValidationException
+     */
     public static function formCart($userId, array $cartIdList)
     {
         if (empty($cartIdList)) {
@@ -36,35 +44,39 @@ class ShoppingCart extends Model
         $goodsTotalAmount = 0;
 
         // 获取购物车里面的商品
-        $orderGoodsList = ShoppingCart::field([
-            'id', 'goods_id', 'goods_sku_id', 'goods_title',
-            'goods_cover', 'goods_num', 'goods_spec',
-        ])->withJoin([
-            'goods_sku' => [
-                'price', 'market_price', 'weight', 'spec_sku_id',
-            ],
-        ])->where([
-            ['shopping_cart.id', 'in', $cartIdList],
-            ['user_id', '=', $userId],
-        ])->select()->map(function (ShoppingCart $item) use (&$goodsTotalAmount) {
-            $goodsTotal = bcmul($item['goodsSku__price'], $item['goods_num'], 2);
-            $goodsTotalAmount = bcadd($goodsTotalAmount, $goodsTotal, 2);
+        $orderGoodsList = ShoppingCart::query()->with([
+            'goods_sku' => function (Builder $query) use ($cartIdList) {
+                $query->select([
+                    'price', 'market_price', 'weight', 'spec_sku_id',
+                ]);
+            },
+        ])
+            ->select([
+                'id', 'goods_id', 'goods_sku_id', 'goods_title',
+                'goods_cover', 'goods_num', 'goods_spec',
+            ])
+            ->where([
+                ['shopping_cart.id', 'in', $cartIdList],
+                ['user_id', '=', $userId],
+            ])->get()->map(function (ShoppingCart $item) use (&$goodsTotalAmount) {
+                $goodsTotal = bcmul($item['goodsSku__price'], $item['goods_num'], 2);
+                $goodsTotalAmount = bcadd($goodsTotalAmount, $goodsTotal, 2);
 
-            return new static([
-                'cart_id'            => $item['id'],
-                'goods_id'           => $item['goods_id'],
-                'goods_sku_id'       => $item['goods_sku_id'],
-                'goods_title'        => $item['goods_title'],
-                'goods_cover'        => $item['goods_cover'],
-                'goods_num'          => $item['goods_num'],
-                'goods_price'        => $item['goodsSku__price'],
-                'goods_market_price' => $item['goodsSku__market_price'],
-                'goods_weight'       => $item['goodsSku__weight'],
-                'goods_spec_sku'     => $item['goodsSku__spec_sku_id'],
-                'goods_spec'         => $item['goods_spec'],
-                'total_price'        => $goodsTotal,
-            ]);
-        });
+                return new static([
+                    'cart_id'            => $item['id'],
+                    'goods_id'           => $item['goods_id'],
+                    'goods_sku_id'       => $item['goods_sku_id'],
+                    'goods_title'        => $item['goods_title'],
+                    'goods_cover'        => $item['goods_cover'],
+                    'goods_num'          => $item['goods_num'],
+                    'goods_price'        => $item['goodsSku__price'],
+                    'goods_market_price' => $item['goodsSku__market_price'],
+                    'goods_weight'       => $item['goodsSku__weight'],
+                    'goods_spec_sku'     => $item['goodsSku__spec_sku_id'],
+                    'goods_spec'         => $item['goods_spec'],
+                    'total_price'        => $goodsTotal,
+                ]);
+            });
         if (empty($orderGoodsList)) {
             throw Error::validationException('购物车商品不存在！');
         }
@@ -82,7 +94,7 @@ class ShoppingCart extends Model
      */
     public function goods()
     {
-        return $this->belongsTo(Goods::class)->field(Goods::getSimpleFields());
+        return $this->belongsTo(Goods::class)->select(Goods::getSimpleFields());
     }
 
     /**
@@ -99,7 +111,8 @@ class ShoppingCart extends Model
      * 根据购物车返回订单商品信息
      *
      * @param bool $isValidate
-     * @return \Plugins\Order\App\Models\OrderGoods
+     * @return OrderGoods
+     * @throws ValidationException
      */
     public function toOrderGoods($isValidate = false, $options = [])
     {

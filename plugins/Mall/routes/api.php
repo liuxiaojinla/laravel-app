@@ -19,23 +19,28 @@ use Plugins\Mall\App\Http\Controllers\ShoppingCartController;
 */
 
 Route::prefix('goods')->name('goods.')->group(function () {
-	Route::get('/lists', [GoodsController::class, 'index']);
-	Route::get('/info', [GoodsController::class, 'detail']);
-	Route::get('/sku_data', [GoodsController::class, 'skuData']);
+    Route::get('/lists', [GoodsController::class, 'index'])->name('lists');
+    Route::get('/info', [GoodsController::class, 'detail'])->name('info');
+    Route::get('/sku_data', [GoodsController::class, 'skuData'])->name('sku_data');
 });
 
 Route::prefix('category')->name('category.')->group(function () {
-    Route::get('/lists', [CategoryController::class, 'index']);
+    Route::get('/lists', [CategoryController::class, 'index'])->name('lists');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('goods_appraise')->name('goods_appraise.')->group(function () {
+    Route::get('/lists', [GoodsAppraiseController::class, 'index'])->name('lists');
+    Route::post('/create', [GoodsAppraiseController::class, 'store'])->name('submit');
 });
 
 Route::middleware(['auth:sanctum'])->prefix('shopping_cart')->name('shopping_cart.')->group(function () {
-    Route::get('/lists', [ShoppingCartController::class, 'index']);
-    Route::post('/store', [ShoppingCartController::class, 'store']);
-    Route::post('/change', [ShoppingCartController::class, 'change']);
-    Route::post('/delete', [ShoppingCartController::class, 'delete']);
+    Route::get('/lists', [ShoppingCartController::class, 'index'])->name('lists');
+    Route::post('/create', [ShoppingCartController::class, 'store'])->name('create');
+    Route::post('/change', [ShoppingCartController::class, 'change'])->name('change');
+    Route::post('/delete', [ShoppingCartController::class, 'delete'])->name('delete');
 });
 
 Route::middleware(['auth:sanctum'])->prefix('order')->name('order.')->group(function () {
-    Route::get('/prepay', [AdvanceOrderController::class, 'fromGoods']);
-    Route::post('/submit', [AdvanceOrderController::class, 'store']);
+    Route::get('/prepay', [AdvanceOrderController::class, 'fromGoods'])->name('prepay');
+    Route::post('/submit', [AdvanceOrderController::class, 'store'])->name('submit');
 });
