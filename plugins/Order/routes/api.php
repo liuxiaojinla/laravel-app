@@ -8,7 +8,6 @@ use Plugins\Order\App\Http\Controllers\OrderPaidNotifyController;
 use Plugins\Order\App\Http\Controllers\OrderRefundNotifyController;
 use Plugins\Order\App\Http\Controllers\RefundApplyController;
 use Plugins\Order\App\Http\Controllers\RefundController;
-use Plugins\Order\App\Models\Express;
 
 /*
     |--------------------------------------------------------------------------
@@ -44,6 +43,6 @@ Route::middleware(['auth:sanctum'])->prefix('refund')->name('refund.')->group(fu
     Route::post('/delete', [RefundController::class, 'delete'])->name('delete');
     Route::post('/cancel', [RefundController::class, 'cancel'])->name('cancel');
     Route::post('/delivery', [RefundController::class, 'delivery'])->name('delivery');
-    Route::post('/apply', [RefundApplyController::class, 'index'])->name('apply');
+    Route::match(['GET', 'POST'], '/apply', [RefundApplyController::class, 'index'])->name('apply');
 });
 Route::match('GET|POST', '/refund_notify', [OrderRefundNotifyController::class, 'receipt'])->name('refund_notify');

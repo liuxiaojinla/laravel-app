@@ -26,10 +26,11 @@ class RefundController extends Controller
         $userId = $this->auth->id();
         $data = OrderRefund::simple()
             ->with([
-                'master_order', 'order_goods_list',
+                'masterOrder', 'orderGoodsList',
             ])->where([
                 'user_id' => $userId,
-            ])->orderByDesc('create_time')
+            ])
+            ->latest()
             ->paginate();
 
         return Hint::result($data);
@@ -47,7 +48,7 @@ class RefundController extends Controller
 
         /** @var OrderRefund $info */
         $info = OrderRefund::with([
-            'master_order', 'order_goods_list',
+            'masterOrder', 'orderGoodsList',
         ])->where([
             'id'      => $id,
             'user_id' => $userId,
@@ -131,7 +132,7 @@ class RefundController extends Controller
     {
         $info = $this->findIsEmptyAssert();
 
-        $data = $this->request->only(['express_name', 'express_no', 'express_remark']);
+        $data = $this->request->only(['express_id', 'express_no', 'express_remark']);
         if (!$info->setDelivery($data)) {
             return Hint::error("提交失败！");
         }

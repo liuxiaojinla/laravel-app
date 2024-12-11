@@ -28,6 +28,7 @@ trait OrderActions
      * @param float $orderAmount
      * @param float $deliveryAmount
      * @return bool
+     * @throws ValidationException
      */
     public function updateAmount($orderAmount, $deliveryAmount)
     {
@@ -255,6 +256,7 @@ trait OrderActions
      * 订单确认收货
      *
      * @return bool
+     * @throws ValidationException
      */
     public function setReceipt()
     {
@@ -282,6 +284,7 @@ trait OrderActions
      * 设置订单已评价
      *
      * @return bool
+     * @throws ValidationException
      */
     public function setAppraise()
     {
@@ -313,6 +316,7 @@ trait OrderActions
      *
      * @param int $verifierId
      * @return bool
+     * @throws ValidationException
      */
     public function verification($verifierId = 0)
     {

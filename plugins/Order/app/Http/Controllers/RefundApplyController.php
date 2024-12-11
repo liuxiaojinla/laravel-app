@@ -41,7 +41,7 @@ class RefundApplyController extends Controller
         // 检查此商品是否已在申请退款中
         $refundRefund = OrderRefund::query()->where([
             'order_id' => $orderId,
-        ])->order('id desc')->first();
+        ])->orderByDesc('id')->first();
         if (!empty($refundRefund) && !$refundRefund->isFinished() && !$refundRefund->isRefused()) {
             throw Error::validationException('订单已在申请中！');
         }
@@ -61,7 +61,6 @@ class RefundApplyController extends Controller
 
         // 组合数据
         $data = array_merge($data, [
-            'app_id'        => $this->request->appId(),
             'user_id'       => $userId,
             'refund_amount' => $refundAmount,
             'refund_no'     => Str::makeOrderSn(),
@@ -69,7 +68,7 @@ class RefundApplyController extends Controller
             'audit_status'  => RefundAuditStatusEnum::PENDING,
         ]);
 
-        $refund = OrderRefund::query()->create($data);
+        $refund = OrderRefund::query()->forceCreate($data);
 
         return Hint::success('已申请！', null, $refund);
     }

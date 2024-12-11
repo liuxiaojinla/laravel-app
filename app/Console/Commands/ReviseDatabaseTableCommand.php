@@ -7,6 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class ReviseDatabaseTableCommand extends Command
 {
@@ -40,18 +41,24 @@ class ReviseDatabaseTableCommand extends Command
 
             // 类型处理
             Schema::table($tableNameComplex, function ($table) use ($tableNameComplex) {
-                if ($columnType = Schema::getColumnType($tableNameComplex, 'updated_at')) {
-                    if ($columnType !== 'timestamp') {
-                        $this->components->info("$tableNameComplex dropColumn [updated_at($columnType)] handling.");
-                        $table->dropColumn('updated_at');
+                try {
+                    if ($columnType = Schema::getColumnType($tableNameComplex, 'updated_at')) {
+                        if ($columnType !== 'timestamp') {
+                            $this->components->warn("$tableNameComplex dropColumn [updated_at($columnType)] handling.");
+                            $table->dropColumn('updated_at');
+                        }
                     }
+                } catch (InvalidArgumentException $e) {
                 }
 
-                if ($columnType = Schema::getColumnType($tableNameComplex, 'created_at')) {
-                    if ($columnType !== 'timestamp') {
-                        $this->components->info("$tableNameComplex dropColumn [created_at($columnType)] handling.");
-                        $table->dropColumn('created_at');
+                try {
+                    if ($columnType = Schema::getColumnType($tableNameComplex, 'created_at')) {
+                        if ($columnType !== 'timestamp') {
+                            $this->components->warn("$tableNameComplex dropColumn [created_at($columnType)] handling.");
+                            $table->dropColumn('created_at');
+                        }
                     }
+                } catch (InvalidArgumentException $e) {
                 }
             });
 
@@ -59,37 +66,37 @@ class ReviseDatabaseTableCommand extends Command
             Schema::table($tableNameComplex, function (Blueprint $table) use ($tableNameComplex) {
                 // 处理 update_time
                 if (Schema::hasColumn($tableNameComplex, 'update_time')) {
-                    $this->components->info("$tableNameComplex dropColumn [update_time] handling.");
+                    $this->components->warn("$tableNameComplex dropColumn [update_time] handling.");
                     $table->dropColumn('update_time');
                 }
                 if (!Schema::hasColumn($tableNameComplex, 'updated_at')) {
-                    $this->components->info("$tableNameComplex addColumn [updated_at] handling.");
+                    $this->components->warn("$tableNameComplex addColumn [updated_at] handling.");
                     $table->timestamp('updated_at')->nullable();
                 }
 
                 // 处理 create_time
                 if (Schema::hasColumn($tableNameComplex, 'create_time')) {
-                    $this->components->info("$tableNameComplex dropColumn [create_time] handling.");
+                    $this->components->warn("$tableNameComplex dropColumn [create_time] handling.");
                     $table->dropColumn('create_time');
                 }
                 if (!Schema::hasColumn($tableNameComplex, 'created_at')) {
-                    $this->components->info("$tableNameComplex addColumn [created_at] handling.");
+                    $this->components->warn("$tableNameComplex addColumn [created_at] handling.");
                     $table->timestamp('created_at')->nullable();
                 }
 
                 // 处理 delete_time
                 if (Schema::hasColumn($tableNameComplex, 'delete_time')) {
-                    $this->components->info("$tableNameComplex dropColumn [delete_time] handling.");
+                    $this->components->warn("$tableNameComplex dropColumn [delete_time] handling.");
                     $table->dropColumn('delete_time');
                 }
                 if (!Schema::hasColumn($tableNameComplex, 'deleted_at')) {
-                    $this->components->info("$tableNameComplex addColumn [deleted_at] handling.");
+                    $this->components->warn("$tableNameComplex addColumn [deleted_at] handling.");
                     $table->softDeletes();
                 }
 
                 // 处理 app_id
                 if (Schema::hasColumn($tableNameComplex, 'app_id')) {
-                    $this->components->info("$tableNameComplex dropColumn [app_id] handling.");
+                    $this->components->warn("$tableNameComplex dropColumn [app_id] handling.");
                     $table->dropColumn('app_id');
                 }
             });

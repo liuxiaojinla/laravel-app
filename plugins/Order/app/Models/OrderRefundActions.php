@@ -5,6 +5,7 @@ namespace Plugins\Order\App\Models;
 
 use App\Exceptions\Error;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
 use Plugins\Order\App\Enums\RefundAuditStatus as RefundAuditStatusEnum;
@@ -58,15 +59,13 @@ trait OrderRefundActions
      */
     public function audit(array $data)
     {
-        $validate = new Validate();
-        $validate->rule([
+        Validator::make($data, [
             'audit_status' => 'required|in:1,2',
             'refuse_desc'  => 'requireIf:audit_status,2|between3,255',
-        ], [
+        ], [], [
             'audit_status' => '审核状态',
             'refuse_desc'  => '拒绝原因',
         ]);
-        $validate->failException(true)->check($data);
 
         if (!$this->isPending()) {
             throw Error::validationException("请勿重复操作！");
@@ -151,15 +150,13 @@ trait OrderRefundActions
      */
     public function setDelivery(array $data)
     {
-        $validate = new Validate();
-        $validate->rule([
-            'express_name' => 'required',
-            'express_no'   => 'required',
-        ], [
+        $data = Validator::validate($data, [
+            'express_id' => 'required',
+            'express_no' => 'required',
+        ], [], [
             'express_name' => '物流公司',
             'express_no'   => '物流单号',
         ]);
-        $validate->failException(true)->check($data);
 
         // 验证售后单类型
         if (!$this->isBarterType()) {
@@ -183,7 +180,7 @@ trait OrderRefundActions
             'send_time'    => time(),
         ]);
 
-        if (!$this->save($data)) {
+        if (!$this->forceFill($data)->save()) {
             return false;
         }
 
@@ -195,6 +192,7 @@ trait OrderRefundActions
      *
      * @param array $attributes
      * @return bool
+     * @throws ValidationException
      */
     public function setReceipt($attributes = [])
     {
