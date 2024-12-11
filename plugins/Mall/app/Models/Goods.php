@@ -67,9 +67,9 @@ class Goods extends Model implements OrderListenerOfStatic
             Goods::query()->where('id', $favorite->topic_id)->increment('collect_count');
         } else {
             try {
-                Goods::query()->where('id', $favorite->topic_id)->dec('collect_count')->update([]);
+                Goods::query()->where('id', $favorite->topic_id)->decrement('collect_count');
             } catch (PDOException $e) {
-                $data = $e->getData();
+                $data = $e->errorInfo;
                 if (isset($data['PDO Error Info']) && $pdoErrorInfo = $data['PDO Error Info']) {
                     // Numeric value out of range: 0 Out of range value for col
                     if ($pdoErrorInfo['SQLSTATE'] == 22003) {
@@ -114,13 +114,13 @@ class Goods extends Model implements OrderListenerOfStatic
     {
         try {
             if ($orderGoods->is_sample) {
-                GoodsSku::query()->where('id', $orderGoods->goods_sku_id)->dec('sample_stock', $orderGoods->goods_num)->update([]);
+                GoodsSku::query()->where('id', $orderGoods->goods_sku_id)->decrement('sample_stock', $orderGoods->goods_num);
             } else {
-                GoodsSku::query()->where('id', $orderGoods->goods_sku_id)->dec('stock', $orderGoods->goods_num)->update([]);
+                GoodsSku::query()->where('id', $orderGoods->goods_sku_id)->decrement('stock', $orderGoods->goods_num);
             }
-            static::query()->where('id', $orderGoods->goods_id)->inc('sale_count', $orderGoods->goods_num)->update([]);
+            static::query()->where('id', $orderGoods->goods_id)->increment('sale_count', $orderGoods->goods_num);
         } catch (PDOException $e) {
-            $data = $e->getData();
+            $data = $e->errorInfo;
             if (isset($data['PDO Error Info']) && $pdoErrorInfo = $data['PDO Error Info']) {
                 // Numeric value out of range: 0 Out of range value for col
                 if ($pdoErrorInfo['SQLSTATE'] == 22003) {
@@ -192,7 +192,7 @@ class Goods extends Model implements OrderListenerOfStatic
      * 加载商品服务
      *
      * @param bool $refresh
-     * @return array|Collection
+     * @return array
      */
     public function loadServices($refresh = false)
     {
@@ -201,8 +201,8 @@ class Goods extends Model implements OrderListenerOfStatic
             if (empty($serviceIds)) {
                 $this->goodsServices = [];
             } else {
-                $this->goodsServices = GoodsService::field('id,title,description')
-                    ->where('id', 'in', $serviceIds)->select();
+                $this->goodsServices = GoodsService::query()->select(['id', 'title', 'description'])
+                    ->where('id', 'in', $serviceIds)->get()->toArray();
             }
         }
 
@@ -215,7 +215,7 @@ class Goods extends Model implements OrderListenerOfStatic
      * @param array $categoryId
      * @return void
      */
-    public function searchCategoryIds(Builder $query, $categoryId)
+    public function searchCategoryIdsAttribute(Builder $query, $categoryId)
     {
         $categoryIds = GoodsCategory::query()->where('pid', $categoryId)->column('id');
         array_unshift($categoryIds, $categoryId);
@@ -279,8 +279,10 @@ class Goods extends Model implements OrderListenerOfStatic
 
         $goodsTotalAmount = bcmul($goodsPrice, $goodsNum, 2);
 
-        return new OrderGoods([
-            'goods_type'         => self::MORPH_TYPE,
+        return (new OrderGoods)->forceFill([
+            'goods_type'         => 0,
+            'goodsable_type'     => self::MORPH_TYPE,
+            'goodsable_id'       => $this->getRawOriginal('id'),
             'goods_id'           => $this->getRawOriginal('id'),
             'goods_sku_id'       => $goodsSkuId,
             'goods_title'        => $this->getRawOriginal('title'),

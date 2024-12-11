@@ -8,7 +8,7 @@ use App\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Xin\LaravelFortify\Validation\ValidationException;
+use Illuminate\Validation\ValidationException;
 
 /**
  * @property Coupon $coupon
@@ -85,7 +85,7 @@ class UserCoupon extends Model
      */
     public function isAvailable()
     {
-        return now()->getTimestamp() < $this->getOrigin('expire_time') && $this->getOrigin('use_time') == 0;
+        return now()->getTimestamp() < $this->getRawOriginal('expire_time') && $this->getRawOriginal('use_time') == 0;
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Plugins\Mall\App\Http\Controllers\AdvanceOrderController;
 use Plugins\Mall\App\Http\Controllers\CategoryController;
 use Plugins\Mall\App\Http\Controllers\GoodsAppraiseController;
 use Plugins\Mall\App\Http\Controllers\GoodsController;
+use Plugins\Mall\App\Http\Controllers\PlaceOrderController;
 use Plugins\Mall\App\Http\Controllers\ShoppingCartController;
 
 /*
@@ -40,7 +40,9 @@ Route::middleware(['auth:sanctum'])->prefix('shopping_cart')->name('shopping_car
     Route::post('/delete', [ShoppingCartController::class, 'delete'])->name('delete');
 });
 
-Route::middleware(['auth:sanctum'])->prefix('order')->name('order.')->group(function () {
-    Route::get('/prepay', [AdvanceOrderController::class, 'fromGoods'])->name('prepay');
-    Route::post('/submit', [AdvanceOrderController::class, 'store'])->name('submit');
+Route::middleware(['auth:sanctum'])->prefix('place_order')->name('place_order.')->group(function () {
+    Route::match(['GET', 'POST'], '/from_goods', [PlaceOrderController::class, 'fromGoods'])->name('prepay');
+    Route::match(['GET', 'POST'], '/from_shopping_cart', [
+        PlaceOrderController::class, 'fromShoppingCart',
+    ])->name('submit');
 });

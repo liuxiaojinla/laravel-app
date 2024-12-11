@@ -141,4 +141,5 @@ return [
     'uppercase'            => 'The :attribute field must be uppercase.',
     'url'                  => 'The :attribute format is invalid.',
     'uuid'                 => 'The :attribute must be a valid UUID.',
+    'mobile'               => 'The :attribute format is incorrect!',
 ];

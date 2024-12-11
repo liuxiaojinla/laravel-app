@@ -12,43 +12,42 @@ class OrderRequest extends FormRequest
      * @var string[]
      */
     protected $rule = [
-        'app_id'  => 'required',
         'user_id' => 'required',
 
         'order_no'            => 'required|alphaNum|max:32',
         'order_type'          => 'required|in:0,1,2,3',
-        'order_status'        => 'required|number',
+        'order_status'        => 'required|integer',
 
         // 订单相关金额
-        'total_amount'        => 'required|float|egt:0',
-        'point_amount'        => 'float|egt:0',
-        'adjust_amount'       => 'float|egt:0',
-        'discount_amount'     => 'float|egt:0',
+        'total_amount'        => 'required|decimal:0,2|gte:0',
+        'point_amount'        => 'decimal:0,2|gte:0',
+        'adjust_amount'       => 'decimal:0,2|gte:0',
+        'discount_amount'     => 'decimal:0,2|gte:0',
 
         // 发票信息
-        'need_invoice'        => 'number',
-        'invoice_amount'      => 'float|egt:0',
+        'need_invoice'        => 'integer',
+        'invoice_amount'      => 'decimal:0,2|gte:0',
 
         // 优惠券
-        'coupon_id'           => 'number',
-        'coupon_amount'       => 'float|egt:0',
+        'coupon_id'           => 'integer',
+        'coupon_amount'       => 'decimal:0,2|gte:0',
 
         // 支付信息
         'pay_status'          => 'required|in:10,20',
-        'pay_amount'          => 'float|egt:0',
+        'pay_amount'          => 'decimal:0,2|gte:0',
         'pay_type'            => 'required|in:0,1,2',
         //		'pay_time'            => '',
         //		'pay_no'              => '',
         //		'transaction_id'      => '', //第三方流水号
 
         // 核销信息
-        'extract_shop_id'     => 'number',
-        'extract_verifier_id' => 'number',
+        'extract_shop_id'     => 'integer',
+        'extract_verifier_id' => 'integer',
 
         // 物流信息
         'delivery_type'       => 'required|in:10,20',
         'delivery_status'     => 'required|in:10,20',
-        'delivery_amount'     => 'float|egt:0',
+        'delivery_amount'     => 'decimal:0,2|gte:0',
         //		'delivery_time'   => '',
         //		'express_company' => '',
         //		'express_name'    => '',
@@ -61,13 +60,13 @@ class OrderRequest extends FormRequest
         // 收货信息
         'receipt_status'      => 'required|in:10,20',
         //		'receipt_time'    => '',
-        'receiver_name'       => 'requireIf:delivery_type,10|between2,24',
-        'receiver_gender'     => 'requireIf:delivery_type,10|in:0,1',
-        'receiver_phone'      => 'requireIf:delivery_type,10|mobile',
-        'receiver_province'   => 'requireIf:delivery_type,10',
-        'receiver_city'       => 'requireIf:delivery_type,10',
-        'receiver_district'   => 'requireIf:delivery_type,10',
-        'receiver_address'    => 'requireIf:delivery_type,10',
+        'receiver_name'       => 'requiredIf:delivery_type,10|between:2,24',
+        'receiver_gender'     => 'requiredIf:delivery_type,10|in:0,1',
+        'receiver_phone'      => 'requiredIf:delivery_type,10|mobile',
+        'receiver_province'   => 'requiredIf:delivery_type,10',
+        'receiver_city'       => 'requiredIf:delivery_type,10',
+        'receiver_district'   => 'requiredIf:delivery_type,10',
+        'receiver_address'    => 'requiredIf:delivery_type,10',
 
         // 其他订单属性
         'is_allow_refund'     => 'in:0,1',

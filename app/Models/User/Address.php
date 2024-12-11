@@ -8,6 +8,7 @@
 namespace App\Models\User;
 
 use App\Models\Model;
+use App\Models\Region;
 use Xin\LaravelFortify\Validation\ValidationException;
 
 /**
@@ -15,50 +16,56 @@ use Xin\LaravelFortify\Validation\ValidationException;
  */
 class Address extends Model
 {
+    /**
+     * @var array
+     */
+    protected $guarded = [];
 
     /**
      * @var string
      */
-    protected $name = 'user_address';
+    protected $table = 'user_addresses';
 
     /**
      * 优化关联ID
      * @param array $data
      * @return array
+     * @throws ValidationException
      */
     public static function optimizeWithRelationId(array $data)
     {
         $provinceName = $data['province'];
         /** @var Region $province */
-        $province = Region::where('name', $provinceName)->find();
+        $province = Region::query()->where('name', $provinceName)->first();
         if (empty($province)) {
             ValidationException::throwException("请联系管理员完善地址库！");
         }
         $data['province_id'] = $province->id;
 
         $cityName = $data['city'];
-        $city = Region::where('name', $cityName)->where('pid', $data['province_id'])->find();
+        /** @var Region $city */
+        $city = Region::query()->where('name', $cityName)->where('pid', $data['province_id'])->first();
         if (empty($city)) {
-            $city = Region::create([
-                'pid' => $province->id,
-                'shortname' => '',
-                'name' => $cityName,
+            $city = Region::query()->create([
+                'pid'         => $province->id,
+                'shortname'   => '',
+                'name'        => $cityName,
                 'merger_name' => $province->name . ',' . $cityName,
-                'level' => 2,
+                'level'       => 2,
             ]);
         }
         $data['city_id'] = $city->id;
 
         $districtName = $data['district'];
         /** @var Region $district */
-        $district = Region::where('name', $districtName)->where('pid', $data['city_id'])->find();
+        $district = Region::query()->where('name', $districtName)->where('pid', $data['city_id'])->first();
         if (empty($district)) {
-            $district = Region::create([
-                'pid' => $city->id,
-                'shortname' => '',
-                'name' => $districtName,
+            $district = Region::query()->create([
+                'pid'         => $city->id,
+                'shortname'   => '',
+                'name'        => $districtName,
                 'merger_name' => $province->name . ',' . $cityName . ',' . $districtName,
-                'level' => 3,
+                'level'       => 3,
             ]);
         }
         $data['district_id'] = $district->id;
@@ -83,10 +90,10 @@ class Address extends Model
      * @param int $userId
      * @return static
      */
-    public static function getUserDefaultPlainInfo($userId)
+    public static function getUserDefaultSimpleInfo($userId)
     {
         return static::simple()->where([
-            'user_id' => $userId,
+            'user_id'    => $userId,
             'is_default' => 1,
         ])->orderByDesc('is_default')->first();
     }

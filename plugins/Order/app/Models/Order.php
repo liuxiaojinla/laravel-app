@@ -3,7 +3,6 @@
 
 namespace Plugins\Order\App\Models;
 
-use App\Exceptions\Error;
 use App\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
@@ -22,8 +22,10 @@ use Plugins\Order\App\Enums\OrderStatus as OrderStatusEnum;
 use Plugins\Order\App\Enums\PayStatus as PayStatusEnum;
 use Plugins\Order\App\Enums\PayType as PayTypeEnum;
 use Plugins\Order\App\Enums\ReceiptStatus as ReceiptStatusEnum;
+use Plugins\Order\App\Events\OrderDeletedEvent;
 use Plugins\Order\App\Http\Requests\OrderRequest;
 use Plugins\Shop\App\Models\Shop;
+use Xin\LaravelFortify\Model\Relation;
 use Xin\Support\Radix;
 use Xin\Support\Str;
 
@@ -114,22 +116,29 @@ class Order extends Model
 
         return DB::transaction(function () use (&$orderData, &$orderGoodsList) {
             /** @var static $order */
-            $order = static::query()->create($orderData);
+            $order = static::query()->forceCreate(Arr::except($orderData, [
+                'goods_id', 'goods_sku_id', 'goods_num', 'goods_type',
+            ]));
             $order->goods_list = static::createGoodsList($order, $orderGoodsList);
 
             if (isset($order['user_coupon_id'])) {
-                UserCoupon::query()->where('id', $order->user_coupon_id)->where('user_id', $order->user_id)->save([
+                UserCoupon::query()->where([
+                    'id'      => $order->user_coupon_id,
+                    'user_id' => $order->user_id,
+                ])->update([
                     'status'   => UserCoupon::STATUS_USED,
                     'use_time' => now()->getTimestamp(),
                 ]);
             }
 
             if ($order->orderable_type) {
-                Morph::callMethod($order->orderable_type, 'onOrderCreated', [$order]);
+                Relation::call($order->orderable_type, 'onOrderCreated', [$order]);
             }
 
             $order->goods_list->each(function (OrderGoods $orderGoods) {
-                Morph::callMethod($orderGoods->goods_type, 'onOrderGoodsSaved', [$orderGoods]);
+                Relation::call($orderGoods->goodsable_type, 'onOrderGoodsSaved', [
+                    'orderGoods' => $orderGoods,
+                ]);
             });
 
             return $order;
@@ -161,7 +170,7 @@ class Order extends Model
             'invoice_amount'      => 0,
 
             // 优惠券
-            'coupon_id'           => 0,
+            'user_coupon_id'      => 0,
             'coupon_amount'       => 0,
 
             // 支付信息
@@ -211,10 +220,10 @@ class Order extends Model
         ], $order);
 
         // 验证数据合法性
-        $validate = new OrderRequest();
-        if (!$validate->check($order)) {
-            throw Error::validationException($validate->getError());
-        }
+        $request = OrderRequest::create('', 'POST', $order);
+        $request->setContainer(app());
+        $request->setRedirector(redirect());
+        $request->validateResolved();
 
         return $order;
     }
@@ -260,7 +269,7 @@ class Order extends Model
             /** @var OrderGoods $orderGoods */
             $orderGoods['order_id'] = $order->id;
             $orderGoods['user_id'] = $order->user_id;
-            $orderGoods['app_id'] = $order['app_id'];
+            unset($orderGoods['goods_market_price'], $orderGoods['stock']);
             $orderGoods->save();
         }
 

@@ -17,6 +17,7 @@ use Plugins\Mall\App\Models\Goods;
  * @property Order master_order
  * @property-read Model goodsable
  * @property int goods_num
+ * @property-read string $goodsable_type
  */
 class OrderGoods extends Model
 {
@@ -43,7 +44,7 @@ class OrderGoods extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class)->withField([
+        return $this->belongsTo(User::class)->select([
             'id', 'nickname', 'avatar', 'gender',
         ]);
     }
@@ -65,9 +66,7 @@ class OrderGoods extends Model
      */
     public function goodsable()
     {
-        return $this->morphTo([
-            'goodsable_type', 'goodsable_id',
-        ], Morph::getTypeList());
+        return $this->morphTo(__FUNCTION__, 'goodsable_type', 'goodsable_id');
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Http\Controller;
 use App\Models\User;
 use App\Models\User\Address;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
@@ -19,8 +20,34 @@ use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderGoods;
 use Xin\Hint\Facades\Hint;
 
-class AdvanceOrderController extends Controller
+class PlaceOrderController extends Controller
 {
+
+    /**
+     * @var int
+     */
+    private $userId;
+
+    /**
+     * @var int
+     */
+    private $isVipUser;
+
+    /**
+     * @var int
+     */
+    private $belongDistributorId;
+
+    /**
+     * @param Application $app
+     */
+    public function __construct(Application $app)
+    {
+        parent::__construct($app);
+        $this->userId = $this->auth->id();
+        $this->isVipUser = $this->auth->user()?->is_vip ?? 0;
+        $this->belongDistributorId = $this->request->user()?->belong_distributor_id ?? 0;
+    }
 
     /**
      * 创建订单 - 根据商品
@@ -34,8 +61,7 @@ class AdvanceOrderController extends Controller
         $goodsSkuId = $this->request->validId('goods_sku_id');
         $goodsNum = $this->request->integer('goods_num', 1);
         $isSample = $this->request->integer('sample', 0);
-        $isVipUser = $this->auth->user()?->is_vip ?? 0;
-        $belongDistributorId = $this->request->user()?->belong_distributor_id ?? 0;
+
         if ($goodsNum < 1) {
             throw Error::validationException('商品数量错误！');
         }
@@ -48,10 +74,11 @@ class AdvanceOrderController extends Controller
             throw Error::validationException('商品已下架');
         }
 
+        // 是否是样品
         if ($isSample) {
             $sampleCount = OrderGoods::query()->where([
                 'goods_id' => $goodsId,
-                'user_id'  => $this->request->userId(),
+                'user_id'  => $this->userId,
             ])->sum('goods_num');
 
             $maxSampleCount = (int)Config::get('mall_sample_count');
@@ -62,17 +89,54 @@ class AdvanceOrderController extends Controller
 
         // 组装订单商品信息
         $orderGoods = $goods->toOrderGoods($goodsSkuId, $goodsNum, $this->request->isPost(), [
-            'is_vip'    => $isVipUser,
+            'is_vip'    => $this->isVipUser,
             'is_sample' => $isSample,
         ]);
         $orderGoods['is_sample'] = $isSample;
-        $orderGoods['is_vip'] = $isVipUser;
-        $orderGoods['distributor_id'] = $belongDistributorId;
+        $orderGoods['is_vip'] = $this->isVipUser;
+        $orderGoods['distributor_id'] = $this->belongDistributorId;
         $orderGoodsList = new Collection([
             $orderGoods,
         ]);
 
+        if (!$this->request->isPost()) {
+            return $this->prepay($orderGoodsList);
+        }
+
         return $this->order($orderGoodsList);
+    }
+
+    /**
+     * 创建订单 - 根据购物车商品
+     *
+     * @return Response
+     * @throws ValidationException
+     */
+    public function fromShoppingCart()
+    {
+        $cartIdList = $this->request->idsWithValid();
+
+        $orderGoodsList = ShoppingCart::query()->where('id', 'in', $cartIdList)
+            ->where('user_id', $this->userId)->get()
+            ->map(function (ShoppingCart $shoppingCart) {
+                $orderGoods = $shoppingCart->toOrderGoods($this->request->isPost(), [
+                    'is_vip' => $this->isVipUser,
+                ]);
+                $orderGoods['is_vip'] = $this->isVipUser;
+                $orderGoods['distributor_id'] = $this->belongDistributorId;
+
+                return $orderGoods;
+            });
+
+        if (!$this->request->isPost()) {
+            return $this->prepay($orderGoodsList);
+        } else {
+            // 删除购物车
+            ShoppingCart::query()->where('user_id', $this->userId)->where('id', 'in', $cartIdList)->delete();
+            $result = $this->order($orderGoodsList);
+        }
+
+        return $result;
     }
 
     /**
@@ -81,20 +145,15 @@ class AdvanceOrderController extends Controller
      * @param Collection $orderGoodsList
      * @return Response
      * @throws ValidationException
+     * @throws \Exception
      */
     private function order(Collection $orderGoodsList)
     {
-        if (!$this->request->isPost()) {
-            return $this->toAdvance($orderGoodsList);
-        }
-
         $isSample = $this->request->integer('sample', 0);
-        $userId = $this->auth->id();
-        $belongDistributorId = $this->auth->user()?->belong_distributor_id ?? 0;
         $data = $this->request->post();
 
-        $data['user_id'] = $userId;
-        $data['distributor_id'] = $belongDistributorId;
+        $data['user_id'] = $this->userId;
+        $data['distributor_id'] = $this->belongDistributorId;
         $data['is_sample'] = $isSample;
         $data['orderable_type'] = 'goods';
         $data['total_amount'] = $orderGoodsList->reduce(function ($total, $item) {
@@ -123,7 +182,7 @@ class AdvanceOrderController extends Controller
      * @return Response
      * @throws ValidationException
      */
-    private function toAdvance(Collection $orderGoodsList)
+    private function prepay(Collection $orderGoodsList)
     {
         $totalAmount = $orderGoodsList->reduce(function ($total, $item) {
             return $total + $item['total_price'];
@@ -141,7 +200,8 @@ class AdvanceOrderController extends Controller
         // 获取当前用户余额
         /** @var User $user */
         $user = $this->auth->user();
-        $userBalance = $user->getBalance();
+        //        $userBalance = $user->getBalance();
+        $userBalance = 0;
 
         return Hint::result([
             'user_address'     => $userAddress,
@@ -161,15 +221,16 @@ class AdvanceOrderController extends Controller
      */
     private function loadUserCouponList($totalAmount)
     {
-        return UserCoupon::getAvailableList($this->request->userId())->each(function (UserCoupon $userCoupon) use ($totalAmount) {
-            $userCoupon->disabled = !$userCoupon->canUse($totalAmount);
-            if (!$userCoupon->disabled) {
-                $userCoupon->money = number_format($userCoupon->calcAmount($totalAmount), 2);
-            }
-            $userCoupon->coupon->append(['use_tips', 'number_text']);
-        })->filter(function (UserCoupon $userCoupon) {
-            return !$userCoupon->disabled;
-        });
+        return UserCoupon::getAvailableList($this->auth->id())
+            ->each(function (UserCoupon $userCoupon) use ($totalAmount) {
+                $userCoupon->disabled = !$userCoupon->canUse($totalAmount);
+                if (!$userCoupon->disabled) {
+                    $userCoupon->money = number_format($userCoupon->calcAmount($totalAmount), 2);
+                }
+                $userCoupon->coupon->append(['use_tips', 'number_text']);
+            })->filter(function (UserCoupon $userCoupon) {
+                return !$userCoupon->disabled;
+            });
     }
 
     /**
@@ -189,7 +250,7 @@ class AdvanceOrderController extends Controller
                 throw Error::validationException("地址信息不存在，请重新选择！");
             }
         } else {
-            $info = Address::getUserDefaultPlainInfo($userId);
+            $info = Address::getUserDefaultSimpleInfo($userId);
             if (!empty($info)) {
                 $info['phone'] = substr_replace($info['phone'], '*****', 3, 5);
             }
@@ -239,40 +300,6 @@ class AdvanceOrderController extends Controller
         }
 
         return $userCoupon->calcAmount($totalAmount);
-    }
-
-    /**
-     * 创建订单 - 根据购物车商品
-     *
-     * @return Response
-     * @throws ValidationException
-     */
-    public function fromShoppingCart()
-    {
-        $cartIdList = $this->request->idsWithValid();
-        $userId = $this->auth->id();
-        $isVipUser = $this->request->user('is_vip', 0);
-        $belongDistributorId = $this->request->user('belong_distributor_id', 0);
-
-        $orderGoodsList = ShoppingCart::query()->where('id', 'in', $cartIdList)->where('user_id', $userId)->get()
-            ->map(function (ShoppingCart $shoppingCart) use ($isVipUser, $belongDistributorId) {
-                $orderGoods = $shoppingCart->toOrderGoods($this->request->isPost(), [
-                    'is_vip' => $isVipUser,
-                ]);
-                $orderGoods['is_vip'] = $isVipUser;
-                $orderGoods['distributor_id'] = $belongDistributorId;
-
-                return $orderGoods;
-            });
-
-        $result = $this->order($orderGoodsList);
-
-        // 删除购物车
-        if ($this->request->isPost()) {
-            ShoppingCart::query()->where('user_id', $userId)->where('id', 'in', $cartIdList)->delete();
-        }
-
-        return $result;
     }
 
 }

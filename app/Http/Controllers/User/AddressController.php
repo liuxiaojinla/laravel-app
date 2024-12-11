@@ -11,6 +11,7 @@ use App\Http\Controller;
 use App\Models\User\Address;
 use Xin\Hint\Facades\Hint;
 use Xin\Http\Response;
+use Xin\LaravelFortify\Validation\ValidationException;
 
 class AddressController extends Controller
 {
@@ -52,21 +53,21 @@ class AddressController extends Controller
      * 创建收货地址
      *
      * @return Response
+     * @throws ValidationException
      */
-    public function create()
+    public function store()
     {
         $userId = $this->auth->id();
 
         $data = $this->validateData();
         $data['user_id'] = $userId;
-        $data['app_id'] = $this->request->appId();
 
         if (isset($data['is_default']) && $data['is_default']) {
             $this->cancelDefault();
         }
 
         $data = Address::optimizeWithRelationId($data);
-        $info = Address::create($data);
+        $info = Address::query()->create($data);
 
         return Hint::success('已创建！', null, $info);
     }
@@ -79,12 +80,12 @@ class AddressController extends Controller
     private function validateData()
     {
         return $this->request->validate([
-            'name'     => 'required|length:2,15',
-            'phone'    => 'required|phone',
+            'name'     => 'required|between:2,15',
+            'phone'    => 'required|mobile',
             'province' => 'required',
             'city'     => 'required',
             'district' => 'required',
-            'address'  => 'required|length:2,255',
+            'address'  => 'required|between:2,255',
         ], [], [
             'name'     => '收货人姓名',
             'phone'    => '收货人手机号',
@@ -112,6 +113,7 @@ class AddressController extends Controller
      * 更新地址
      *
      * @return Response
+     * @throws ValidationException
      */
     public function update()
     {

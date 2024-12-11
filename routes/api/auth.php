@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\WechatAuthenticatedController;
 use App\Http\Controllers\Auth\WechatMiniAppController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\User\AddressController;
 use App\Http\Controllers\User\BrowseController;
 use App\Http\Controllers\User\CashoutController;
 use App\Http\Controllers\User\DistributorTeamController;
@@ -68,6 +69,15 @@ Route::middleware(['auth:sanctum'])->prefix('user')->name('user.')->group(functi
 Route::middleware(['auth:sanctum'])->prefix('user/identity')->name('user.identity.')->group(function () {
     Route::get('/index', [IdentityController::class, 'index'])->name('index');
     Route::post('/apply', [TeamController::class, 'apply'])->name('apply');
+});
+
+// 地址管理
+Route::middleware(['auth:sanctum'])->prefix('user/address')->name('user.address.')->group(function () {
+    Route::get('/lists', [AddressController::class, 'index'])->name('lists');
+    Route::post('/create', [AddressController::class, 'store'])->name('create');
+    Route::post('/update', [AddressController::class, 'update'])->name('update');
+    Route::post('/delete', [AddressController::class, 'delete'])->name('delete');
+    Route::post('/setdefault', [AddressController::class, 'setDefault'])->name('set_default');
 });
 
 // 浏览记录

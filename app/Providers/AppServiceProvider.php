@@ -29,7 +29,10 @@ class AppServiceProvider extends ServiceProvider
     protected function resolvingValidation(): void
     {
         $this->app->resolving(ValidationFactory::class, function (ValidationFactory $factory) {
-//            $factory->extend('mobile', MobileRule::class);
+            $factory->extend('mobile', function (string $attribute, mixed $value, array $data) {
+                return preg_match('/^1\d{10}+$/', $value);
+            });
+
             $factory->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
                 $validator = new Validator($translator, $data, $rules, $messages, $customAttributes);
                 $validator->setException(ValidationException::class);
