@@ -5,11 +5,11 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace plugins\website\validate;
+namespace Plugins\Website\App\Http\Requests;
 
-use think\Validate;
+use Xin\LaravelFortify\Request\FormRequest;
 
-class CasesValidate extends Validate
+class ProductRequest extends FormRequest
 {
 
 }

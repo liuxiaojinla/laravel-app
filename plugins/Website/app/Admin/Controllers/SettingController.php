@@ -8,9 +8,10 @@
 namespace Plugins\Website\App\Admin\Controllers;
 
 use App\Admin\Controller;
+use Illuminate\Http\Response;
+use Plugins\Website\app\Http\Requests\WebsiteRequest;
 use Plugins\Website\App\Models\About;
 use Plugins\Website\App\Models\Website;
-use plugins\website\validate\WebsiteValidate;
 use Xin\Hint\Facades\Hint;
 
 class SettingController extends Controller
@@ -24,10 +25,10 @@ class SettingController extends Controller
     public function index()
     {
         $id = $this->request->validId();
-        $info = Website::query()->where('id', $id)->find();
+        $info = Website::query()->where('id', $id)->first();
 
         if ($this->request->isPost()) {
-            $data = $this->request->param();
+            $data = $this->request->all();
             if (isset($data['region'])) {
                 $region = (array)json_decode($data['region'], true);
                 unset($data['region']);
@@ -41,7 +42,7 @@ class SettingController extends Controller
                 $data['lat'] = $location[1] ?? '';
             }
 
-            $validate = new WebsiteValidate();
+            $validate = new WebsiteRequest();
             $validate->failException(true)->check($data);
 
             if (!$info) {
@@ -66,7 +67,7 @@ class SettingController extends Controller
     public function about()
     {
         $id = $this->request->validId();
-        $info = About::query()->where('id', $id)->find();
+        $info = About::query()->where('id', $id)->first();
 
         if ($this->request->isPost()) {
             $content = $this->request->param('content');

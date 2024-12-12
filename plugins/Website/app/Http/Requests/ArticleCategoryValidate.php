@@ -7,14 +7,14 @@
  * @author        <657306123@qq.com> LXSEA
  */
 
-namespace plugins\website\validate;
+namespace Plugins\Website\App\Http\Requests;
 
-use think\Validate;
+use Xin\LaravelFortify\Request\FormRequest;
 
 /**
  * 分类验证器
  */
-class ArticleCategoryValidate extends Validate
+class ArticleCategoryValidate extends FormRequest
 {
 
     /**
@@ -23,8 +23,8 @@ class ArticleCategoryValidate extends Validate
      * @var array
      */
     protected $rule = [
-        'title' => 'require|length:2,48|unique:goods_category,app_id^title',
-        'cover' => 'require',
+        'title' => 'required|between:2,48|unique:goods_category,app_id^title',
+        'cover' => 'required',
         'pid'   => 'checkOneself',
     ];
 

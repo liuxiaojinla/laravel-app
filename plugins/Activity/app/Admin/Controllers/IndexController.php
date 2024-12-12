@@ -30,7 +30,7 @@ class IndexController extends Controller
     /**
      * 数据详情
      * @param Request $request
-     * @return mixed
+     * @return Response
      */
     public function info(Request $request)
     {

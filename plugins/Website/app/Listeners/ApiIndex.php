@@ -101,7 +101,7 @@ class ApiIndex
         // 企业信息
         $data['website_info'] = Website::query()->where([
             'app_id' => $this->request->appId(),
-        ])->find();
+        ])->first();
 
         // 留言表单
         $data['leaving_msg_form'] = [

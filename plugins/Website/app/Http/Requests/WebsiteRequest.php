@@ -7,14 +7,14 @@
  * @author        <657306123@qq.com> LXSEA
  */
 
-namespace plugins\website\validate;
+namespace Plugins\Website\App\Http\Requests;
 
-use think\Validate;
+use Xin\LaravelFortify\Request\FormRequest;
 
 /**
  * 官网验证器
  */
-class WebsiteValidate extends Validate
+class WebsiteRequest extends FormRequest
 {
 
     /**
@@ -23,17 +23,17 @@ class WebsiteValidate extends Validate
      * @var array
      */
     protected $rule = [
-        'title'    => 'require|length:2,48',
-        'logo'     => 'require',
-        'phone'    => 'require|phone',
-        'wechat'   => 'length:2,50',
+        'title'    => 'required|between:2,48',
+        'logo'     => 'required',
+        'phone'    => 'required|phone',
+        'wechat'   => 'between:2,50',
         //		'wechat_qrcode' => '',
-        'province' => 'require',
-        'city'     => 'require',
-        'district' => 'require',
-        'lng'      => 'require|float',
-        'lat'      => 'require|float',
-        'address'  => 'require|length:3,255',
+        'province' => 'required',
+        'city'     => 'required',
+        'district' => 'required',
+        'lng'      => 'required|float',
+        'lat'      => 'required|float',
+        'address'  => 'required|between:3,255',
     ];
 
     /**
