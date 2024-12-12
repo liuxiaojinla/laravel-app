@@ -8,9 +8,9 @@
 namespace plugins\website\listener;
 
 use app\Request;
-use Plugins\Website\App\Models\Article;
-use Plugins\Website\App\Models\Cases;
-use Plugins\Website\App\Models\Product;
+use Plugins\Website\App\Models\WebsiteArticle;
+use Plugins\Website\App\Models\WebsiteCase;
+use Plugins\Website\App\Models\WebsiteProduct;
 use Plugins\Website\App\Models\Website;
 use Xin\Support\Fluent;
 
@@ -59,7 +59,7 @@ class ApiIndex
         ];
 
         // 获取文章
-        $data['article_list'] = Article::query()->where([
+        $data['article_list'] = WebsiteArticle::query()->where([
             'app_id' => $this->request->appId(),
             'status' => 1,
         ])->order([
@@ -68,7 +68,7 @@ class ApiIndex
         ])->limit(0, 5)->get();
 
         // 获取产品
-        $data['product_list'] = Product::getList([
+        $data['product_list'] = WebsiteProduct::getList([
             'app_id' => $this->request->appId(),
             'status' => 1,
         ])->order([
@@ -77,7 +77,7 @@ class ApiIndex
         ])->limit(0, 5)->get();
 
         // 获取案例
-        $data['case_list'] = Cases::getList([
+        $data['case_list'] = WebsiteCase::getList([
             'app_id' => $this->request->appId(),
             'status' => 1,
         ])->order([

@@ -13,8 +13,8 @@ use App\Models\Model;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Plugins\Website\app\Http\Requests\ProductRequest;
-use Plugins\Website\App\Models\Product;
-use Plugins\Website\App\Models\ProductCategory;
+use Plugins\Website\App\Models\WebsiteProduct;
+use Plugins\Website\App\Models\WebsiteProductCategory;
 use Xin\Hint\Facades\Hint;
 
 class ProductController extends Controller
@@ -27,7 +27,7 @@ class ProductController extends Controller
     public function index()
     {
         $search = $this->request->query();
-        $data = Product::simple()->search($search)
+        $data = WebsiteProduct::simple()->search($search)
             ->orderByDesc('id')
             ->paginate();
 
@@ -42,7 +42,7 @@ class ProductController extends Controller
     public function info()
     {
         $id = $this->request->validId();
-        $info = ProductCategory::query()->with([
+        $info = WebsiteProductCategory::query()->with([
         ])->where('id', $id)->firstOrFail();
         return Hint::result($info);
     }
@@ -54,7 +54,7 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         $data = $request->validated();
-        $info = ProductCategory::query()->create($data);
+        $info = WebsiteProductCategory::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
@@ -68,7 +68,7 @@ class ProductController extends Controller
         $id = $this->request->validId();
         $data = $request->validated();
 
-        $info = ProductCategory::query()->where('id', $id)->firstOrFail();
+        $info = WebsiteProductCategory::query()->where('id', $id)->firstOrFail();
         if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
@@ -86,11 +86,11 @@ class ProductController extends Controller
         $ids = $this->request->validIds();
         $targetId = $this->request->validId('category_id');
 
-        if (!ProductCategory::query()->where('id', $targetId)->count()) {
+        if (!WebsiteProductCategory::query()->where('id', $targetId)->count()) {
             throw Error::validationException("所选分类不存在！");
         }
 
-        Product::withTrashed()->whereIn('id', $ids)->update([
+        WebsiteProduct::withTrashed()->whereIn('id', $ids)->update([
             'category_id' => $targetId,
         ]);
 
@@ -105,7 +105,7 @@ class ProductController extends Controller
         $ids = $this->request->validIds();
         $isForce = $this->request->integer('force', 0);;
 
-        Product::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
+        WebsiteProduct::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
             $item->force($isForce)->delete();
         });
 
@@ -123,7 +123,7 @@ class ProductController extends Controller
         $field = $this->request->validString('field');
         $value = $this->request->param($field);
 
-        Product::setManyValue($ids, $field, $value);
+        WebsiteProduct::setManyValue($ids, $field, $value);
 
         return Hint::success("更新成功！");
     }

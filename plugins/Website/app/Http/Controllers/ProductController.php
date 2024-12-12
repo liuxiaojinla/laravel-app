@@ -13,10 +13,10 @@ use App\Models\User\Favorite;
 use App\Models\User\UserLike;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
-use Plugins\Website\App\Models\Article;
-use Plugins\Website\App\Models\ArticleCategory;
-use Plugins\Website\App\Models\Product;
-use Plugins\Website\App\Models\ProductCategory;
+use Plugins\Website\App\Models\WebsiteArticle;
+use Plugins\Website\App\Models\WebsiteArticleCategory;
+use Plugins\Website\App\Models\WebsiteProduct;
+use Plugins\Website\App\Models\WebsiteProductCategory;
 
 
 use Xin\Hint\Facades\Hint;
@@ -48,7 +48,7 @@ class ProductController extends Controller
         }
 
         $search = $this->request->query();
-        $data = Article::with('category')
+        $data = WebsiteArticle::with('category')
             ->simple()->search($search)
             ->where('status', 1)
             ->order($order)
@@ -67,26 +67,26 @@ class ProductController extends Controller
         $id = $this->request->validId();
         $userId = $this->auth->id();
 
-        /** @var Product $info */
-        $info = Product::with(['category'])->where('id', $id)->firstOrFail();
+        /** @var WebsiteProduct $info */
+        $info = WebsiteProduct::with(['category'])->where('id', $id)->firstOrFail();
         if ($info->status == 0) {
-            throw new ModelNotFoundException("产品不存在！", Product::class);
+            throw new ModelNotFoundException("产品不存在！", WebsiteProduct::class);
         }
 
         // 当有user_id时判断信息
         if ($userId) {
             // 新增浏览数量
-            $userBrowse = Browse::attach(Article::MORPH_TYPE, $info->id, $userId);
+            $userBrowse = Browse::attach(WebsiteArticle::MORPH_TYPE, $info->id, $userId);
             if ($userBrowse->view_count == 1) {
                 $info->increment('view_count');
                 $info->view_count++;
             }
 
             // 判断是否被收藏
-            $info['is_favorite'] = Favorite::isFavorite(Article::MORPH_TYPE, $info->id, $userId);
+            $info['is_favorite'] = Favorite::isFavorite(WebsiteArticle::MORPH_TYPE, $info->id, $userId);
 
             // 判断是否被点赞
-            $info['is_like'] = UserLike::isLike(Article::MORPH_TYPE, $info->id, $userId);
+            $info['is_like'] = UserLike::isLike(WebsiteArticle::MORPH_TYPE, $info->id, $userId);
         }
 
         $info->increment('view_count');
@@ -96,7 +96,7 @@ class ProductController extends Controller
             'simply_view_count', 'simply_good_count', 'simply_collect_count', 'simply_comment_count',
         ]);
 
-        $info['good_categories'] = ProductCategory::getGoodList([], 'sort asc', 1, 4);
+        $info['good_categories'] = WebsiteProductCategory::getGoodList([], 'sort asc', 1, 4);
 
         return Hint::result($info);
     }
@@ -108,7 +108,7 @@ class ProductController extends Controller
      */
     public function tree()
     {
-        $data = ArticleCategory::select();
+        $data = WebsiteArticleCategory::select();
         $data = Arr::tree($data->toArray());
 
         return Hint::result($data);

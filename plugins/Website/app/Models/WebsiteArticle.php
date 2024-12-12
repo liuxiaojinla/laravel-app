@@ -24,9 +24,9 @@ use \App\Events\FavoriteEvent;
  * @property string $cover
  * @property-read string $update_time
  * @property-read string $create_time
- * @property ArticleCategory category
+ * @property WebsiteArticleCategory category
  */
-class Article extends Model implements FavoriteListenerOfStatic
+class WebsiteArticle extends Model implements FavoriteListenerOfStatic
 {
 
     use SoftDeletes, FieldFormatable;
@@ -80,7 +80,7 @@ class Article extends Model implements FavoriteListenerOfStatic
     public static function onFavorite(FavoriteEvent $event)
     {
         if ($event->isFavorite()) {
-            Article::query()->where('id', $event->getTopicId())->inc('collect_count')->update([]);
+            WebsiteArticle::query()->where('id', $event->getTopicId())->inc('collect_count')->update([]);
         } else {
             static::decWithFieldById($event->getTopicId(), 'collect_count');
         }
@@ -117,7 +117,7 @@ class Article extends Model implements FavoriteListenerOfStatic
      */
     public function category()
     {
-        return $this->belongsTo(ArticleCategory::class, "category_id")
+        return $this->belongsTo(WebsiteArticleCategory::class, "category_id")
             ->select('id,title,cover');
     }
 

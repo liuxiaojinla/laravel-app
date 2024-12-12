@@ -16,9 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string title
  * @property int status
  * @property int view_count
- * @property ArticleCategory category
+ * @property WebsiteArticleCategory category
  */
-class About extends Model
+class WebsiteAbout extends Model
 {
 
     use SoftDeletes, FieldFormatable;

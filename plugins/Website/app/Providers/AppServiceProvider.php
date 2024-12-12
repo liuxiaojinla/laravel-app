@@ -4,8 +4,8 @@ namespace Plugins\Website\App\Providers;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Plugins\Website\App\Models\Article;
-use Plugins\Website\App\Models\Cases;
+use Plugins\Website\App\Models\WebsiteArticle;
+use Plugins\Website\App\Models\WebsiteCase;
 use Xin\LaravelFortify\Plugin\AppServiceProvider as ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,8 +28,8 @@ class AppServiceProvider extends ServiceProvider
     protected function registerEnforceMorphMaps()
     {
         Relation::enforceMorphMap([
-            Article::MORPH_TYPE => Article::class,
-            Cases::MORPH_TYPE   => Cases::class,
+            WebsiteArticle::MORPH_TYPE => WebsiteArticle::class,
+            WebsiteCase::MORPH_TYPE    => WebsiteCase::class,
         ]);
     }
 }

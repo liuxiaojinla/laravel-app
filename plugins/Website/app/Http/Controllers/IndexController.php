@@ -9,8 +9,8 @@ namespace Plugins\Website\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
-use Plugins\Website\App\Models\About;
-use Plugins\Website\App\Models\LeaveMessage;
+use Plugins\Website\App\Models\WebsiteAbout;
+use Plugins\Website\App\Models\WebsiteLeaveMessage;
 use Xin\Hint\Facades\Hint;
 
 class IndexController extends Controller
@@ -23,7 +23,7 @@ class IndexController extends Controller
      */
     public function about()
     {
-        $info = About::query()->where([])->first();
+        $info = WebsiteAbout::query()->where([])->first();
 
         return Hint::result($info);
     }
@@ -42,7 +42,7 @@ class IndexController extends Controller
         $data['user_agent'] = $this->request->server('HTTP_USER_AGENT');
         $data['referer'] = $this->request->server('HTTP_REFERER');
 
-        LeaveMessage::query()->create($data);
+        WebsiteLeaveMessage::query()->create($data);
 
         return Hint::success("已留言！");
     }

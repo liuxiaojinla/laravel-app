@@ -9,8 +9,8 @@ namespace Plugins\Website\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
-use Plugins\Website\App\Models\Product;
-use Plugins\Website\App\Models\ProductCategory;
+use Plugins\Website\App\Models\WebsiteProduct;
+use Plugins\Website\App\Models\WebsiteProductCategory;
 
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Number;
@@ -33,10 +33,10 @@ class ProductCategoryController extends Controller
         }
 
         $search = $this->request->query();
-        $data = ProductCategory::simple()->search($search)->order($order)
+        $data = WebsiteProductCategory::simple()->search($search)->order($order)
             ->paginate()
-            ->each(function (ProductCategory $item) use ($isGood) {
-                $postCount = Product::query()->where([
+            ->each(function (WebsiteProductCategory $item) use ($isGood) {
+                $postCount = WebsiteProduct::query()->where([
                     'status'      => 1,
                     'category_id' => $item->id,
                 ])->count();
@@ -63,8 +63,8 @@ class ProductCategoryController extends Controller
     {
         $id = $this->request->validId();
 
-        /** @var ProductCategory $info */
-        $info = ProductCategory::with([])->findOrFail($id);
+        /** @var WebsiteProductCategory $info */
+        $info = WebsiteProductCategory::with([])->findOrFail($id);
 
         if ($info['status'] != 1) {
             return Hint::error("专题未发布或不存在！");
@@ -74,12 +74,12 @@ class ProductCategoryController extends Controller
             $this->auth->getUser(null, null, AuthVerifyType::NOT)
         );
 
-        $info['article_list'] = Product::query()->where([
+        $info['article_list'] = WebsiteProduct::query()->where([
             'status'      => 1,
             'category_id' => $info->id,
         ])->orderByDesc('id')->paginate();
 
-        $info['post_count'] = Product::query()->where('status', 1)->where('category_id', $info->id)->count();
+        $info['post_count'] = WebsiteProduct::query()->where('status', 1)->where('category_id', $info->id)->count();
 
         return Hint::result($info);
     }

@@ -24,7 +24,7 @@ use App\Models\Model;
  * @property string update_time
  * @property string cover
  */
-class ProductCategory extends Model
+class WebsiteProductCategory extends Model
 {
 
     use OpenAppable;
@@ -74,7 +74,7 @@ class ProductCategory extends Model
      */
     public function products()
     {
-        return $this->hasMany(Product::class, 'category_id');
+        return $this->hasMany(WebsiteProduct::class, 'category_id');
     }
 
     /**

@@ -9,8 +9,8 @@ namespace Plugins\Website\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
-use Plugins\Website\App\Models\Article;
-use Plugins\Website\App\Models\ArticleCategory;
+use Plugins\Website\App\Models\WebsiteArticle;
+use Plugins\Website\App\Models\WebsiteArticleCategory;
 
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Arr;
@@ -35,9 +35,9 @@ class ArticleCategoryController extends Controller
         }
 
         $search = $this->request->query();
-        $data = ArticleCategory::simple()->search($search)->order($order)
-            ->select()->each(function (ArticleCategory $item) use ($isGood, $userId) {
-                $postCount = Article::query()->where([
+        $data = WebsiteArticleCategory::simple()->search($search)->order($order)
+            ->select()->each(function (WebsiteArticleCategory $item) use ($isGood, $userId) {
+                $postCount = WebsiteArticle::query()->where([
                     'status'      => 1,
                     'category_id' => $item->id,
                 ])->count();
@@ -63,8 +63,8 @@ class ArticleCategoryController extends Controller
         $id = $this->request->validId();
         $userId = $this->auth->id();
 
-        /** @var ArticleCategory $info */
-        $info = ArticleCategory::with([])->findOrFail($id);
+        /** @var WebsiteArticleCategory $info */
+        $info = WebsiteArticleCategory::with([])->findOrFail($id);
 
         if ($info['status'] != 1) {
             return Hint::error("专题未发布或不存在！");
@@ -72,12 +72,12 @@ class ArticleCategoryController extends Controller
 
         $info['follow_users'] = $info->getLastFollowUsers($userId);
 
-        $info['article_list'] = Article::query()->where([
+        $info['article_list'] = WebsiteArticle::query()->where([
             'status'      => 1,
             'category_id' => $info->id,
         ])->orderByDesc('id')->paginate();
 
-        $info['post_count'] = Article::query()->where('status', 1)->where('category_id', $info->id)->count();
+        $info['post_count'] = WebsiteArticle::query()->where('status', 1)->where('category_id', $info->id)->count();
 
         return Hint::result($info);
     }
@@ -88,7 +88,7 @@ class ArticleCategoryController extends Controller
      */
     public function tree()
     {
-        $data = ArticleCategory::select();
+        $data = WebsiteArticleCategory::select();
         $data = Arr::tree($data->toArray());
 
         return Hint::result($data);

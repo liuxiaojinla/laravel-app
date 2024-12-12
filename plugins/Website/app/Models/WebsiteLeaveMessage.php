@@ -18,9 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string title
  * @property int status
  * @property int view_count
- * @property ArticleCategory category
+ * @property WebsiteArticleCategory category
  */
-class LeaveMessage extends Model
+class WebsiteLeaveMessage extends Model
 {
 
     use SoftDeletes;

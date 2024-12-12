@@ -10,7 +10,7 @@ namespace Plugins\Website\App\Admin\Controllers;
 use App\Admin\Controller;
 use Illuminate\Http\Response;
 use Plugins\Website\app\Http\Requests\WebsiteRequest;
-use Plugins\Website\App\Models\About;
+use Plugins\Website\App\Models\WebsiteAbout;
 use Plugins\Website\App\Models\Website;
 use Xin\Hint\Facades\Hint;
 
@@ -67,13 +67,13 @@ class SettingController extends Controller
     public function about()
     {
         $id = $this->request->validId();
-        $info = About::query()->where('id', $id)->first();
+        $info = WebsiteAbout::query()->where('id', $id)->first();
 
         if ($this->request->isPost()) {
             $content = $this->request->param('content');
 
             if (!$info) {
-                $info = new About();
+                $info = new WebsiteAbout();
             }
 
             $info->allowField([])->save([

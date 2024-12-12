@@ -27,15 +27,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string update_time
  * @property string cover
  */
-class ArticleCategory extends Model
+class WebsiteCaseCategory extends Model
 {
-
-
 
     /**
      * @var string
      */
-    protected $table = 'website_article_category';
+    protected $table = 'website_case_category';
 
     /**
      * 获取推荐列表
@@ -44,7 +42,7 @@ class ArticleCategory extends Model
      * @param string $order
      * @param int $page
      * @param int $limit
-     * @return array|Collection
+     * @return Collection
      */
     public static function getGoodList($query, $order = 'sort asc', $page = 1, $limit = 10)
     {
@@ -73,9 +71,9 @@ class ArticleCategory extends Model
      *
      * @return HasMany
      */
-    public function articles()
+    public function cases()
     {
-        return $this->hasMany(Article::class, 'category_id');
+        return $this->hasMany(WebsiteCase::class, 'category_id');
     }
 
     /**
@@ -88,7 +86,7 @@ class ArticleCategory extends Model
     public function getLastFollowUsers($user = null, $count = 5)
     {
         $followUsers = $this->followUsers()->select('user.id,user.nickname,user.avatar')
-            ->where('pivot.topic_type', 'website_article_category')
+            ->where('pivot.type', WebsiteCase::MORPH_TYPE)
             ->order('pivot.id desc')->limit(0, $count)
             ->hidden(['pivot'])
             ->get();
@@ -119,6 +117,6 @@ class ArticleCategory extends Model
      */
     public function followUsers()
     {
-        return $this->belongsToMany(User::class, Favorite::class, 'user_id', 'topic_id');
+        return $this->belongsToMany('User', 'Collect', 'uid', 'topic_id');
     }
 }

@@ -14,8 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Plugins\Website\app\Http\Requests\ArticleRequest;
-use Plugins\Website\App\Models\Article;
-use Plugins\Website\App\Models\ArticleCategory;
+use Plugins\Website\App\Models\WebsiteArticle;
+use Plugins\Website\App\Models\WebsiteArticleCategory;
 use Xin\Hint\Facades\Hint;
 
 class ArticleController extends Controller
@@ -29,7 +29,7 @@ class ArticleController extends Controller
     public function index()
     {
         $search = $this->request->query();
-        $data = Article::simple()->search($search)
+        $data = WebsiteArticle::simple()->search($search)
             ->orderByDesc('id')
             ->paginate();
 
@@ -44,7 +44,7 @@ class ArticleController extends Controller
     public function info(Request $request)
     {
         $id = $request->validId();
-        $info = Article::query()->with([
+        $info = WebsiteArticle::query()->with([
         ])->where('id', $id)->firstOrFail();
         return Hint::result($info);
     }
@@ -56,7 +56,7 @@ class ArticleController extends Controller
     public function store(ArticleRequest $request)
     {
         $data = $request->validated();
-        $info = Article::query()->create($data);
+        $info = WebsiteArticle::query()->create($data);
 
         return Hint::success("创建成功！", (string)url('index'), $info);
     }
@@ -70,7 +70,7 @@ class ArticleController extends Controller
         $id = $this->request->validId();
         $data = $request->validated();
 
-        $info = Article::query()->where('id', $id)->firstOrFail();
+        $info = WebsiteArticle::query()->where('id', $id)->firstOrFail();
         if (!$info->fill($data)->save()) {
             return Hint::error("更新失败！");
         }
@@ -89,11 +89,11 @@ class ArticleController extends Controller
         $ids = $this->request->validIds();
         $targetId = $this->request->validId('category_id');
 
-        if (!ArticleCategory::query()->where('id', $targetId)->count()) {
+        if (!WebsiteArticleCategory::query()->where('id', $targetId)->count()) {
             throw Error::validationException("所选分类不存在！");
         }
 
-        Article::withTrashed()->whereIn('id', $ids)->update([
+        WebsiteArticle::withTrashed()->whereIn('id', $ids)->update([
             'category_id' => $targetId,
         ]);
 
@@ -109,7 +109,7 @@ class ArticleController extends Controller
         $ids = $this->request->validIds();
         $isForce = $this->request->integer('force', 0);;
 
-        Article::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
+        WebsiteArticle::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
             if ($isForce) {
                 $item->forceDelete();
             } else {
@@ -131,7 +131,7 @@ class ArticleController extends Controller
         $field = $this->request->validString('field');
         $value = $this->request->param($field);
 
-        Article::setManyValue($ids, $field, $value);
+        WebsiteArticle::setManyValue($ids, $field, $value);
 
         return Hint::success("更新成功！");
     }

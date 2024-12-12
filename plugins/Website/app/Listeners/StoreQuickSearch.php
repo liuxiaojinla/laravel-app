@@ -7,8 +7,8 @@
 
 namespace plugins\website\listener;
 
-use Plugins\Website\App\Models\Article;
-use Plugins\Website\App\Models\Product;
+use Plugins\Website\App\Models\WebsiteArticle;
+use Plugins\Website\App\Models\WebsiteProduct;
 
 class StoreQuickSearch
 {
@@ -22,8 +22,8 @@ class StoreQuickSearch
         return [
             [
                 'title' => '动态',
-                'items' => !empty($keywords) ? Article::query()->where('title', 'like', $keywords)->order('view_count desc')
-                    ->page(1, 10)->select()->map(function (Article $item) {
+                'items' => !empty($keywords) ? WebsiteArticle::query()->where('title', 'like', $keywords)->order('view_count desc')
+                    ->page(1, 10)->select()->map(function (WebsiteArticle $item) {
                         return [
                             'title'       => $item->title,
                             'description' => $item->description,
@@ -35,8 +35,8 @@ class StoreQuickSearch
             ],
             [
                 'title' => '产品',
-                'items' => !empty($keywords) ? Product::query()->where('title', 'like', $keywords)->orderByDesc('id')
-                    ->page(1, 10)->select()->map(function (Product $item) {
+                'items' => !empty($keywords) ? WebsiteProduct::query()->where('title', 'like', $keywords)->orderByDesc('id')
+                    ->page(1, 10)->select()->map(function (WebsiteProduct $item) {
                         return [
                             'title'       => $item->title,
                             'description' => $item->description,

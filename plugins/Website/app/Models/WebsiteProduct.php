@@ -7,19 +7,25 @@
 
 namespace Plugins\Website\App\Models;
 
+use App\Contracts\FavoriteListenerOfStatic;
+use App\Events\FavoriteEvent;
 use App\Models\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use PDOException;
+use Xin\ThinkPHP\Util\DbUtil;
 
 /**
  * @property int id
  * @property string title
  * @property int status
  * @property int view_count
- * @property CasesCategory category
+ * @property string $description
+ * @property string $cover
+ * @property-read string $update_time
+ * @property-read string $create_time
+ * @property WebsiteProductCategory category
  */
-class Cases extends Model
+class WebsiteProduct extends Model implements FavoriteListenerOfStatic
 {
 
     use SoftDeletes, FieldFormatable;
@@ -27,12 +33,12 @@ class Cases extends Model
     /**
      * 主题类型
      */
-    const MORPH_TYPE = 'website_cases';
+    const MORPH_TYPE = 'website_product';
 
     /**
      * @var string
      */
-    protected $table = 'website_case';
+    protected $table = 'website_product';
 
     /**
      * @var array
@@ -67,13 +73,28 @@ class Cases extends Model
     }
 
     /**
+     * @inheritDoc
+     * @throws PDOException
+     */
+    public static function onFavorite(FavoriteEvent $event)
+    {
+        if ($event->isFavorite()) {
+            WebsiteProduct::query()->where('id', $event->getTopicId())->increment('collect_count');
+        } else {
+            DbUtil::call(function () use ($event) {
+                WebsiteProduct::query()->where('id', $event->getTopicId())->decrement('collect_count');
+            });
+        }
+    }
+
+    /**
      * 分类动态属性
      *
      * @return BelongsTo
      */
     public function category()
     {
-        return $this->belongsTo(CasesCategory::class, "category_id")
+        return $this->belongsTo(WebsiteProductCategory::class, "category_id")
             ->select('id,title,cover');
     }
 
