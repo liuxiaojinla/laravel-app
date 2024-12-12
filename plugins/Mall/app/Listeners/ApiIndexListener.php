@@ -5,17 +5,26 @@ namespace Plugins\Mall\App\Listeners;
 
 use App\Models\User\Browse;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\GoodsCategory;
 use Xin\Support\Fluent;
 
-class ApiIndex
+class ApiIndexListener
 {
 
     /**
-     * @var \app\Request
+     * @var Request
      */
     private $request;
+
+    /**
+     * @param Request $request
+     */
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
 
     /**
      * @param Fluent $data
@@ -23,8 +32,6 @@ class ApiIndex
      */
     public function handle(Fluent $data)
     {
-        $this->request = app(Request::class);
-
         $data['goods_list'] = $this->goodsList();
         $data['goods_browse_list'] = $this->goodsBrowseList();
         $data['goods_category_list'] = $this->goodsCategoryList();
@@ -52,20 +59,22 @@ class ApiIndex
      */
     private function goodsBrowseList()
     {
-        $userId = $this->request->userId(AuthVerifyType::NOT);
+        $userId = $this->request->user()?->id ?? 0;
         if (!$userId) {
             return [];
         }
 
-        MorphMaker::maker(Browse::class);
-
         return Browse::with([
             'browseable',
-        ])->where('user_id', $userId)
+        ])
+            ->where('user_id', $userId)
             ->where(['topic_type' => Goods::MORPH_TYPE])
-            ->order('update_time desc')->limit(0, 10)->select()->map(function (Browse $item) {
+            ->orderByDesc('update_time')->limit(10)
+            ->get()->map(function (Browse $item) {
                 if ($item->browseable && method_exists($item->browseable, 'onMorphToRead')) {
-                    $item->browseable->onMorphToRead();
+                    $item->browseable->onMorphToRead([
+                        'user' => $this->request->user(),
+                    ]);
                 }
 
                 return $item->browseable;
@@ -80,7 +89,6 @@ class ApiIndex
     private function goodsCategoryList()
     {
         return GoodsCategory::query()->where([
-            'app_id' => $this->request->appId(),
             'pid'    => 0,
         ])->oldest('sort')->get();
     }

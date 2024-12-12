@@ -3,11 +3,23 @@
 
 namespace Plugins\Mall\App\Listeners;
 
-use app\Request;
+use Illuminate\Http\Request;
 use Plugins\Mall\App\Models\Goods;
 
-class URLChoiceInit
+class URLChoiceInitListener
 {
+    /**
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * @param Request $request
+     */
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
 
     /**
      * @param callable $define

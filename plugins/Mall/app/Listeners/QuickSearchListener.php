@@ -5,7 +5,7 @@ namespace Plugins\Mall\App\Listeners;
 use Plugins\Mall\App\Models\Goods;
 use Plugins\Mall\App\Models\GoodsCategory;
 
-class QuickSearch
+class QuickSearchListener
 {
 
     /**

@@ -3,12 +3,13 @@
 
 namespace Plugins\Order\App\Listeners;
 
+use Illuminate\Http\Request;
 use Plugins\Order\App\Enums\OrderStatus;
 use Plugins\Order\App\Enums\RefundStatus;
 use Plugins\Order\App\Models\Order;
 use Plugins\Order\App\Models\OrderRefund;
 
-class ApiUserCenter
+class ApiUserCenterListener
 {
 
     /**
@@ -17,15 +18,20 @@ class ApiUserCenter
     private $request;
 
     /**
+     * @param Request $request
+     */
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
+    /**
      * @param callable $define
      * @return void
-     * @throws DbException
      */
     public function handle(callable $define)
     {
-        $this->request = app(Request::class);
-
-        $userId = $this->request->userId(AuthVerifyType::NOT);
+        $userId = $this->request->user()?->id ?? 0;
 
         $statusCount = [
             'pending_count'   => 0,

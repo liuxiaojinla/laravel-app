@@ -13,7 +13,7 @@ return [
     | Default module namespace.
     |
     */
-    'namespace' => 'Plugins',
+    'namespace'  => 'Plugins',
 
     /*
     |--------------------------------------------------------------------------
@@ -23,20 +23,20 @@ return [
     | Default module stubs.
     |
     */
-    'stubs'    => [
+    'stubs'      => [
         'enabled'      => false,
         'path'         => base_path('vendor/nwidart/laravel-modules/src/Commands/stubs'),
         'files'        => [
             'routes/web'      => 'routes/web.php',
             'routes/api'      => 'routes/api.php',
-//            'views/index'     => 'resources/views/index.blade.php',
-//            'views/master'    => 'resources/views/layouts/master.blade.php',
+            //            'views/index'     => 'resources/views/index.blade.php',
+            //            'views/master'    => 'resources/views/layouts/master.blade.php',
             'scaffold/config' => 'config/config.php',
             'composer'        => 'composer.json',
-//            'assets/js/app'   => 'resources/assets/js/app.js',
-//            'assets/sass/app' => 'resources/assets/sass/app.scss',
-//            'vite'            => 'vite.config.js',
-//            'package'         => 'package.json',
+            //            'assets/js/app'   => 'resources/assets/js/app.js',
+            //            'assets/sass/app' => 'resources/assets/sass/app.scss',
+            //            'vite'            => 'vite.config.js',
+            //            'package'         => 'package.json',
         ],
         'replacements' => [
             'routes/web'      => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE', 'CONTROLLER_NAMESPACE'],
@@ -58,7 +58,7 @@ return [
         ],
         'gitkeep'      => false,
     ],
-    'paths'    => [
+    'paths'      => [
         /*
         |--------------------------------------------------------------------------
         | Modules path
@@ -68,7 +68,7 @@ return [
         | This path will also be added automatically to the list of scanned folders.
         |
         */
-        'modules' => base_path('plugins'),
+        'modules'   => base_path('plugins'),
 
         /*
         |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return [
         | Here you may update the modules' assets path.
         |
         */
-        'assets' => public_path('plugins'),
+        'assets'    => public_path('plugins'),
 
         /*
         |--------------------------------------------------------------------------
@@ -102,28 +102,40 @@ return [
             'config'          => ['path' => 'config', 'generate' => true],
 
             // App
-            'command'         => ['path' => 'app/Console', 'generate' => false],
-            'channels'        => ['path' => 'app/Broadcasting', 'generate' => false],
-            'model'           => ['path' => 'app/Models', 'generate' => true],
-            'observer'        => ['path' => 'app/Observers', 'generate' => false],
-            'provider'        => ['path' => 'app/Providers', 'generate' => true],
-            'controller'      => ['path' => 'app/Http/Controllers', 'generate' => true],
-            'filter'          => ['path' => 'app/Http/Middleware', 'generate' => false],
-            'request'         => ['path' => 'app/Http/Requests', 'generate' => true],
-            'repository'      => ['path' => 'app/Repositories', 'generate' => false],
-            'event'           => ['path' => 'app/Events', 'generate' => false],
-            'listener'        => ['path' => 'app/Listeners', 'generate' => false],
-            'policies'        => ['path' => 'app/Policies', 'generate' => false],
-            'rules'           => ['path' => 'app/Rules', 'generate' => false],
-            'jobs'            => ['path' => 'app/Jobs', 'generate' => false],
-            'emails'          => ['path' => 'app/Emails', 'generate' => false],
-            'notifications'   => ['path' => 'app/Notifications', 'generate' => false],
-            'resource'        => ['path' => 'app/Resources', 'generate' => false],
+            'command'         => ['path' => 'app/Console', 'namespace' => 'App/Console', 'generate' => false],
+            'channels'        => ['path' => 'app/Broadcasting', 'namespace' => 'App/Broadcasting', 'generate' => false],
+            'model'           => ['path' => 'app/Models', 'namespace' => 'App/Models', 'generate' => true],
+            'observer'        => ['path' => 'app/Observers', 'namespace' => 'App/Observers', 'generate' => false],
+            'provider'        => ['path' => 'app/Providers', 'namespace' => 'App/Providers', 'generate' => true],
+            'controller'      => [
+                'path' => 'app/Http/Controllers', 'namespace' => 'App/Http/Controllers', 'generate' => true,
+            ],
+            'filter'          => [
+                'path' => 'app/Http/Middleware', 'namespace' => 'App/Http/Middleware', 'generate' => false,
+            ],
+            'request'         => [
+                'path' => 'app/Http/Requests', 'namespace' => 'App/Http/Requests', 'generate' => true,
+            ],
+            'repository'      => ['path' => 'app/Repositories', 'namespace' => 'App/Repositories', 'generate' => false],
+            'event'           => ['path' => 'app/Events', 'namespace' => 'App/Events', 'generate' => false],
+            'listener'        => ['path' => 'app/Listeners', 'namespace' => 'App/Listeners', 'generate' => false],
+            'policies'        => ['path' => 'app/Policies', 'namespace' => 'App/Policies', 'generate' => false],
+            'rules'           => ['path' => 'app/Rules', 'namespace' => 'App/Rules', 'generate' => false],
+            'jobs'            => ['path' => 'app/Jobs', 'namespace' => 'App/Jobs', 'generate' => false],
+            'emails'          => ['path' => 'app/Emails', 'namespace' => 'App/Emails', 'generate' => false],
+            'notifications'   => [
+                'path' => 'app/Notifications', 'namespace' => 'App/Notifications', 'generate' => false,
+            ],
+            'resource'        => ['path' => 'app/Resources', 'namespace' => 'App/Resources', 'generate' => false],
 
             // database
-            'migration'       => ['path' => 'database/migrations', 'generate' => false],
-            'seeder'          => ['path' => 'database/seeders', 'generate' => false],
-            'factory'         => ['path' => 'database/factories', 'generate' => false],
+            'migration'       => [
+                'path' => 'database/migrations', 'namespace' => 'Database/Migrations', 'generate' => false,
+            ],
+            'seeder'          => ['path' => 'database/seeders', 'namespace' => 'Database/Seeders', 'generate' => false],
+            'factory'         => [
+                'path' => 'database/factories', 'namespace' => 'Database/Factories', 'generate' => false,
+            ],
 
             // route
             'routes'          => ['path' => 'routes', 'generate' => true],
@@ -140,8 +152,12 @@ return [
             'test-feature'    => ['path' => 'tests/Feature', 'generate' => false],
 
             // component
-            'component-view'  => ['path' => 'resources/views/components', 'generate' => false],
-            'component-class' => ['path' => 'app/View/Components', 'generate' => false],
+            'component-view'  => [
+                'path' => 'resources/views/components', 'generate' => false,
+            ],
+            'component-class' => [
+                'path' => 'app/View/Components', 'namespace' => 'App/View/Components', 'generate' => false,
+            ],
         ],
     ],
 
@@ -154,7 +170,7 @@ return [
     | application. You can add your own commands to merge section.
     |
     */
-    'commands' => ConsoleServiceProvider::defaultCommands()
+    'commands'   => ConsoleServiceProvider::defaultCommands()
         ->merge([
             // New commands go here
         ])->toArray(),
@@ -168,7 +184,7 @@ return [
     | directory. This is useful if you host the package in packagist website.
     |
     */
-    'scan' => [
+    'scan'       => [
         'enabled' => false,
         'paths'   => [
             base_path('vendor/*/*'),
