@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Wechat\app\Providers;
+namespace Plugins\Wechat\App\Providers;
 
 use Xin\LaravelFortify\Plugin\RouteServiceProvider as ServiceProvider;
 

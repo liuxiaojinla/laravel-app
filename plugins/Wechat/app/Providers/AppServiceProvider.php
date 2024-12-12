@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Wechat\app\Providers;
+namespace Plugins\Wechat\App\Providers;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Xin\LaravelFortify\Plugin\AppServiceProvider as ServiceProvider;

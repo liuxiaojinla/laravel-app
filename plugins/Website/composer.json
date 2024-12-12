@@ -1,0 +1,25 @@
+{
+    "name": "plugins/website",
+    "description": "",
+    "authors": [
+        {
+            "name": "liuxiaojinla",
+            "email": "1540175452@qq.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Website\\": "",
+            "Plugins\\Website\\App\\": "app/",
+            "Plugins\\Website\\Database\\Factories\\": "database/factories/",
+            "Plugins\\Website\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

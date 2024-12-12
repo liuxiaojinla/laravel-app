@@ -96,7 +96,7 @@ class PayController extends Controller
         $shop = $this->shopService->get($shopId);
         $shopTitle = $shop?->title;
 
-        $notifyUrl = $this->request->domain() . "/api/shop/pay_notify";
+        $notifyUrl = $this->request->root() . "/api/shop/pay_notify";
         $outTradeNo = Str::makeOrderSn();
         $data = $this->payment->wechat()->mini([
             'out_trade_no' => $outTradeNo,

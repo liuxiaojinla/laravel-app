@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Supports\WebServer;
+use EasyWeChat\Kernel\Exceptions\InvalidConfigException as EasyWeChatInvalidConfigException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -14,8 +15,7 @@ use Illuminate\Validation\ValidationException;
 use Throwable;
 use Xin\Hint\Facades\Hint;
 use Xin\LaravelFortify\Foundation\Exceptions\Handler as ExceptionHandler;
-
-//use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Yansongda\Artful\Exception\InvalidConfigException as PayInvalidConfigException;
 
 class Handler extends ExceptionHandler
 {
@@ -28,6 +28,18 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
         });
 
+        // 转换相关的异常
+        $this->map(function (\Throwable $e) {
+            if ($e instanceof PayInvalidConfigException) {
+                return new \InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+            } elseif ($e instanceof EasyWeChatInvalidConfigException) {
+                return new \InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+            }
+
+            return $e;
+        });
+
+        // 拦截特殊的异常进行响应
         $this->renderable(function (HttpResponseException $e, Request $request) {
             if ($this->shouldReturnJson($request, $e)) {
                 $response = $e->getResponse();

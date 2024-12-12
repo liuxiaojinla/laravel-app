@@ -24,10 +24,5 @@
             "Plugins\\Wechat\\Database\\Factories\\": "database/factories/",
             "Plugins\\Wechat\\Database\\Seeders\\": "database/seeders/"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Plugins\\Wechat\\Tests\\": "tests/"
-        }
     }
 }

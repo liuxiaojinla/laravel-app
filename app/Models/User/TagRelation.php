@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class TagRelation extends Pivot
 {
 
-    public const UPDATED_AT = false;
+    public const UPDATED_AT = null;
     /**
      * @var bool
      */

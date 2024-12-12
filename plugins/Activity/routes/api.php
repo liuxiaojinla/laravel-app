@@ -20,7 +20,7 @@ Route::group([], function () {
     Route::get('/info', [IndexController::class, 'detail']);
 });
 
-Route::middleware(['auth:sanctum'])->prefix('join')->name('join')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('join')->name('join.')->group(function () {
     Route::get('/lists', [JoinController::class, 'index']);
     Route::post('/submit', [JoinController::class, 'join']);
 });

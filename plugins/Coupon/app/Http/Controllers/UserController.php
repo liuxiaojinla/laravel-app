@@ -19,9 +19,10 @@ class UserController extends Controller
      */
     public function index()
     {
+        $userId = $this->auth->id();
         /** @var LengthAwarePaginator $data */
         $data = UserCoupon::with('coupon')
-            ->where('user_id', $this->request->userId())
+            ->where('user_id', $userId)
             ->paginate();
         $data->each(function (UserCoupon $userCoupon) {
             $userCoupon->coupon->append(['use_tips', 'number_text']);

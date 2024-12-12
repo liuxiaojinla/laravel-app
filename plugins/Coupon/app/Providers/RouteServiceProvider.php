@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Activity\app\Providers;
+namespace Plugins\Coupon\App\Providers;
 
 use Xin\LaravelFortify\Plugin\RouteServiceProvider as ServiceProvider;
 

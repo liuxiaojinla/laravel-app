@@ -46,7 +46,6 @@ class JoinController extends Controller
 
         /** @var ActivityUser $info */
         $info = ActivityUser::query()->create([
-            'app_id'      => $this->request->appId(),
             'activity_id' => $activityId,
             'user_id'     => $userId,
         ]);

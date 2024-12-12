@@ -130,4 +130,14 @@ class User extends Authenticatable
             }
         );
     }
+
+    /**
+     * @inerhitDoc
+     */
+    public static function getSimpleFields()
+    {
+        return [
+            'id', 'nickname', 'avatar',
+        ];
+    }
 }

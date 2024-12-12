@@ -8,10 +8,11 @@ use App\Exceptions\Error;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Plugins\Coupon\app\Enums\CouponStatus;
 use Plugins\Coupon\app\Enums\CouponType;
 use Plugins\Shop\App\Models\Shop;
-use Xin\LaravelFortify\Validation\ValidationException;
 
 /**
  * @property-read int $id
@@ -79,15 +80,15 @@ class Coupon extends Model
      */
     public function userGive($userId)
     {
-        $couponId = $this->getOrigin('id');
-        $status = $this->getOrigin('status');
-        $totalNum = $this->getOrigin('total_num');
-        $totalGiveNum = $this->getOrigin('give_num');
-        $giveCountLimit = $this->getOrigin('max_give_num');
-        $startTime = $this->getOrigin('start_time');
-        $endTime = $this->getOrigin('end_time');
-        $expireType = $this->getOrigin('expire_type');
-        $expireDay = $this->getOrigin('expire_day');
+        $couponId = $this->getRawOriginal('id');
+        $status = $this->getRawOriginal('status');
+        $totalNum = $this->getRawOriginal('total_num');
+        $totalGiveNum = $this->getRawOriginal('give_num');
+        $giveCountLimit = $this->getRawOriginal('max_give_num');
+        $startTime = $this->getRawOriginal('start_time');
+        $endTime = $this->getRawOriginal('end_time');
+        $expireType = $this->getRawOriginal('expire_type');
+        $expireDay = $this->getRawOriginal('expire_day');
 
         // if($status == 0){
         // 	throw Error::validationException("优惠券活动未开始");
@@ -110,7 +111,7 @@ class Coupon extends Model
         }
 
         if ($giveCountLimit) {
-            $giveCount = UserCoupon::where([
+            $giveCount = UserCoupon::query()->where([
                 'coupon_id' => $couponId,
                 'user_id'   => $userId,
             ])->count();
@@ -120,17 +121,16 @@ class Coupon extends Model
             }
         }
 
-        return static::transaction(function () use ($userId, $expireType, $endTime, $expireDay) {
-            $userCoupon = UserCoupon::create([
-                'coupon_id'   => $this->getOrigin('id'),
-                'app_id'      => $this->getOrigin('app_id'),
+        return DB::transaction(function () use ($userId, $expireType, $endTime, $expireDay) {
+            $userCoupon = UserCoupon::query()->create([
+                'coupon_id'   => $this->getRawOriginal('id'),
                 'user_id'     => $userId,
                 'status'      => 0,
                 'expire_time' => $expireType == static::EXPIRE_TYPE_FIXED ? $endTime : now()->addDays($expireDay)->getTimestamp(),
             ]);
 
-            $this->inc('give_num')->update([]);
-            $this->set('give_num', $this->getOrigin('give_num') + 1);
+            $this->increment('give_num');
+            $this->setAttribute('give_num', $this->getRawOriginal('give_num') + 1);
 
             return $userCoupon;
         });
@@ -141,21 +141,22 @@ class Coupon extends Model
      *
      * @param float $totalAmount
      * @return float
+     * @throws ValidationException
      */
     public function calcAmount($totalAmount)
     {
-        $type = $this->getOrigin('type');
+        $type = $this->getRawOriginal('type');
 
         if (CouponType::FULL_MINUS == $type) {
-            $money = (float)$this->getOrigin('money');
+            $money = (float)$this->getRawOriginal('money');
 
             return (float)min($money, $totalAmount);
         } elseif (CouponType::DISCOUNT == $type) {
-            $discount = $this->getOrigin('discount');
-            $maxDiscountMoney = $this->getOrigin('discount');
+            $discount = $this->getRawOriginal('discount');
+            $maxDiscountMoney = $this->getRawOriginal('discount');
             $money = bcmul($totalAmount, bcdiv($discount, 10, 2), 2);
 
-            return (float)($money > $maxDiscountMoney ? $maxDiscountMoney : $money);
+            return (float)(min($money, $maxDiscountMoney));
         }
 
         throw Error::validationException("不支持的优惠券类型！");
@@ -166,9 +167,9 @@ class Coupon extends Model
      *
      * @return string
      */
-    protected function getStatusTextAttr()
+    protected function getStatusTextAttribute()
     {
-        $status = $this->getData('status');
+        $status = $this->getRawOriginal('status');
 
         return CouponStatus::text($status);
     }
@@ -178,9 +179,9 @@ class Coupon extends Model
      *
      * @return string
      */
-    protected function getTypeTextAttr()
+    protected function getTypeTextAttribute()
     {
-        $type = $this->getOrigin('type');
+        $type = $this->getRawOriginal('type');
 
         return CouponType::text($type);
     }
@@ -190,9 +191,9 @@ class Coupon extends Model
      *
      * @return string
      */
-    protected function getUseTipsAttr()
+    protected function getUseTipsAttribute()
     {
-        $minUseMoney = $this->getOrigin('min_use_money');
+        $minUseMoney = $this->getRawOriginal('min_use_money');
 
         return "满{$minUseMoney}元可用";
     }
@@ -202,15 +203,15 @@ class Coupon extends Model
      *
      * @return string
      */
-    protected function getNumberTextAttr()
+    protected function getNumberTextAttribute()
     {
-        $type = $this->getOrigin('type');
+        $type = $this->getRawOriginal('type');
         if ($type == CouponType::FULL_MINUS) {
-            $number = $this->getOrigin('money');
+            $number = $this->getRawOriginal('money');
 
             return "￥{$number}";
         } else {
-            $number = bcmul($this->getOrigin('discount'), 10, 1);
+            $number = bcmul($this->getRawOriginal('discount'), 10, 1);
 
             return "{$number}折";
         }

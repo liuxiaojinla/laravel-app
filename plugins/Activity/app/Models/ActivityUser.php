@@ -21,14 +21,19 @@ class ActivityUser extends Pivot
     }
 
     /**
+     * @var string
+     */
+    protected $table = 'activity_users';
+
+    /**
      * @var bool
      */
-    protected $autoWriteTimestamp = true;
+    public $timestamps = true;
 
     /**
      * @var string
      */
-    protected $updateTime = false;
+    public const UPDATED_AT = null;
 
     /**
      * @inerhitDoc
@@ -60,7 +65,7 @@ class ActivityUser extends Pivot
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id')->field(User::getSimpleFields());
+        return $this->belongsTo(User::class, 'user_id')->select(User::getSimpleFields());
     }
 
     /**

@@ -5,11 +5,11 @@ namespace Plugins\Activity\App\Http\Controllers;
 
 use App\Exceptions\Error;
 use App\Http\Controller;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Plugins\Activity\App\Models\Activity;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Validation\ValidationException;
 
 class IndexController extends Controller
 {
@@ -19,12 +19,13 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $data = Activity::simple()->with(['user', 'last_join_user'])
+        $data = Activity::simple()->with(['user', 'latestJoinUser'])
             ->where([
-                'app_id'  => $this->request->appId(),
                 'status'  => 1,
                 'display' => 2,
-            ])->orderByDesc('id')->paginate(15);
+            ])
+            ->orderByDesc('id')
+            ->paginate();
 
         return Hint::result($data);
     }
@@ -41,13 +42,13 @@ class IndexController extends Controller
 
         /** @var Activity $info */
         $info = Activity::with([
-            'user', 'last_join_user',
-            'join_users' => function (Builder $query) {
+            'user', 'latestJoinUser',
+            'joinUsers' => function (BelongsToMany $query) {
+                $query->getModel()->makeHidden(['pivot']);
                 $query->limit(15);
             },
         ])->where([
-            'id'     => $id,
-            'app_id' => $this->request->appId(),
+            'id' => $id,
         ])->firstOrFail();
 
         if ($info->status != 1) {

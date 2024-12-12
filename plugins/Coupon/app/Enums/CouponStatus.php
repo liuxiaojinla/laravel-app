@@ -3,7 +3,8 @@
 
 namespace Plugins\Coupon\app\Enums;
 
-use MyCLabs\Enum\Enum;
+
+use Xin\Support\Enum;
 
 final class CouponStatus extends Enum
 {

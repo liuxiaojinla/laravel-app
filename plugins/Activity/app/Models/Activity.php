@@ -45,6 +45,19 @@ class Activity extends Model
     }
 
     /**
+     * @return array
+     */
+    public static function getSimpleFields()
+    {
+        return [
+            'id', 'description', 'config', 'cover', 'status', 'start_time', 'end_time',
+            'display', 'join_count', 'view_count', 'comment_count', 'share_count', 'allow_comment',
+            'last_join_user_id', 'last_join_time',
+            'created_at', 'updated_at', 'deleted_at',
+        ];
+    }
+
+    /**
      * 创建人
      *
      * @return BelongsTo
@@ -59,27 +72,20 @@ class Activity extends Model
      *
      * @return BelongsTo
      */
-    public function lastJoinUser()
+    public function latestJoinUser()
     {
         return $this->belongsTo(User::class, 'last_join_user_id')->select(User::getSimpleFields());
     }
 
     /**
      * 加入得用户列表
-     * $rel = $this->belongsToMany(User::class, ActivityUser::class);
-     *
      * @return BelongsToMany
      */
     public function joinUsers()
     {
-
-        $userPublicFields = User::simpleFields();
-        unset($userPublicFields[0]);
-        $userPublicFields[] = 'user.id';
-
-        $rel->getQuery()->field($userPublicFields);
-
-        return $rel;
+        return $this->belongsToMany(User::class, ActivityUser::class)->select(array_map(function ($field) {
+            return 'users.' . $field;
+        }, User::getSimpleFields()));
     }
 
     /**
