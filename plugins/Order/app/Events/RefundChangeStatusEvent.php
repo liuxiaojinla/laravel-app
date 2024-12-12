@@ -58,14 +58,6 @@ class RefundChangeStatusEvent
     }
 
     /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
      * 是否已取消变动
      *
      * @return bool
@@ -73,6 +65,14 @@ class RefundChangeStatusEvent
     public function isCanceled()
     {
         return $this->getType() == static::CANCELED;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**

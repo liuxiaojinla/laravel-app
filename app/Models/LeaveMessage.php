@@ -18,21 +18,6 @@ class LeaveMessage extends Model
     ];
 
     /**
-     * 日期搜索器
-     * @param Builder $query
-     * @param array $rangeTime
-     * @return void
-     */
-    public function searchCreateTimeAttribute(Builder $query, $rangeTime)
-    {
-        if (empty($rangeTime)) {
-            return;
-        }
-
-        $query->whereBetween('create_time', $rangeTime[0], $rangeTime[1]);
-    }
-
-    /**
      * @return string[]
      */
     public static function getSearchFields()
@@ -46,5 +31,20 @@ class LeaveMessage extends Model
     public static function getSearchKeywordFields()
     {
         return ['name', 'phone'];
+    }
+
+    /**
+     * 日期搜索器
+     * @param Builder $query
+     * @param array $rangeTime
+     * @return void
+     */
+    public function searchCreateTimeAttribute(Builder $query, $rangeTime)
+    {
+        if (empty($rangeTime)) {
+            return;
+        }
+
+        $query->whereBetween('create_time', $rangeTime[0], $rangeTime[1]);
     }
 }

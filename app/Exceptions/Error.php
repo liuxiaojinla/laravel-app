@@ -13,18 +13,6 @@ class Error
 
     /**
      * 验证错误
-     * @param string $message
-     * @return BaseValidationException
-     */
-    public static function validationException($message)
-    {
-        return ValidationException::withMessages([
-            'default' => $message,
-        ]);
-    }
-
-    /**
-     * 验证错误
      * @param array $messages
      * @return BaseValidationException
      */
@@ -42,6 +30,18 @@ class Error
     public static function throwValidateException($message)
     {
         throw self::validationException($message);
+    }
+
+    /**
+     * 验证错误
+     * @param string $message
+     * @return BaseValidationException
+     */
+    public static function validationException($message)
+    {
+        return ValidationException::withMessages([
+            'default' => $message,
+        ]);
     }
 
     /**

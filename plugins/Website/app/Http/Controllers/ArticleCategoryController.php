@@ -11,7 +11,6 @@ use App\Http\Controller;
 use Illuminate\Http\Response;
 use Plugins\Website\App\Models\WebsiteArticle;
 use Plugins\Website\App\Models\WebsiteArticleCategory;
-
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Arr;
 use Xin\Support\Number;
@@ -26,7 +25,7 @@ class ArticleCategoryController extends Controller
      */
     public function index()
     {
-        $isGood = $this->request->integer('is_good', 0);;
+        $isGood = $this->request->integer('is_good', 0);
         $userId = $this->auth->id();
 
         $order = 'id DESC';

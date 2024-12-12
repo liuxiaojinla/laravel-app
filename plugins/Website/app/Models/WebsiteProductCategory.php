@@ -30,7 +30,6 @@ class WebsiteProductCategory extends Model
     use OpenAppable;
 
 
-
     /**
      * @var string
      */

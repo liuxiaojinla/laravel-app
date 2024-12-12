@@ -8,22 +8,22 @@
 namespace plugins\website\listener;
 
 use app\Request;
+use Plugins\Website\App\Models\Website;
 use Plugins\Website\App\Models\WebsiteArticle;
 use Plugins\Website\App\Models\WebsiteCase;
 use Plugins\Website\App\Models\WebsiteProduct;
-use Plugins\Website\App\Models\Website;
 use Xin\Support\Fluent;
 
 class ApiIndex
 {
 
     /**
-     * @var \app\Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @param \Xin\Support\Fluent $data
+     * @param Fluent $data
      * @return void
      */
     public function handle(Fluent $data)

@@ -12,24 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 trait CrudOperations
 {
     /**
-     * 获取数据
-     * @param int $id
-     * @return M
-     */
-    public function get($id)
-    {
-        $data = $this->getCache($id);
-        if (is_null($data)) {
-            return null;
-        }
-
-        $info = $this->newQuery()->make()->setRawAttributes($data,true);
-        $info->exists = true;
-
-        return $info;
-    }
-
-    /**
      * 创建数据
      * @param array $data
      * @return M
@@ -41,6 +23,33 @@ trait CrudOperations
         $info = $this->afterWriting($data, $info, CrudWriteScene::CREATE);
 
         return $this->refresh($info->id);
+    }
+
+    /**
+     * @param array $data
+     * @param M $info
+     * @param string $scene
+     * @return array
+     */
+    public function beforeWriting(array $data, $info, string $scene)
+    {
+        return $data;
+    }
+
+    /**
+     * @return Builder
+     */
+    abstract protected function newQuery();
+
+    /**
+     * @param M $info
+     * @param array $data
+     * @param string $scene
+     * @return M
+     */
+    public function afterWriting(array $data, $info, string $scene)
+    {
+        return $info;
     }
 
     /**
@@ -66,28 +75,6 @@ trait CrudOperations
     }
 
     /**
-     * @param array $data
-     * @param M $info
-     * @param string $scene
-     * @return array
-     */
-    public function beforeWriting(array $data, $info, string $scene)
-    {
-        return $data;
-    }
-
-    /**
-     * @param M $info
-     * @param array $data
-     * @param string $scene
-     * @return M
-     */
-    public function afterWriting(array $data, $info, string $scene)
-    {
-        return $info;
-    }
-
-    /**
      * 删除数据
      * @param array $ids
      * @param bool $isForce
@@ -107,7 +94,20 @@ trait CrudOperations
     }
 
     /**
-     * @return Builder
+     * 获取数据
+     * @param int $id
+     * @return M
      */
-    abstract protected function newQuery();
+    public function get($id)
+    {
+        $data = $this->getCache($id);
+        if (is_null($data)) {
+            return null;
+        }
+
+        $info = $this->newQuery()->make()->setRawAttributes($data, true);
+        $info->exists = true;
+
+        return $info;
+    }
 }

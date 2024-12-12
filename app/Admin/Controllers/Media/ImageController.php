@@ -4,7 +4,6 @@ namespace App\Admin\Controllers\Media;
 
 use App\Admin\Controller;
 use App\Models\Media\Image;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;

@@ -36,6 +36,16 @@ class FreightTemplate extends Model
     }
 
     /**
+     * @inerhitDoc
+     */
+    public static function getAllowSetFields()
+    {
+        return array_merge(parent::getAllowSetFields(), [
+            'sort' => 'number|min:0',
+        ]);
+    }
+
+    /**
      * 模板规则
      *
      * @return HasMany
@@ -56,15 +66,5 @@ class FreightTemplate extends Model
 
         return isset(static::$FEE_TYPE_TEXT_MAP[$val])
             ? static::$FEE_TYPE_TEXT_MAP[$val] : '';
-    }
-
-    /**
-     * @inerhitDoc
-     */
-    public static function getAllowSetFields()
-    {
-        return array_merge(parent::getAllowSetFields(), [
-            'sort' => 'number|min:0',
-        ]);
     }
 }

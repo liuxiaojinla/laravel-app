@@ -9,7 +9,7 @@ class Chirp extends Model
     use HasFactory;
 
     /**
-     * @var array 
+     * @var array
      */
     protected $guarded = [];
 }

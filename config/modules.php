@@ -122,8 +122,8 @@ return [
 
             // database
             'migration'       => ['path' => 'database/migrations', 'generate' => false],
-            'seeder'          => ['path' => 'database/Seeders', 'generate' => true],
-            'factory'         => ['path' => 'database/Factories', 'generate' => false],
+            'seeder'          => ['path' => 'database/seeders', 'generate' => false],
+            'factory'         => ['path' => 'database/factories', 'generate' => false],
 
             // route
             'routes'          => ['path' => 'routes', 'generate' => true],

@@ -11,7 +11,6 @@ use App\Http\Controller;
 use Illuminate\Http\Response;
 use Plugins\Website\App\Models\WebsiteProduct;
 use Plugins\Website\App\Models\WebsiteProductCategory;
-
 use Xin\Hint\Facades\Hint;
 use Xin\Support\Number;
 
@@ -25,7 +24,7 @@ class ProductCategoryController extends Controller
      */
     public function index()
     {
-        $isGood = $this->request->integer('is_good', 0);;
+        $isGood = $this->request->integer('is_good', 0);
 
         $order = 'id DESC';
         if ($isGood) {

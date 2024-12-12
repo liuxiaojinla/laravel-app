@@ -60,23 +60,6 @@ class ProductController extends Controller
     }
 
     /**
-     * 更新数据
-     * @return Response
-     */
-    public function update(ProductRequest $request)
-    {
-        $id = $this->request->validId();
-        $data = $request->validated();
-
-        $info = WebsiteProductCategory::query()->where('id', $id)->firstOrFail();
-        if (!$info->fill($data)->save()) {
-            return Hint::error("更新失败！");
-        }
-
-        return Hint::success("更新成功！", (string)url('index'), $info);
-    }
-
-    /**
      * 移动文章
      * @return Response
      * @throws ValidationException
@@ -96,6 +79,24 @@ class ProductController extends Controller
 
         return Hint::success('已移动！', null, $ids);
     }
+
+    /**
+     * 更新数据
+     * @return Response
+     */
+    public function update(ProductRequest $request)
+    {
+        $id = $this->request->validId();
+        $data = $request->validated();
+
+        $info = WebsiteProductCategory::query()->where('id', $id)->firstOrFail();
+        if (!$info->fill($data)->save()) {
+            return Hint::error("更新失败！");
+        }
+
+        return Hint::success("更新成功！", (string)url('index'), $info);
+    }
+
     /**
      * 删除数据
      * @return Response
@@ -103,7 +104,7 @@ class ProductController extends Controller
     public function delete()
     {
         $ids = $this->request->validIds();
-        $isForce = $this->request->integer('force', 0);;
+        $isForce = $this->request->integer('force', 0);
 
         WebsiteProduct::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
             $item->force($isForce)->delete();

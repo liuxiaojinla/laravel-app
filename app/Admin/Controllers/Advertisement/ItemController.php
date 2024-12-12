@@ -32,6 +32,24 @@ class ItemController extends Controller
     }
 
     /**
+     * @return AdvertisementPosition
+     */
+    protected function advertisementPosition()
+    {
+        $advertisementId = $this->advertisementId();
+        $info = AdvertisementPosition::query()->where('id', $advertisementId)->firstOrFail();
+        return with($info);
+    }
+
+    /**
+     * @return int
+     */
+    protected function advertisementId()
+    {
+        return request()->validId('advertisement_id');
+    }
+
+    /**
      * 数据展示
      * @param Request $request
      * @return View
@@ -45,6 +63,19 @@ class ItemController extends Controller
         ])->where('id', $id)->firstOrFail();
 
         return Hint::result($info);
+    }
+
+    /**
+     * 数据创建
+     * @return Response
+     */
+    public function store()
+    {
+        $data = $this->validated();
+
+        $info = AdvertisementItem::create($data);
+
+        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
@@ -67,19 +98,6 @@ class ItemController extends Controller
             'begin_time'       => '开始时间',
             'end_time'         => '结束时间',
         ]);
-    }
-
-    /**
-     * 数据创建
-     * @return Response
-     */
-    public function store()
-    {
-        $data = $this->validated();
-
-        $info = AdvertisementItem::create($data);
-
-        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**
@@ -120,24 +138,6 @@ class ItemController extends Controller
         });
 
         return Hint::success('删除成功！', null, $ids);
-    }
-
-    /**
-     * @return int
-     */
-    protected function advertisementId()
-    {
-        return request()->validId('advertisement_id');
-    }
-
-    /**
-     * @return AdvertisementPosition
-     */
-    protected function advertisementPosition()
-    {
-        $advertisementId = $this->advertisementId();
-        $info = AdvertisementPosition::query()->where('id', $advertisementId)->firstOrFail();
-        return with($info);
     }
 
     /**

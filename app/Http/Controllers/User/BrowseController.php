@@ -11,11 +11,9 @@ use App\Http\Controller;
 use App\Models\User\Browse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Support\SqlDebug;
-use \Xin\LaravelFortify\Model\Relation as RelationUtil;
+use Xin\LaravelFortify\Model\Relation as RelationUtil;
 
 class BrowseController extends Controller
 {
@@ -35,7 +33,7 @@ class BrowseController extends Controller
             'browseable' => function (MorphTo $morphTo) use ($topicType) {
                 $morphTo->constrain(
                     RelationUtil::morphToConstrain([
-                        $topicType
+                        $topicType,
                     ])
                 );
             },

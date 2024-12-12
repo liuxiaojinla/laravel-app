@@ -18,7 +18,7 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $status = $this->request->integer('status', 0);;
+        $status = $this->request->integer('status', 0);
 
         $search = $this->request->query();
         $data = Website::simple()->search($search)
@@ -77,7 +77,7 @@ class IndexController extends Controller
     public function delete()
     {
         $ids = $this->request->validIds();
-        $isForce = $this->request->integer('force', 0);;
+        $isForce = $this->request->integer('force', 0);
 
         Website::whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
             if ($isForce) {

@@ -1,0 +1,11 @@
+{
+    "name": "VCard",
+    "alias": "vcard",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Plugins\\VCard\\app\\Providers\\VCardServiceProvider"
+    ],
+    "files": []
+}

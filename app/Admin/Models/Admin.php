@@ -28,12 +28,18 @@ class Admin extends Authenticatable
     use Notifiable, Modelable;
 
     /**
+     * @var mixed
+     */
+    protected static $STATUS_TEXT_MAP = [
+        '0' => '禁用',
+        '1' => '启用',
+    ];
+    /**
      * @var string[]
      */
     protected $fillable = [
         'username',
     ];
-
     /**
      * @var string[]
      */
@@ -41,26 +47,16 @@ class Admin extends Authenticatable
         'login_count' => 'int',
         'login_time'  => 'timestamp',
     ];
-
     /**
      * @var array
      */
     protected $hidden = [
         'password',
     ];
-
     /**
      * @var array
      */
     protected $allMenuIds = null;
-
-    /**
-     * @var mixed
-     */
-    protected static $STATUS_TEXT_MAP = [
-        '0' => '禁用',
-        '1' => '启用',
-    ];
 
     /**
      * 检查是否更新了超级管理员
@@ -77,6 +73,16 @@ class Admin extends Authenticatable
     }
 
     /**
+     * 超级管理员ID
+     *
+     * @return int
+     */
+    public static function adminId()
+    {
+        return config('auth.guards.admin.administrator_id');
+    }
+
+    /**
      * 关联角色模型
      *
      * @return BelongsToMany
@@ -85,6 +91,50 @@ class Admin extends Authenticatable
     {
         return $this->belongsToMany(AdminRole::class, AdminAccess::class, 'role_id', 'target_id')
             ->wherePivot('type', 'admin');
+    }
+
+    /**
+     * 是否是超级管理员
+     *
+     * @return bool
+     */
+    public function isAdministrator()
+    {
+        return $this->getAttribute('is_admin');
+    }
+
+    /**
+     * 获取所有菜单ID
+     *
+     * @return array
+     */
+    public function getAllMenuIds()
+    {
+        if ($this->allMenuIds !== null) {
+            return $this->allMenuIds;
+        }
+
+        if ($this->roles->isEmpty()) {
+            return [];
+        }
+
+        $result = AdminAccess::query()->where([
+            'type' => 'menu',
+        ])
+            ->whereIn('role_id', $this->roles->pluck('id'))
+            ->pluck('target_id')->toArray();
+
+        $result = array_unique($result);
+
+        return $this->allMenuIds = array_values($result);
+    }
+
+    /**
+     * 清空当前内存菜单ID
+     */
+    public function flushAllMenuIds()
+    {
+        $this->allMenuIds = null;
     }
 
     /**
@@ -146,66 +196,12 @@ class Admin extends Authenticatable
     /**
      * 是否是超级管理员
      *
-     * @return bool
-     */
-    public function isAdministrator()
-    {
-        return $this->getAttribute('is_admin');
-    }
-
-    /**
-     * 超级管理员ID
-     *
-     * @return int
-     */
-    public static function adminId()
-    {
-        return config('auth.guards.admin.administrator_id');
-    }
-
-    /**
-     * 是否是超级管理员
-     *
      * @param int $id
      * @return bool
      */
     public static function checkAdmin($id)
     {
         return self::adminId() == $id;
-    }
-
-    /**
-     * 获取所有菜单ID
-     *
-     * @return array
-     */
-    public function getAllMenuIds()
-    {
-        if ($this->allMenuIds !== null) {
-            return $this->allMenuIds;
-        }
-
-        if ($this->roles->isEmpty()) {
-            return [];
-        }
-
-        $result = AdminAccess::query()->where([
-            'type' => 'menu',
-        ])
-            ->whereIn('role_id', $this->roles->pluck('id'))
-            ->pluck('target_id')->toArray();
-
-        $result = array_unique($result);
-
-        return $this->allMenuIds = array_values($result);
-    }
-
-    /**
-     * 清空当前内存菜单ID
-     */
-    public function flushAllMenuIds()
-    {
-        $this->allMenuIds = null;
     }
 
 }

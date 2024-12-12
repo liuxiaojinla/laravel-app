@@ -8,7 +8,6 @@
 namespace Plugins\Website\App\Models;
 
 use App\Models\Model;
-
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -44,7 +43,6 @@ class WebsiteLeaveMessage extends Model
 
     /**
      * @inheritDoc
-
      */
     protected static function resolveDetail($info, $options = [])
     {

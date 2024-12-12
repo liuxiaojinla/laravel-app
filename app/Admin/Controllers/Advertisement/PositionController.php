@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Validation\ValidationException;
 
 class PositionController extends Controller
 {
@@ -45,6 +44,19 @@ class PositionController extends Controller
     }
 
     /**
+     * 数据创建
+     * @return Response
+     */
+    public function store()
+    {
+        $data = $this->validated();
+
+        $info = AdvertisementPosition::query()->create($data);
+
+        return Hint::success("创建成功！", (string)url('index'), $info);
+    }
+
+    /**
      * @return array
      */
     protected function validated()
@@ -57,19 +69,6 @@ class PositionController extends Controller
             'title' => '广告位名称',
             'name'  => '唯一标识',
         ]);
-    }
-
-    /**
-     * 数据创建
-     * @return Response
-     */
-    public function store()
-    {
-        $data = $this->validated();
-
-        $info = AdvertisementPosition::query()->create($data);
-
-        return Hint::success("创建成功！", (string)url('index'), $info);
     }
 
     /**

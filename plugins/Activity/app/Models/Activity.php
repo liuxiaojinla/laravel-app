@@ -45,6 +45,16 @@ class Activity extends Model
     }
 
     /**
+     * 创建人
+     *
+     * @return BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id')->select(User::getSimpleFields());
+    }
+
+    /**
      * @return array
      */
     public static function getSimpleFields()
@@ -55,16 +65,6 @@ class Activity extends Model
             'last_join_user_id', 'last_join_time',
             'created_at', 'updated_at', 'deleted_at',
         ];
-    }
-
-    /**
-     * 创建人
-     *
-     * @return BelongsTo
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id')->select(User::getSimpleFields());
     }
 
     /**

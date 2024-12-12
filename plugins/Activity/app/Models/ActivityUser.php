@@ -23,17 +23,15 @@ class ActivityUser extends Pivot
     /**
      * @var string
      */
-    protected $table = 'activity_users';
-
+    public const UPDATED_AT = null;
     /**
      * @var bool
      */
     public $timestamps = true;
-
     /**
      * @var string
      */
-    public const UPDATED_AT = null;
+    protected $table = 'activity_users';
 
     /**
      * @inerhitDoc

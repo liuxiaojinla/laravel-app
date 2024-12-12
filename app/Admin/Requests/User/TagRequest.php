@@ -17,29 +17,29 @@ use Xin\LaravelFortify\Request\FormRequest;
 class TagRequest extends FormRequest
 {
 
-	/**
-	 * 验证规则
-	 *
-	 * @var array
-	 */
-	protected $rule = [
-		'title' => ['required','length:2,24'],
-	];
+    /**
+     * 验证规则
+     *
+     * @var array
+     */
+    protected $rule = [
+        'title' => ['required', 'length:2,24'],
+    ];
 
-	/**
-	 * 字段信息
-	 *
-	 * @var array
-	 */
-	protected $field = [
-		'title' => '标签名称',
-	];
+    /**
+     * 字段信息
+     *
+     * @var array
+     */
+    protected $field = [
+        'title' => '标签名称',
+    ];
 
-	/**
-	 * 情景模式
-	 *
-	 * @var array
-	 */
-	protected $scene = [];
+    /**
+     * 情景模式
+     *
+     * @var array
+     */
+    protected $scene = [];
 
 }

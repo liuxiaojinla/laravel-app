@@ -11,16 +11,6 @@ use Illuminate\Support\Facades\Route;
 class RouteServiceProvider extends ServiceProvider
 {
     /**
-     * @var string[]
-     */
-    protected static $allowModuleList = ['api', 'admin', 'web'];
-
-    /**
-     * @var string
-     */
-    protected static $defaultModule = 'web';
-
-    /**
      * The path to your application's "home" route.
      *
      * Typically, users are redirected here after authentication.
@@ -28,6 +18,48 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     public const HOME = '/dashboard';
+    /**
+     * @var string[]
+     */
+    protected static $allowModuleList = ['api', 'admin', 'web'];
+    /**
+     * @var string
+     */
+    protected static $defaultModule = 'web';
+
+    /**
+     * @return string
+     */
+    public static function getDefaultModule(): string
+    {
+        return self::$defaultModule;
+    }
+
+    /**
+     * @param string $defaultModule
+     * @return void
+     */
+    public static function setDefaultModule(string $defaultModule): void
+    {
+        self::$defaultModule = $defaultModule;
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getAllowModuleList(): array
+    {
+        return self::$allowModuleList;
+    }
+
+    /**
+     * @param array $allowModuleList
+     * @return void
+     */
+    public static function setAllowModuleList(array $allowModuleList): void
+    {
+        self::$allowModuleList = $allowModuleList;
+    }
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
@@ -106,39 +138,5 @@ class RouteServiceProvider extends ServiceProvider
         Request::macro('modulePath', function () use ($modulePath) {
             return $modulePath;
         });
-    }
-
-    /**
-     * @return string
-     */
-    public static function getDefaultModule(): string
-    {
-        return self::$defaultModule;
-    }
-
-    /**
-     * @param string $defaultModule
-     * @return void
-     */
-    public static function setDefaultModule(string $defaultModule): void
-    {
-        self::$defaultModule = $defaultModule;
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function getAllowModuleList(): array
-    {
-        return self::$allowModuleList;
-    }
-
-    /**
-     * @param array $allowModuleList
-     * @return void
-     */
-    public static function setAllowModuleList(array $allowModuleList): void
-    {
-        self::$allowModuleList = $allowModuleList;
     }
 }

@@ -11,7 +11,6 @@ use App\Admin\Controller;
 use App\Admin\Models\Admin;
 use App\Admin\Requests\Authorization\AdminRequest;
 use App\Exceptions\Error;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;

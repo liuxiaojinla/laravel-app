@@ -62,24 +62,6 @@ class ArticleController extends Controller
     }
 
     /**
-     * 更新数据
-     * @return Response
-     */
-    public function update(ArticleRequest $request)
-    {
-        $id = $this->request->validId();
-        $data = $request->validated();
-
-        $info = WebsiteArticle::query()->where('id', $id)->firstOrFail();
-        if (!$info->fill($data)->save()) {
-            return Hint::error("更新失败！");
-        }
-
-        return Hint::success("更新成功！", (string)url('index'), $info);
-    }
-
-
-    /**
      * 移动文章
      * @return Response
      * @throws ValidationException
@@ -101,13 +83,30 @@ class ArticleController extends Controller
     }
 
     /**
+     * 更新数据
+     * @return Response
+     */
+    public function update(ArticleRequest $request)
+    {
+        $id = $this->request->validId();
+        $data = $request->validated();
+
+        $info = WebsiteArticle::query()->where('id', $id)->firstOrFail();
+        if (!$info->fill($data)->save()) {
+            return Hint::error("更新失败！");
+        }
+
+        return Hint::success("更新成功！", (string)url('index'), $info);
+    }
+
+    /**
      * 删除数据
      * @return Response
      */
     public function delete()
     {
         $ids = $this->request->validIds();
-        $isForce = $this->request->integer('force', 0);;
+        $isForce = $this->request->integer('force', 0);
 
         WebsiteArticle::withTrashed()->whereIn('id', $ids)->select()->each(function (Model $item) use ($isForce) {
             if ($isForce) {

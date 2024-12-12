@@ -27,18 +27,6 @@ final class WebServer
     }
 
     /**
-     * 加密Cookie的值
-     * @param string $cookieName
-     * @return string
-     */
-    public static function encryptCookieValue($cookieName, $cookieValue)
-    {
-        return Crypt::encrypt(
-            CookieValuePrefix::create($cookieName, Crypt::getKey()) . $cookieValue
-        );
-    }
-
-    /**
      * 解密Cookie的值
      *
      * @param string $cookieName
@@ -50,6 +38,15 @@ final class WebServer
         $value = Crypt::decrypt($cookieValue);
 
         return CookieValuePrefix::validate($cookieName, $value, Crypt::getKey());
+    }
+
+    /**
+     * 获取Session的Cookie加密的值
+     * @return string
+     */
+    public static function getEncryptSessionCookieValue()
+    {
+        return self::getEncryptCookieValue(self::getSessionCookieKey());
     }
 
     /**
@@ -69,12 +66,15 @@ final class WebServer
     }
 
     /**
-     * 获取Session的Cookie加密的值
+     * 加密Cookie的值
+     * @param string $cookieName
      * @return string
      */
-    public static function getEncryptSessionCookieValue()
+    public static function encryptCookieValue($cookieName, $cookieValue)
     {
-        return self::getEncryptCookieValue(self::getSessionCookieKey());
+        return Crypt::encrypt(
+            CookieValuePrefix::create($cookieName, Crypt::getKey()) . $cookieValue
+        );
     }
 
     /**

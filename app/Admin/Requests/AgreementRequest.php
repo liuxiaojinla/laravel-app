@@ -47,7 +47,7 @@ class AgreementRequest extends FormRequest
     {
         $id = $this->integer('id');
         return [
-            'title'   => ['required','between:2,48'],
+            'title'   => ['required', 'between:2,48'],
             'name'    => ['required', 'alpha_dash:ascii', 'between:3,48', Rule::unique('agreements')->ignore($id)],
             'content' => ['required'],
         ];

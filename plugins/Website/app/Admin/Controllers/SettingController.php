@@ -10,8 +10,8 @@ namespace Plugins\Website\App\Admin\Controllers;
 use App\Admin\Controller;
 use Illuminate\Http\Response;
 use Plugins\Website\app\Http\Requests\WebsiteRequest;
-use Plugins\Website\App\Models\WebsiteAbout;
 use Plugins\Website\App\Models\Website;
+use Plugins\Website\App\Models\WebsiteAbout;
 use Xin\Hint\Facades\Hint;
 
 class SettingController extends Controller
@@ -53,7 +53,6 @@ class SettingController extends Controller
 
             return Hint::success('已更新！');
         }
-
 
 
         return Hint::result($info);

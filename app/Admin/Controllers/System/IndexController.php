@@ -32,6 +32,26 @@ class IndexController extends Controller
     }
 
     /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    protected function refreshSettingCache()
+    {
+        Setting::clearCache();
+        Event::refreshCache();
+        Artisan::call('queue:restart');
+    }
+
+    /**
+     * @return void
+     */
+    protected function refreshMenuCache()
+    {
+        //        app()->invoke([MenuController::class, 'sync']);
+        app()->invoke([PluginController::class, 'refreshMenus']);
+    }
+
+    /**
      * 清除配置缓存
      *
      * @return Response
@@ -45,17 +65,6 @@ class IndexController extends Controller
     }
 
     /**
-     * @return void
-     * @throws InvalidArgumentException
-     */
-    protected function refreshSettingCache()
-    {
-        Setting::clearCache();
-        Event::refreshCache();
-        Artisan::call('queue:restart');
-    }
-
-    /**
      * 清除菜单缓存
      *
      * @return Response
@@ -65,14 +74,5 @@ class IndexController extends Controller
         $this->refreshMenuCache();
 
         return Hint::success("已刷新缓存！");
-    }
-
-    /**
-     * @return void
-     */
-    protected function refreshMenuCache()
-    {
-        //        app()->invoke([MenuController::class, 'sync']);
-        app()->invoke([PluginController::class, 'refreshMenus']);
     }
 }

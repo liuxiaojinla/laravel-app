@@ -13,7 +13,7 @@ class TestJob extends Job
      *
      * @var int
      */
-//    public $tries = 5;
+    //    public $tries = 5;
 
     protected $retrySleepMilliseconds = 300;
 
@@ -24,8 +24,8 @@ class TestJob extends Job
         return false;
     }
 
-//    public function retryUntil()
-//    {
-//        return now()->addSeconds(10);
-//    }
+    //    public function retryUntil()
+    //    {
+    //        return now()->addSeconds(10);
+    //    }
 }

@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
         });
 
         // 转换相关的异常
-        $this->map(function (\Throwable $e) {
+        $this->map(function (Throwable $e) {
             if ($e instanceof PayInvalidConfigException) {
                 return new \InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
             } elseif ($e instanceof EasyWeChatInvalidConfigException) {
@@ -54,6 +54,17 @@ class Handler extends ExceptionHandler
         });
     }
 
+    /**
+     * Determine if the exception handler response should be JSON.
+     *
+     * @param Request $request
+     * @param Throwable $e
+     * @return bool
+     */
+    protected function shouldReturnJson($request, Throwable $e): bool
+    {
+        return WebServer::shouldReturnJson($request);
+    }
 
     /**
      * @inerhitDoc
@@ -85,18 +96,6 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Determine if the exception handler response should be JSON.
-     *
-     * @param Request $request
-     * @param \Throwable $e
-     * @return bool
-     */
-    protected function shouldReturnJson($request, Throwable $e): bool
-    {
-        return WebServer::shouldReturnJson($request);
-    }
-
-    /**
      * Prepare a JSON response for the given exception.
      *
      * @param Request $request
@@ -114,7 +113,7 @@ class Handler extends ExceptionHandler
     /**
      * Convert the given exception to an array.
      *
-     * @param \Throwable $e
+     * @param Throwable $e
      * @return array
      */
     protected function convertExceptionToArray(Throwable $e): array
@@ -146,7 +145,7 @@ class Handler extends ExceptionHandler
 
     /**
      * 是否是安全的异常
-     * @param \Throwable $e
+     * @param Throwable $e
      * @return bool
      */
     protected function isSafetyException($e)

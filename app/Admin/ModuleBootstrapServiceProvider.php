@@ -47,7 +47,7 @@ class ModuleBootstrapServiceProvider extends ServiceProvider
         });
 
         Auth::resolved(function ($auth) {
-//            dd(config('auth'));
+            //            dd(config('auth'));
         });
     }
 }

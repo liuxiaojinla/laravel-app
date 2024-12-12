@@ -93,6 +93,59 @@ class Article extends Model
     protected $guarded = [];
 
     /**
+     * @inheritDoc
+     */
+    public static function getSimpleFields()
+    {
+        return [
+            'id', 'title', 'cover', 'category_id',
+            'status', 'display',
+            'view_count', 'virtual_view_count',
+            'collect_count', 'virtual_collect_count',
+            'share_count', 'virtual_share_count',
+            'is_original', 'original_url',
+            'good_time', 'publish_time',
+            'updated_at', 'created_at',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getAllowSetFields()
+    {
+        return array_merge(parent::getAllowSetFields(), [
+            'display' => 'in:0,1',
+        ]);
+    }
+
+    /**
+     * 获取状态配置信息
+     * @return string[][]
+     */
+    public static function getEnumStatusData()
+    {
+        return [
+            self::STATUS_DRAFT    => [
+                'class_type' => 'default',
+                'text'       => '草稿中',
+            ],
+            self::STATUS_PUBLISH  => [
+                'class_type' => 'success',
+                'text'       => '已发布',
+            ],
+            self::STATUS_REFUSED  => [
+                'class_type' => 'danger',
+                'text'       => '已禁用',
+            ],
+            self::STATUS_DISABLED => [
+                'class_type' => 'danger',
+                'text'       => '已禁用',
+            ],
+        ];
+    }
+
+    /**
      * 分类动态属性
      *
      * @return BelongsTo
@@ -210,58 +263,5 @@ class Article extends Model
         $val = $this->getData('update_time');
 
         return Time::formatRelative($val);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSimpleFields()
-    {
-        return [
-            'id', 'title', 'cover', 'category_id',
-            'status', 'display',
-            'view_count', 'virtual_view_count',
-            'collect_count', 'virtual_collect_count',
-            'share_count', 'virtual_share_count',
-            'is_original', 'original_url',
-            'good_time', 'publish_time',
-            'updated_at', 'created_at',
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getAllowSetFields()
-    {
-        return array_merge(parent::getAllowSetFields(), [
-            'display' => 'in:0,1',
-        ]);
-    }
-
-    /**
-     * 获取状态配置信息
-     * @return \string[][]
-     */
-    public static function getEnumStatusData()
-    {
-        return [
-            self::STATUS_DRAFT    => [
-                'class_type' => 'default',
-                'text'       => '草稿中',
-            ],
-            self::STATUS_PUBLISH  => [
-                'class_type' => 'success',
-                'text'       => '已发布',
-            ],
-            self::STATUS_REFUSED  => [
-                'class_type' => 'danger',
-                'text'       => '已禁用',
-            ],
-            self::STATUS_DISABLED => [
-                'class_type' => 'danger',
-                'text'       => '已禁用',
-            ],
-        ];
     }
 }

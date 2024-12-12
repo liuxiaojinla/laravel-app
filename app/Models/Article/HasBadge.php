@@ -67,7 +67,7 @@ trait HasBadge
         foreach ($badgeIds as $badgeId) {
             if (isset(self::$BADGE_LIST[$badgeId])) {
                 $result[] = [
-                    'id' => $badgeId,
+                    'id'    => $badgeId,
                     'title' => self::$BADGE_LIST[$badgeId],
                 ];
             }

@@ -62,6 +62,19 @@ class FreightTemplateController extends Controller
     }
 
     /**
+     * 数据创建之后
+     *
+     * @param FreightTemplate $model
+     * @param array $data
+     */
+    protected function afterCreate($model, $data)
+    {
+        foreach ($data['rules'] as $rule) {
+            $model->rules()->save($rule);
+        }
+    }
+
+    /**
      * 更新数据
      * @return Response
      */
@@ -82,6 +95,26 @@ class FreightTemplateController extends Controller
         $this->afterUpdate($info, $data);
 
         return Hint::success("更新成功！", (string)url('index'), $info);
+    }
+
+    /**
+     * 数据更新之后
+     *
+     * @param FreightTemplate $model
+     * @param array $data
+     */
+    protected function afterUpdate($model, $data)
+    {
+        $ruleIds = array_column($data['rules'], 'id');
+        $existIds = FreightTemplateRule::query()->where('template_id', $model->id)->pluck('id')->toArray();
+        $detachIds = array_diff($existIds, $ruleIds);
+
+        foreach ($data['rules'] as $rule) {
+            $model->rules()->save($rule);
+        }
+
+        FreightTemplateRule::query()->where('template_id', $model->id)
+            ->where('id', 'in', $detachIds)->delete();
     }
 
     /**
@@ -118,40 +151,6 @@ class FreightTemplateController extends Controller
         FreightTemplate::setManyValue($ids, $field, $value);
 
         return Hint::success("更新成功！");
-    }
-
-
-    /**
-     * 数据创建之后
-     *
-     * @param FreightTemplate $model
-     * @param array $data
-     */
-    protected function afterCreate($model, $data)
-    {
-        foreach ($data['rules'] as $rule) {
-            $model->rules()->save($rule);
-        }
-    }
-
-    /**
-     * 数据更新之后
-     *
-     * @param FreightTemplate $model
-     * @param array $data
-     */
-    protected function afterUpdate($model, $data)
-    {
-        $ruleIds = array_column($data['rules'], 'id');
-        $existIds = FreightTemplateRule::query()->where('template_id', $model->id)->pluck('id')->toArray();
-        $detachIds = array_diff($existIds, $ruleIds);
-
-        foreach ($data['rules'] as $rule) {
-            $model->rules()->save($rule);
-        }
-
-        FreightTemplateRule::query()->where('template_id', $model->id)
-            ->where('id', 'in', $detachIds)->delete();
     }
 
 

@@ -18,6 +18,18 @@ class Model extends BaseModel
     use Modelable;
 
     /**
+     * 获取枚举字段文字样式
+     *
+     * @return string
+     */
+    public static function getFieldEnumDataColorClass($field, $value, $default = null)
+    {
+        $styleValue = self::getFieldEnumData($field, $value . ".class_type", $default);
+
+        return app(DefaultStyle::class)->getTextColorClass($styleValue);
+    }
+
+    /**
      * 获取枚举字段数据
      * @param string $field
      * @param string $key
@@ -34,17 +46,5 @@ class Model extends BaseModel
         $data = call_user_func([static::class, $method]);
 
         return Arr::get($data, $key, $default);
-    }
-
-    /**
-     * 获取枚举字段文字样式
-     *
-     * @return string
-     */
-    public static function getFieldEnumDataColorClass($field, $value, $default = null)
-    {
-        $styleValue = self::getFieldEnumData($field, $value . ".class_type", $default);
-
-        return app(DefaultStyle::class)->getTextColorClass($styleValue);
     }
 }

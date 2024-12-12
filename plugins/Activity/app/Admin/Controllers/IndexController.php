@@ -4,7 +4,6 @@
 namespace Plugins\Activity\App\Admin\Controllers;
 
 use App\Admin\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Plugins\Activity\App\Http\Requests\ActivityRequest;
@@ -29,12 +28,11 @@ class IndexController extends Controller
 
     /**
      * 数据详情
-     * @param Request $request
      * @return Response
      */
-    public function info(Request $request)
+    public function info()
     {
-        $id = $request->validId();
+        $id = $this->request->validId();
         $info = Activity::query()->with([
         ])->where('id', $id)->firstOrFail();
         return Hint::result($info);

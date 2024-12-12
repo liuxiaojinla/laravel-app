@@ -13,11 +13,11 @@ use App\Events\FavoriteEvent;
 interface FavoriteListenerOfStatic
 {
 
-	/**
-	 * 收藏/取消收藏回调
-	 * @param FavoriteEvent $event
-	 * @return mixed
-	 */
-	public static function onFavorite(FavoriteEvent $event);
+    /**
+     * 收藏/取消收藏回调
+     * @param FavoriteEvent $event
+     * @return mixed
+     */
+    public static function onFavorite(FavoriteEvent $event);
 
 }

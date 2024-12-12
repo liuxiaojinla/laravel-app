@@ -18,7 +18,7 @@ class ApiIndex
     private $request;
 
     /**
-     * @param \Xin\Support\Fluent $data
+     * @param Fluent $data
      * @return void
      */
     public function handle(Fluent $data)

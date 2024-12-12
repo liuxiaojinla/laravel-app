@@ -69,33 +69,6 @@ class WechatMiniAppController extends Controller
     }
 
     /**
-     * 解密会话信息
-     * @return mixed
-     * @throws ClientExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     */
-    public function decryptSession()
-    {
-        $sessionKey = $this->request->validString('session_key');
-        $iv = $this->request->validString('iv');
-        $encryptedData = $this->request->validString('encrypted_data');
-
-        // 获取 MiniProgram 实例
-        $miniApp = $this->wechat->miniApp();
-
-        try {
-            $result = $miniApp->getUtils()->decryptSession($sessionKey, $iv, $encryptedData);
-        } catch (DecryptException $e) {
-            Hint::outputAlert("Session已失效！");
-        }
-
-        return Hint::result($result);
-    }
-
-    /**
      * 解密手机号
      *
      * @return Response
@@ -131,6 +104,33 @@ class WechatMiniAppController extends Controller
         }
 
         return Hint::result($phoneInfo);
+    }
+
+    /**
+     * 解密会话信息
+     * @return mixed
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function decryptSession()
+    {
+        $sessionKey = $this->request->validString('session_key');
+        $iv = $this->request->validString('iv');
+        $encryptedData = $this->request->validString('encrypted_data');
+
+        // 获取 MiniProgram 实例
+        $miniApp = $this->wechat->miniApp();
+
+        try {
+            $result = $miniApp->getUtils()->decryptSession($sessionKey, $iv, $encryptedData);
+        } catch (DecryptException $e) {
+            Hint::outputAlert("Session已失效！");
+        }
+
+        return Hint::result($result);
     }
 
 }

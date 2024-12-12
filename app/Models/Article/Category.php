@@ -51,28 +51,111 @@ class Category extends Model
      * 缓存数据的key
      */
     public const CACHE_KEY = '__sys_category_list__';
-
-    /**
-     * @var string
-     */
-    protected $table = 'article_categories';
-
-    /**
-     * @var int
-     */
-    protected $defaultSoftDelete = 0;
-
     /**
      * 缓存列表
      *
      * @var array
      */
     protected static $nameToIdCacheList = null;
-
+    /**
+     * @var string
+     */
+    protected $table = 'article_categories';
+    /**
+     * @var int
+     */
+    protected $defaultSoftDelete = 0;
     /**
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * 获取列表
+     *
+     * @param array $query
+     * @param string $order
+     * @param int $page
+     * @param int $limit
+     * @return Collection
+     */
+    public static function getGoodList($query, $order = 'sort', $page = 1, $limit = 10)
+    {
+        $field = ['id', 'title', 'description', 'cover'];
+
+        return static::query()->where('status', 1)
+            ->where($query)
+            ->select($field)
+            ->orderBy($order)
+            ->forPage($page, $limit)
+            ->get();
+    }
+
+    /**
+     * 根据分类标识获取分类ID
+     *
+     * @param string $name
+     * @return int
+     */
+    public static function getIdByName($name)
+    {
+        if (is_null(self::$nameToIdCacheList)) {
+            if (Cache::has(self::CACHE_KEY)) {
+                $data = Cache::get(self::CACHE_KEY);
+            }
+
+            if (empty($data)) {
+                $data = static::column('id', 'name');
+            }
+
+            if (empty($data)) {
+                self::$nameToIdCacheList = [];
+            } else {
+                Cache::set(self::CACHE_KEY, $data);
+                self::$nameToIdCacheList = $data;
+            }
+        }
+
+        return self::$nameToIdCacheList[$name] ?? 0;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getAllowSetFields()
+    {
+        return array_merge(parent::getAllowSetFields(), [
+            'sort' => 'number|min:0',
+        ]);
+    }
+
+    /**
+     * 数据写入后
+     *
+     * @param static $model
+     */
+    protected static function onAfterWrite($model)
+    {
+        static::refreshCache();
+    }
+
+    /**
+     * 更新缓存
+     */
+    public static function refreshCache()
+    {
+        Cache::delete(static::CACHE_KEY);
+    }
+
+    /**
+     * 数据删除后
+     *
+     * @param static $model
+     */
+    protected static function onAfterDelete($model)
+    {
+        static::refreshCache();
+    }
 
     /**
      * 关联文章
@@ -82,20 +165,6 @@ class Category extends Model
     public function articles()
     {
         return $this->hasMany(Article::class, 'category_id');
-    }
-
-    /**
-     * 关注用户
-     *
-     * @return BelongsToMany
-     */
-    public function followUsers()
-    {
-        return $this->belongsToMany(User::class, Favorite::class, 'user_id', 'topic_id')
-            ->select(array_map(function ($field) {
-                return "user.{$field}";
-            }, User::getSimpleFields()))
-            ->wherePivot('topic_type', 'article');
     }
 
     /**
@@ -132,6 +201,20 @@ class Category extends Model
         $followUsers->prepend($user);
 
         return $followUsers;
+    }
+
+    /**
+     * 关注用户
+     *
+     * @return BelongsToMany
+     */
+    public function followUsers()
+    {
+        return $this->belongsToMany(User::class, Favorite::class, 'user_id', 'topic_id')
+            ->select(array_map(function ($field) {
+                return "user.{$field}";
+            }, User::getSimpleFields()))
+            ->wherePivot('topic_type', 'article');
     }
 
     protected function getCoverSmallAttribute()
@@ -199,93 +282,6 @@ class Category extends Model
         $virtualCount = $this->getAttribute('virtual_article_view_count');
 
         return Number::formatSimple($realCount + $virtualCount);
-    }
-
-    /**
-     * 获取列表
-     *
-     * @param array $query
-     * @param string $order
-     * @param int $page
-     * @param int $limit
-     * @return Collection
-     */
-    public static function getGoodList($query, $order = 'sort', $page = 1, $limit = 10)
-    {
-        $field = ['id', 'title', 'description', 'cover'];
-
-        return static::query()->where('status', 1)
-            ->where($query)
-            ->select($field)
-            ->orderBy($order)
-            ->forPage($page, $limit)
-            ->get();
-    }
-
-    /**
-     * 数据写入后
-     *
-     * @param static $model
-     */
-    protected static function onAfterWrite($model)
-    {
-        static::refreshCache();
-    }
-
-    /**
-     * 数据删除后
-     *
-     * @param static $model
-     */
-    protected static function onAfterDelete($model)
-    {
-        static::refreshCache();
-    }
-
-    /**
-     * 根据分类标识获取分类ID
-     *
-     * @param string $name
-     * @return int
-     */
-    public static function getIdByName($name)
-    {
-        if (is_null(self::$nameToIdCacheList)) {
-            if (Cache::has(self::CACHE_KEY)) {
-                $data = Cache::get(self::CACHE_KEY);
-            }
-
-            if (empty($data)) {
-                $data = static::column('id', 'name');
-            }
-
-            if (empty($data)) {
-                self::$nameToIdCacheList = [];
-            } else {
-                Cache::set(self::CACHE_KEY, $data);
-                self::$nameToIdCacheList = $data;
-            }
-        }
-
-        return self::$nameToIdCacheList[$name] ?? 0;
-    }
-
-    /**
-     * 更新缓存
-     */
-    public static function refreshCache()
-    {
-        Cache::delete(static::CACHE_KEY);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getAllowSetFields()
-    {
-        return array_merge(parent::getAllowSetFields(), [
-            'sort' => 'number|min:0',
-        ]);
     }
 
 }

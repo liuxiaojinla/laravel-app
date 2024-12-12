@@ -41,7 +41,7 @@ class UploadController extends Controller
     {
         $scene = $this->request->input('scene', 'image');
         $targetFile = $this->request->file('file');
-        if (empty($targetFile)){
+        if (empty($targetFile)) {
             throw Error::validationException("请上传文件。");
         }
 

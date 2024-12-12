@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Plugins\Mall\App\Http\Requests\GoodsRequest;
 use Plugins\Mall\App\Models\Goods;
-use Plugins\Mall\App\Models\GoodsBrand;
 use Plugins\Mall\App\Models\GoodsSku;
 use Xin\Hint\Facades\Hint;
 

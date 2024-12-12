@@ -31,7 +31,6 @@ class WebsiteArticleCategory extends Model
 {
 
 
-
     /**
      * @var string
      */

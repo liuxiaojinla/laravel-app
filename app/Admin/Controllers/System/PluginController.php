@@ -79,386 +79,6 @@ class PluginController extends Controller
     }
 
     /**
-     * 数据展示
-     * @param Request $request
-     * @return View
-     */
-    public function show(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = Plugin::query()->where('id', $id)->firstOrFail();
-        $this->assignEvents();
-
-        return view('plugin.show', [
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 数据更新表单
-     * @param Request $request
-     * @return \Illuminate\View\View
-     */
-    public function edit(Request $request)
-    {
-        $id = $request->validId();
-
-        $info = Plugin::query()->where('id', $id)->firstOrFail();
-        $this->assignEvents();
-
-        return view('plugin.edit', [
-            'info' => $info,
-        ]);
-    }
-
-    /**
-     * 更新数据
-     * @return Response
-     */
-    public function update(PluginRequest $request)
-    {
-        $id = $request->validId();
-
-        $info = Agreement::query()->where('id', $id)->firstOrFail();
-
-        $data = $request->validated();
-
-        if (!$info->save($data)) {
-            return Hint::error("更新失败！");
-        }
-
-        $this->updateCache();
-
-        return Hint::success("更新成功！", (string)url('index'), $info);
-    }
-
-    /**
-     * 删除数据
-     * @return Response
-     */
-    public function delete(Request $request)
-    {
-        $ids = $request->validIds();
-        $isForce = (int)$request->input('force', 0);
-
-        Plugin::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
-            if ($isForce) {
-                $item->forceDelete();
-            } else {
-                $item->delete();
-            }
-        });
-
-        return Hint::success('删除成功！', null, $ids);
-    }
-
-    /**
-     * 安装插件
-     *
-     * @return Response
-     */
-    public function install()
-    {
-        /** @var DatabasePlugin $info */
-        $info = $this->findIsEmptyAssert();
-        if ($info->install) {
-            return Hint::success("应用已安装！");
-        }
-
-        if (!$info->local_version) {
-            return Hint::error("应用已删除！");
-        }
-
-        try {
-            $pluginInfo = $this->pluginManager->installPlugin($info->name);
-
-            $this->updateInfo($pluginInfo);
-
-            // 更新配置
-            $info->save([
-                'install' => 1,
-                'version' => $pluginInfo->getVersion(),
-            ]);
-        } catch (\Exception $e) {
-            return Hint::error($e->getMessage());
-        }
-
-        return Hint::success("应用已安装！");
-    }
-
-    /**
-     * 卸载插件
-     *
-     * @return Response
-     */
-    public function uninstall()
-    {
-        /** @var DatabasePlugin $info */
-        $info = $this->findIsEmptyAssert();
-        if (!$info->install) {
-            return Hint::success("应用已卸载！");
-        }
-
-        try {
-            $pluginInfo = $this->pluginManager->uninstallPlugin($info->name);
-
-            $pluginDetail = $pluginInfo->getInfo();
-
-            // 卸载事件
-            if (isset($pluginDetail['events'])) {
-                DatabaseEvent::unmountAddon($info->name);
-            }
-
-            // 配置菜单
-            if (isset($pluginDetail['menus'])) {
-                $this->updateMenus(false, $pluginDetail['menus'], $pluginInfo);
-            }
-
-            $info->save(['install' => 0]);
-        } catch (PluginNotFoundException $e) {
-            DatabaseEvent::unmountAddon($info->name);
-            $info->save(['install' => 0]);
-
-            return Hint::success("应用目录已被删除！");
-        } catch (\Exception $e) {
-            return Hint::error($e->getMessage());
-        }
-
-        return Hint::success("应用已卸载！");
-    }
-
-    /**
-     * 升级插件
-     *
-     * @return Response
-     * @throws \Xin\Plugin\Contracts\PluginNotFoundException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function upgrade()
-    {
-        /** @var DatabasePlugin $info */
-        $info = $this->findIsEmptyAssert();
-        if (!$info->install) {
-            return Hint::success("应用已卸载！");
-        }
-
-        if (!$info->local_version) {
-            return Hint::error("应用已删除！");
-        }
-
-        try {
-            $pluginInfo = $this->pluginManager->plugin($info->name);
-            $this->updateInfo($pluginInfo);
-            $info->save([
-                'version' => $pluginInfo->getVersion(),
-            ]);
-        } catch (\Exception $e) {
-            return Hint::error($e->getMessage());
-        }
-
-        return Hint::success("已更新信息");
-    }
-
-    /**
-     * 更新插件信息
-     *
-     * @param \Xin\Plugin\Contracts\PluginInfo $pluginInfo
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    protected function updateInfo(PluginInfoContract $pluginInfo)
-    {
-        // 获取插件描述信息
-        $pluginDetail = $pluginInfo->getInfo();
-
-        // 生成静态资源软链接
-        $this->createStaticSymlink($pluginInfo);
-
-        // 安装事件
-        if (isset($pluginDetail['events'])) {
-            DatabaseEvent::mountAddon($pluginInfo->getName(), $pluginDetail['events']);
-        }
-
-        // 配置菜单
-        $this->updateMenus(true, $pluginInfo);
-    }
-
-    /**
-     * 设置菜单
-     *
-     * @param bool $isInstall
-     * @param \Xin\Plugin\Contracts\PluginInfo $pluginInfo
-     */
-    protected function updateMenus($isInstall, PluginInfoContract $pluginInfo)
-    {
-        $menuGuards = array_keys($this->app->config->get('menu.menus'));
-        foreach ($menuGuards as $guard) {
-            if ($isInstall) {
-                $menusFilename = $pluginInfo->path($guard) . "menus.php";
-                if (!file_exists($menusFilename)) {
-                    continue;
-                }
-                $menusData = require_once $menusFilename;
-                Menu::menu($guard)->puts($menusData, $pluginInfo->getName());
-            } else {
-                Menu::menu($guard)->forget([
-                    'plugin' => $pluginInfo->getName(),
-                ]);
-            }
-        }
-    }
-
-    /**
-     * 插件配置
-     *
-     * @return Response
-     */
-    public function config(Request $request)
-    {
-        /** @var DatabasePlugin $info */
-        $info = $this->findIsEmptyAssert();
-        if (!$info->install) {
-            return Hint::success("插件未安装！");
-        }
-
-        // 获取插件实例
-        $pluginInfo = $this->pluginManager->plugin($info->name);
-
-        if (!$request->isPost()) {
-            // 获取插件配置
-            $this->assign([
-                'info' => $info,
-                'config_tpl' => $pluginInfo->getConfigTemplate((array)$info->config),
-            ]);
-
-            return $this->fetch();
-        }
-
-        $config = $request->input('config/a', []);
-        foreach ($pluginInfo->getConfigTypeList() as $key => $type) {
-            if (!isset($config[$key])) {
-                continue;
-            }
-
-            if ('int' == $type) {
-                $config[$key] = (int)$config[$key];
-            } elseif ('float' == $type) {
-                $config[$key] = (float)$config[$key];
-            } elseif ('array' == $type) {
-                $config[$key] = Arr::parse($config[$key]);
-            }
-        }
-
-//        $info->config = array_merge((array)$info->config, $config);
-        $info->config = $config;
-
-        $info->save();
-
-        return Hint::success('配置已更新！');
-    }
-
-    /**
-     * 根据id获取数据，如果为空将中断执行
-     *
-     * @param int|null $id
-     * @return array|\think\Model
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    protected function findIsEmptyAssert($id = null)
-    {
-        if ($id) {
-            return Plugin::findOrFail($id);
-        }
-
-        if ($request->has('name')) {
-            return Plugin::query()->where('name', $request->validString('name'))->findOrFail($id);
-        }
-
-        return Plugin::findOrFail($request->validId());
-    }
-
-    /**
-     * 重新刷新插件菜单
-     *
-     * @return \Illuminate\Http\Response
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \Xin\Plugin\Contracts\PluginNotFoundException
-     */
-    public function refreshMenus(Request $request)
-    {
-        $plugin = $request->input('plugin', '', 'trim');
-
-        $menuGuards = array_keys($this->app->config->get('menu.menus'));
-        foreach ($menuGuards as $guard) {
-            Menu::menu($guard)->refresh($plugin);
-        }
-
-        DatabasePlugin::query()->where([
-            'install' => 1,
-            'status' => 1,
-        ])->when($plugin, ['name' => $plugin])
-            ->select()
-            ->each(function (DatabasePlugin $info) {
-                if (!$this->pluginManager->has($info->name)) {
-                    return;
-                }
-
-                $pluginInfo = $this->pluginManager->plugin($info->name);
-
-                // 配置菜单
-                $this->updateMenus(true, $pluginInfo);
-            });
-
-        return Hint::success("已刷新！");
-    }
-
-    /**
-     * 创建插件资源目录软链接
-     *
-     * @param \Xin\Plugin\Contracts\PluginInfo $pluginInfo
-     */
-    protected function createStaticSymlink(PluginInfoContract $pluginInfo)
-    {
-        $pluginName = $pluginInfo->getName();
-        $pluginStaticPath = $pluginInfo->path('static');
-        $linkPath = public_path('vendor') . $pluginName;
-
-        // 检查原路径是否存在
-        if (!is_dir($pluginStaticPath)) {
-            return;
-        }
-
-        // 检查目标路径是否存在，如果存在则需要删除
-        if (is_dir($linkPath)) {
-            @rmdir($linkPath);
-        }
-        if (file_exists($linkPath) || @lstat($linkPath)) {
-            @unlink($linkPath);
-        }
-
-        // 创建软链接
-        if (!@symlink($pluginStaticPath, $linkPath)) {
-            throw new \LogicException('资源目录软链接创建失败，请检查 public 目录是否有可写权限！');
-        }
-    }
-
-    /**
-     * 更新缓存
-     * @return void
-     */
-    protected function updateCache()
-    {
-        DatabaseEvent::refreshCache();
-        DatabasePlugin::refreshPluginDisabledListCache();
-    }
-
-    /**
      * 初始化插件
      *
      * @param Plugin $pluginModel
@@ -564,12 +184,12 @@ class PluginController extends Controller
     protected function buildManifestContent($data)
     {
         $info = var_export([
-            'name' => $data['name'],
-            'title' => $data['title'],
+            'name'        => $data['name'],
+            'title'       => $data['title'],
             'description' => $data['description'],
-            'author' => $data['author'],
-            'version' => $data['version'],
-            'events' => $data['events'],
+            'author'      => $data['author'],
+            'version'     => $data['version'],
+            'events'      => $data['events'],
         ], true);
 
         return <<<EOT
@@ -665,32 +285,6 @@ class $eventClass{
 	protected function handle(){
 	}
 }
-EOT;
-    }
-
-    /**
-     * 生产配置文件
-     *
-     * @return string
-     */
-    protected function buildConfigTplContent()
-    {
-        return <<<EOT
-<?php
-return [
-	[
-		'title'  => '基本',
-		'config' => [
-			[
-				'title' => '小挂件是否显示',
-				'name'  => 'display',
-				'type'  => 'switch',
-				'value' => 1,
-			],
-		],
-	],
-];
-?>
 EOT;
     }
 
@@ -850,40 +444,6 @@ EOT;
     }
 
     /**
-     * 生产菜单配置文件
-     *
-     * @param array $data
-     * @return string
-     */
-    protected function buildAdminMenusConfigContent($data)
-    {
-        return <<<EOT
-<?php
-return [
-	[
-		'title'  => '{$data['title']}',
-		'url'    => '{$data['name']}>index/index',
-		'show'   => true,
-		'link'   => true,
-		'icon'   => 'fa fa-gavel',
-		'sort'   => 300,
-		'parent' => 'marketing',
-		'child'  => [
-			[
-				'title' => '新增{$data['title']}',
-				'url'   => '{$data['name']}>index/create',
-			],
-			[
-				'title' => '更新{$data['title']}',
-				'url'   => '{$data['name']}>index/update',
-			],
-		],
-	],
-];
-EOT;
-    }
-
-    /**
      * 创建后台页面文件
      *
      * @param array $data
@@ -989,6 +549,446 @@ EOT;
 <script>
 </script>
 {/block}
+EOT;
+    }
+
+    /**
+     * 生产菜单配置文件
+     *
+     * @param array $data
+     * @return string
+     */
+    protected function buildAdminMenusConfigContent($data)
+    {
+        return <<<EOT
+<?php
+return [
+	[
+		'title'  => '{$data['title']}',
+		'url'    => '{$data['name']}>index/index',
+		'show'   => true,
+		'link'   => true,
+		'icon'   => 'fa fa-gavel',
+		'sort'   => 300,
+		'parent' => 'marketing',
+		'child'  => [
+			[
+				'title' => '新增{$data['title']}',
+				'url'   => '{$data['name']}>index/create',
+			],
+			[
+				'title' => '更新{$data['title']}',
+				'url'   => '{$data['name']}>index/update',
+			],
+		],
+	],
+];
+EOT;
+    }
+
+    /**
+     * 更新缓存
+     * @return void
+     */
+    protected function updateCache()
+    {
+        DatabaseEvent::refreshCache();
+        DatabasePlugin::refreshPluginDisabledListCache();
+    }
+
+    /**
+     * 数据展示
+     * @param Request $request
+     * @return View
+     */
+    public function show(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = Plugin::query()->where('id', $id)->firstOrFail();
+        $this->assignEvents();
+
+        return view('plugin.show', [
+            'info' => $info,
+        ]);
+    }
+
+    /**
+     * 数据更新表单
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function edit(Request $request)
+    {
+        $id = $request->validId();
+
+        $info = Plugin::query()->where('id', $id)->firstOrFail();
+        $this->assignEvents();
+
+        return view('plugin.edit', [
+            'info' => $info,
+        ]);
+    }
+
+    /**
+     * 更新数据
+     * @return Response
+     */
+    public function update(PluginRequest $request)
+    {
+        $id = $request->validId();
+
+        $info = Agreement::query()->where('id', $id)->firstOrFail();
+
+        $data = $request->validated();
+
+        if (!$info->save($data)) {
+            return Hint::error("更新失败！");
+        }
+
+        $this->updateCache();
+
+        return Hint::success("更新成功！", (string)url('index'), $info);
+    }
+
+    /**
+     * 删除数据
+     * @return Response
+     */
+    public function delete(Request $request)
+    {
+        $ids = $request->validIds();
+        $isForce = (int)$request->input('force', 0);
+
+        Plugin::query()->whereIn('id', $ids)->get()->each(function (Model $item) use ($isForce) {
+            if ($isForce) {
+                $item->forceDelete();
+            } else {
+                $item->delete();
+            }
+        });
+
+        return Hint::success('删除成功！', null, $ids);
+    }
+
+    /**
+     * 安装插件
+     *
+     * @return Response
+     */
+    public function install()
+    {
+        /** @var DatabasePlugin $info */
+        $info = $this->findIsEmptyAssert();
+        if ($info->install) {
+            return Hint::success("应用已安装！");
+        }
+
+        if (!$info->local_version) {
+            return Hint::error("应用已删除！");
+        }
+
+        try {
+            $pluginInfo = $this->pluginManager->installPlugin($info->name);
+
+            $this->updateInfo($pluginInfo);
+
+            // 更新配置
+            $info->save([
+                'install' => 1,
+                'version' => $pluginInfo->getVersion(),
+            ]);
+        } catch (\Exception $e) {
+            return Hint::error($e->getMessage());
+        }
+
+        return Hint::success("应用已安装！");
+    }
+
+    /**
+     * 根据id获取数据，如果为空将中断执行
+     *
+     * @param int|null $id
+     * @return array|\think\Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    protected function findIsEmptyAssert($id = null)
+    {
+        if ($id) {
+            return Plugin::findOrFail($id);
+        }
+
+        if ($request->has('name')) {
+            return Plugin::query()->where('name', $request->validString('name'))->findOrFail($id);
+        }
+
+        return Plugin::findOrFail($request->validId());
+    }
+
+    /**
+     * 更新插件信息
+     *
+     * @param \Xin\Plugin\Contracts\PluginInfo $pluginInfo
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    protected function updateInfo(PluginInfoContract $pluginInfo)
+    {
+        // 获取插件描述信息
+        $pluginDetail = $pluginInfo->getInfo();
+
+        // 生成静态资源软链接
+        $this->createStaticSymlink($pluginInfo);
+
+        // 安装事件
+        if (isset($pluginDetail['events'])) {
+            DatabaseEvent::mountAddon($pluginInfo->getName(), $pluginDetail['events']);
+        }
+
+        // 配置菜单
+        $this->updateMenus(true, $pluginInfo);
+    }
+
+    /**
+     * 创建插件资源目录软链接
+     *
+     * @param \Xin\Plugin\Contracts\PluginInfo $pluginInfo
+     */
+    protected function createStaticSymlink(PluginInfoContract $pluginInfo)
+    {
+        $pluginName = $pluginInfo->getName();
+        $pluginStaticPath = $pluginInfo->path('static');
+        $linkPath = public_path('vendor') . $pluginName;
+
+        // 检查原路径是否存在
+        if (!is_dir($pluginStaticPath)) {
+            return;
+        }
+
+        // 检查目标路径是否存在，如果存在则需要删除
+        if (is_dir($linkPath)) {
+            @rmdir($linkPath);
+        }
+        if (file_exists($linkPath) || @lstat($linkPath)) {
+            @unlink($linkPath);
+        }
+
+        // 创建软链接
+        if (!@symlink($pluginStaticPath, $linkPath)) {
+            throw new \LogicException('资源目录软链接创建失败，请检查 public 目录是否有可写权限！');
+        }
+    }
+
+    /**
+     * 设置菜单
+     *
+     * @param bool $isInstall
+     * @param \Xin\Plugin\Contracts\PluginInfo $pluginInfo
+     */
+    protected function updateMenus($isInstall, PluginInfoContract $pluginInfo)
+    {
+        $menuGuards = array_keys($this->app->config->get('menu.menus'));
+        foreach ($menuGuards as $guard) {
+            if ($isInstall) {
+                $menusFilename = $pluginInfo->path($guard) . "menus.php";
+                if (!file_exists($menusFilename)) {
+                    continue;
+                }
+                $menusData = require_once $menusFilename;
+                Menu::menu($guard)->puts($menusData, $pluginInfo->getName());
+            } else {
+                Menu::menu($guard)->forget([
+                    'plugin' => $pluginInfo->getName(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * 卸载插件
+     *
+     * @return Response
+     */
+    public function uninstall()
+    {
+        /** @var DatabasePlugin $info */
+        $info = $this->findIsEmptyAssert();
+        if (!$info->install) {
+            return Hint::success("应用已卸载！");
+        }
+
+        try {
+            $pluginInfo = $this->pluginManager->uninstallPlugin($info->name);
+
+            $pluginDetail = $pluginInfo->getInfo();
+
+            // 卸载事件
+            if (isset($pluginDetail['events'])) {
+                DatabaseEvent::unmountAddon($info->name);
+            }
+
+            // 配置菜单
+            if (isset($pluginDetail['menus'])) {
+                $this->updateMenus(false, $pluginDetail['menus'], $pluginInfo);
+            }
+
+            $info->save(['install' => 0]);
+        } catch (PluginNotFoundException $e) {
+            DatabaseEvent::unmountAddon($info->name);
+            $info->save(['install' => 0]);
+
+            return Hint::success("应用目录已被删除！");
+        } catch (\Exception $e) {
+            return Hint::error($e->getMessage());
+        }
+
+        return Hint::success("应用已卸载！");
+    }
+
+    /**
+     * 升级插件
+     *
+     * @return Response
+     * @throws \Xin\Plugin\Contracts\PluginNotFoundException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function upgrade()
+    {
+        /** @var DatabasePlugin $info */
+        $info = $this->findIsEmptyAssert();
+        if (!$info->install) {
+            return Hint::success("应用已卸载！");
+        }
+
+        if (!$info->local_version) {
+            return Hint::error("应用已删除！");
+        }
+
+        try {
+            $pluginInfo = $this->pluginManager->plugin($info->name);
+            $this->updateInfo($pluginInfo);
+            $info->save([
+                'version' => $pluginInfo->getVersion(),
+            ]);
+        } catch (\Exception $e) {
+            return Hint::error($e->getMessage());
+        }
+
+        return Hint::success("已更新信息");
+    }
+
+    /**
+     * 插件配置
+     *
+     * @return Response
+     */
+    public function config(Request $request)
+    {
+        /** @var DatabasePlugin $info */
+        $info = $this->findIsEmptyAssert();
+        if (!$info->install) {
+            return Hint::success("插件未安装！");
+        }
+
+        // 获取插件实例
+        $pluginInfo = $this->pluginManager->plugin($info->name);
+
+        if (!$request->isPost()) {
+            // 获取插件配置
+            $this->assign([
+                'info'       => $info,
+                'config_tpl' => $pluginInfo->getConfigTemplate((array)$info->config),
+            ]);
+
+            return $this->fetch();
+        }
+
+        $config = $request->input('config/a', []);
+        foreach ($pluginInfo->getConfigTypeList() as $key => $type) {
+            if (!isset($config[$key])) {
+                continue;
+            }
+
+            if ('int' == $type) {
+                $config[$key] = (int)$config[$key];
+            } elseif ('float' == $type) {
+                $config[$key] = (float)$config[$key];
+            } elseif ('array' == $type) {
+                $config[$key] = Arr::parse($config[$key]);
+            }
+        }
+
+        //        $info->config = array_merge((array)$info->config, $config);
+        $info->config = $config;
+
+        $info->save();
+
+        return Hint::success('配置已更新！');
+    }
+
+    /**
+     * 重新刷新插件菜单
+     *
+     * @return Response
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \Xin\Plugin\Contracts\PluginNotFoundException
+     */
+    public function refreshMenus(Request $request)
+    {
+        $plugin = $request->input('plugin', '', 'trim');
+
+        $menuGuards = array_keys($this->app->config->get('menu.menus'));
+        foreach ($menuGuards as $guard) {
+            Menu::menu($guard)->refresh($plugin);
+        }
+
+        DatabasePlugin::query()->where([
+            'install' => 1,
+            'status'  => 1,
+        ])->when($plugin, ['name' => $plugin])
+            ->select()
+            ->each(function (DatabasePlugin $info) {
+                if (!$this->pluginManager->has($info->name)) {
+                    return;
+                }
+
+                $pluginInfo = $this->pluginManager->plugin($info->name);
+
+                // 配置菜单
+                $this->updateMenus(true, $pluginInfo);
+            });
+
+        return Hint::success("已刷新！");
+    }
+
+    /**
+     * 生产配置文件
+     *
+     * @return string
+     */
+    protected function buildConfigTplContent()
+    {
+        return <<<EOT
+<?php
+return [
+	[
+		'title'  => '基本',
+		'config' => [
+			[
+				'title' => '小挂件是否显示',
+				'name'  => 'display',
+				'type'  => 'switch',
+				'value' => 1,
+			],
+		],
+	],
+];
+?>
 EOT;
     }
 

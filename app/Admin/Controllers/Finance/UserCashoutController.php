@@ -66,10 +66,10 @@ class UserCashoutController extends Controller
         if ($data['audit_status'] == 0) { // 同意打款
             $status = $this->dispatch($data['type'], $info);
             $info->save([
-	            'status'        => UserCashout::STATUS_TRANSFERRED,
-	            'audit_time'    => $request->time(),
-	            'transfer_time' => $request->time(),
-	            'refuse_msg'    => $data['refuse_msg'],
+                'status'        => UserCashout::STATUS_TRANSFERRED,
+                'audit_time'    => $request->time(),
+                'transfer_time' => $request->time(),
+                'refuse_msg'    => $data['refuse_msg'],
             ]);
         } else {
             /** @var User $user */

@@ -31,10 +31,10 @@ class IndexController extends Controller
             ->paginate();
 
         $data->each(function (Coupon $coupon) {
-                $coupon['has_give'] = true;
-                $coupon['user_give_count'] = 0;
-                $coupon->append(['use_tips', 'number_text']);
-            });
+            $coupon['has_give'] = true;
+            $coupon['user_give_count'] = 0;
+            $coupon->append(['use_tips', 'number_text']);
+        });
 
         if (!$data->isEmpty() && $userId = $this->request->id()) {
             $couponIds = $data->pluck('id');

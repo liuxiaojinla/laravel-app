@@ -11,7 +11,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Xin\Hint\Facades\Hint;
-use Xin\LaravelFortify\Support\SqlDebug;
 
 class NoticeController extends Controller
 {

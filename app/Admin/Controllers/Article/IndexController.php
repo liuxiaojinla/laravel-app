@@ -63,23 +63,6 @@ class IndexController extends Controller
     }
 
     /**
-     * 更新数据
-     * @return string
-     */
-    public function update(ArticleRequest $request)
-    {
-        $id = $request->validId();
-        $data = $request->validated();
-
-        $info = Article::query()->where('id', $id)->firstOrFail();
-        if (!$info->fill($data)->save()) {
-            return Hint::error("更新失败！");
-        }
-
-        return Hint::success("更新成功！", (string)url('index'), $info);
-    }
-
-    /**
      * 删除数据
      * @return Response
      */
@@ -135,5 +118,22 @@ class IndexController extends Controller
         ]);
 
         return Hint::success('已移动！', null, $ids);
+    }
+
+    /**
+     * 更新数据
+     * @return string
+     */
+    public function update(ArticleRequest $request)
+    {
+        $id = $request->validId();
+        $data = $request->validated();
+
+        $info = Article::query()->where('id', $id)->firstOrFail();
+        if (!$info->fill($data)->save()) {
+            return Hint::error("更新失败！");
+        }
+
+        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 }

@@ -107,75 +107,6 @@ class PlaceOrderController extends Controller
     }
 
     /**
-     * 创建订单 - 根据购物车商品
-     *
-     * @return Response
-     * @throws ValidationException
-     */
-    public function fromShoppingCart()
-    {
-        $cartIdList = $this->request->idsWithValid();
-
-        $orderGoodsList = ShoppingCart::query()->where('id', 'in', $cartIdList)
-            ->where('user_id', $this->userId)->get()
-            ->map(function (ShoppingCart $shoppingCart) {
-                $orderGoods = $shoppingCart->toOrderGoods($this->request->isPost(), [
-                    'is_vip' => $this->isVipUser,
-                ]);
-                $orderGoods['is_vip'] = $this->isVipUser;
-                $orderGoods['distributor_id'] = $this->belongDistributorId;
-
-                return $orderGoods;
-            });
-
-        if (!$this->request->isPost()) {
-            return $this->prepay($orderGoodsList);
-        } else {
-            // 删除购物车
-            ShoppingCart::query()->where('user_id', $this->userId)->where('id', 'in', $cartIdList)->delete();
-            $result = $this->order($orderGoodsList);
-        }
-
-        return $result;
-    }
-
-    /**
-     * 订单处理
-     *
-     * @param Collection $orderGoodsList
-     * @return Response
-     * @throws ValidationException
-     * @throws \Exception
-     */
-    private function order(Collection $orderGoodsList)
-    {
-        $isSample = $this->request->integer('sample', 0);
-        $data = $this->request->post();
-
-        $data['user_id'] = $this->userId;
-        $data['distributor_id'] = $this->belongDistributorId;
-        $data['is_sample'] = $isSample;
-        $data['orderable_type'] = 'goods';
-        $data['total_amount'] = $orderGoodsList->reduce(function ($total, $item) {
-            return $total + $item['total_price'];
-        }, 0);
-
-        $userCouponId = $this->request->integer('user_coupon_id', 0);
-        if ($userCouponId) {
-            $data['user_coupon_id'] = $userCouponId;
-            $data['coupon_amount'] = $this->calcCouponAmount($data['total_amount'], $userCouponId);
-        }
-
-        // 创建订单
-        $order = Order::fastCreate($data, $orderGoodsList);
-
-        // 15分钟后自动关闭订单
-        OrderAutoClose::dispatchOfOrder($order, 15 * 60);
-
-        return Hint::result($order);
-    }
-
-    /**
      * 生成预下单相应数据
      *
      * @param Collection $orderGoodsList
@@ -279,6 +210,42 @@ class PlaceOrderController extends Controller
     }
 
     /**
+     * 订单处理
+     *
+     * @param Collection $orderGoodsList
+     * @return Response
+     * @throws ValidationException
+     * @throws \Exception
+     */
+    private function order(Collection $orderGoodsList)
+    {
+        $isSample = $this->request->integer('sample', 0);
+        $data = $this->request->post();
+
+        $data['user_id'] = $this->userId;
+        $data['distributor_id'] = $this->belongDistributorId;
+        $data['is_sample'] = $isSample;
+        $data['orderable_type'] = 'goods';
+        $data['total_amount'] = $orderGoodsList->reduce(function ($total, $item) {
+            return $total + $item['total_price'];
+        }, 0);
+
+        $userCouponId = $this->request->integer('user_coupon_id', 0);
+        if ($userCouponId) {
+            $data['user_coupon_id'] = $userCouponId;
+            $data['coupon_amount'] = $this->calcCouponAmount($data['total_amount'], $userCouponId);
+        }
+
+        // 创建订单
+        $order = Order::fastCreate($data, $orderGoodsList);
+
+        // 15分钟后自动关闭订单
+        OrderAutoClose::dispatchOfOrder($order, 15 * 60);
+
+        return Hint::result($order);
+    }
+
+    /**
      * 计算优惠券金额
      *
      * @param float $totalAmount
@@ -300,6 +267,39 @@ class PlaceOrderController extends Controller
         }
 
         return $userCoupon->calcAmount($totalAmount);
+    }
+
+    /**
+     * 创建订单 - 根据购物车商品
+     *
+     * @return Response
+     * @throws ValidationException
+     */
+    public function fromShoppingCart()
+    {
+        $cartIdList = $this->request->idsWithValid();
+
+        $orderGoodsList = ShoppingCart::query()->where('id', 'in', $cartIdList)
+            ->where('user_id', $this->userId)->get()
+            ->map(function (ShoppingCart $shoppingCart) {
+                $orderGoods = $shoppingCart->toOrderGoods($this->request->isPost(), [
+                    'is_vip' => $this->isVipUser,
+                ]);
+                $orderGoods['is_vip'] = $this->isVipUser;
+                $orderGoods['distributor_id'] = $this->belongDistributorId;
+
+                return $orderGoods;
+            });
+
+        if (!$this->request->isPost()) {
+            return $this->prepay($orderGoodsList);
+        } else {
+            // 删除购物车
+            ShoppingCart::query()->where('user_id', $this->userId)->where('id', 'in', $cartIdList)->delete();
+            $result = $this->order($orderGoodsList);
+        }
+
+        return $result;
     }
 
 }

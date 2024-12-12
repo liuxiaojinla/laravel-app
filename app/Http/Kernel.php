@@ -55,7 +55,7 @@ class Kernel extends HttpKernel
             \App\Admin\Middleware\CheckForSafeVisit::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \App\Admin\Middleware\CheckForRouteAuth::class,
-//            \App\Http\Middleware\VerifyCsrfToken::class,
+            //            \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];

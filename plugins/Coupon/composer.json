@@ -1,19 +1,19 @@
 {
-  "name": "plugins/coupon",
-  "description": "",
-  "extra": {
-    "laravel": {
-      "providers": [],
-      "aliases": {
-      }
+    "name": "plugins/coupon",
+    "description": "",
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Coupon\\": "",
+            "Plugins\\Coupon\\App\\": "app/",
+            "Plugins\\Coupon\\Database\\Factories\\": "database/factories/",
+            "Plugins\\Coupon\\Database\\Seeders\\": "database/seeders/"
+        }
     }
-  },
-  "autoload": {
-    "psr-4": {
-      "Plugins\\Coupon\\": "",
-      "Plugins\\Coupon\\App\\": "app/",
-      "Plugins\\Coupon\\Database\\Factories\\": "database/factories/",
-      "Plugins\\Coupon\\Database\\Seeders\\": "database/seeders/"
-    }
-  }
 }

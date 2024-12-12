@@ -1,11 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Plugins\Mall\App\Admin\Controllers\BrandController;
-use Plugins\Mall\App\Admin\Controllers\CategoryController;
-use Plugins\Mall\App\Admin\Controllers\GoodsAppraiseController;
-use Plugins\Mall\App\Admin\Controllers\GoodsController;
-use Plugins\Mall\App\Admin\Controllers\GoodsServiceController;
 use Plugins\Order\App\Admin\Controllers\ExpressController;
 use Plugins\Order\App\Admin\Controllers\FreightTemplateController;
 use Plugins\Order\App\Admin\Controllers\IndexController;

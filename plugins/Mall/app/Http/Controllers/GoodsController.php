@@ -8,7 +8,6 @@ use App\Models\User\Browse;
 use App\Models\User\Favorite;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Config;
@@ -85,7 +84,7 @@ class GoodsController extends Controller
                 $query->where('status', 1)->limit(0, 10);
             },
         ])->where([
-            'id'     => $id,
+            'id' => $id,
         ])->firstOrFail();
         $info = Goods::checkStatus($info);
 

@@ -37,15 +37,6 @@ class Item extends Model
     protected $guarded = [];
 
     /**
-     * 关联广告位
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function advertisement()
-    {
-        return $this->belongsTo(Position::class, 'advertisement_id');
-    }
-
-    /**
      * @inerhitDoc
      */
     public static function getSimpleFields()
@@ -64,5 +55,14 @@ class Item extends Model
         return array_merge(parent::getAllowSetFields(), [
             'sort' => 'number|min:0',
         ]);
+    }
+
+    /**
+     * 关联广告位
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function advertisement()
+    {
+        return $this->belongsTo(Position::class, 'advertisement_id');
     }
 }

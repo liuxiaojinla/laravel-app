@@ -10,7 +10,6 @@ namespace App\Admin\Controllers\System;
 use App\Admin\Controller;
 use App\Admin\Models\AdminMenu;
 use App\Admin\Requests\AdminMenuRequest;
-use App\Exceptions\Error;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
@@ -49,7 +48,7 @@ class MenuController extends Controller
         $data = Arr::tree($data, static function ($level, &$item) {
             $item['level'] = $level;
         });
-//        $data = Arr::treeToList($data);
+        //        $data = Arr::treeToList($data);
 
         return Hint::result($data);
     }
@@ -93,21 +92,6 @@ class MenuController extends Controller
         $info = $this->menuManager->repository()->get($id);
 
         return Hint::result($info);
-    }
-
-    /**
-     * 更新数据
-     * @param AdminMenuRequest $request
-     * @return Response
-     */
-    public function update(AdminMenuRequest $request)
-    {
-        $id = $this->request->validId();
-        $data = $request->validated();
-
-        $info = $this->menuManager->repository()->update($id, $data);
-
-        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
     /**
@@ -160,6 +144,21 @@ class MenuController extends Controller
         }
 
         return Hint::success("已更新排序！");
+    }
+
+    /**
+     * 更新数据
+     * @param AdminMenuRequest $request
+     * @return Response
+     */
+    public function update(AdminMenuRequest $request)
+    {
+        $id = $this->request->validId();
+        $data = $request->validated();
+
+        $info = $this->menuManager->repository()->update($id, $data);
+
+        return Hint::success("更新成功！", (string)url('index'), $info);
     }
 
 }

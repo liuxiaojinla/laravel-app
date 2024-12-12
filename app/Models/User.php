@@ -82,6 +82,16 @@ class User extends Authenticatable
         'gender'            => 'int',
     ];
 
+    /**
+     * @inerhitDoc
+     */
+    public static function getSimpleFields()
+    {
+        return [
+            'id', 'nickname', 'avatar',
+        ];
+    }
+
     public function chirps(): HasMany
     {
         return $this->hasMany(Chirp::class);
@@ -129,15 +139,5 @@ class User extends Authenticatable
                 return ip2long($ip);
             }
         );
-    }
-
-    /**
-     * @inerhitDoc
-     */
-    public static function getSimpleFields()
-    {
-        return [
-            'id', 'nickname', 'avatar',
-        ];
     }
 }

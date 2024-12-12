@@ -8,11 +8,11 @@
 namespace Plugins\Website\App\Models;
 
 use App\Contracts\FavoriteListenerOfStatic;
+use App\Events\FavoriteEvent;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PDOException;
-use \App\Events\FavoriteEvent;
 
 
 /**
@@ -91,7 +91,6 @@ class WebsiteArticle extends Model implements FavoriteListenerOfStatic
      *
      * @param int $id
      * @param string $field
-
      */
     protected static function decWithFieldById($id, $field)
     {

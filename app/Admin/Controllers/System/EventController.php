@@ -6,7 +6,6 @@ use App\Admin\Controller;
 use App\Admin\Models\Event;
 use App\Admin\Requests\System\EventRequest;
 use App\Models\Model;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Xin\Hint\Facades\Hint;
