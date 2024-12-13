@@ -14,11 +14,9 @@ use App\Models\User\UserLike;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
 use Plugins\Website\App\Models\WebsiteArticle;
-use Plugins\Website\App\Models\WebsiteArticleCategory;
 use Plugins\Website\App\Models\WebsiteProduct;
 use Plugins\Website\App\Models\WebsiteProductCategory;
 use Xin\Hint\Facades\Hint;
-use Xin\Support\Arr;
 
 
 /**
@@ -88,8 +86,8 @@ class ProductController extends Controller
             $info['is_like'] = UserLike::isLike(WebsiteArticle::MORPH_TYPE, $info->id, $userId);
         }
 
+        $info->timestamps = false;
         $info->increment('view_count');
-        $info->isAutoWriteTimestamp(false);
         $info->view_count += 1;
         $info->append([
             'simply_view_count', 'simply_good_count', 'simply_collect_count', 'simply_comment_count',
@@ -98,18 +96,5 @@ class ProductController extends Controller
         $info['good_categories'] = WebsiteProductCategory::getGoodList([], 'sort asc', 1, 4);
 
         return Hint::result($info);
-    }
-
-
-    /**
-     * 获取产品分类树形数据
-     * @return Response
-     */
-    public function tree()
-    {
-        $data = WebsiteArticleCategory::select();
-        $data = Arr::tree($data->toArray());
-
-        return Hint::result($data);
     }
 }

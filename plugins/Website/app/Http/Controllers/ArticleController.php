@@ -11,6 +11,7 @@ use App\Http\Controller;
 use App\Models\User\Browse;
 use App\Models\User\Favorite;
 use App\Models\User\UserLike;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
 use Plugins\Website\App\Models\WebsiteArticle;
@@ -25,11 +26,6 @@ class ArticleController extends Controller
 {
 
     /**
-     * @var string
-     */
-    protected $favoriteType = 'website_article';
-
-    /**
      * 文章列表
      *
      * @return Response
@@ -38,16 +34,18 @@ class ArticleController extends Controller
     {
         $keywords = $this->request->keywordsSql();
 
-        $order = 'publish_time desc';
-        if (!empty($keywords)) {
-            $order = 'view_count desc';
-        }
 
         $search = $this->request->query();
         $data = WebsiteArticle::simple()->with('category')
             ->search($search)
             ->where('status', 1)
-            ->order($order)
+            ->where(function (Builder $query) use ($keywords) {
+                if (!empty($keywords)) {
+                    $query->orderByDesc('view_count');
+                } else {
+                    $query->orderByDesc('publish_time');
+                }
+            })
             ->paginate();
 
         return Hint::result($data);

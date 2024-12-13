@@ -87,7 +87,7 @@ class ArticleCategoryController extends Controller
      */
     public function tree()
     {
-        $data = WebsiteArticleCategory::select();
+        $data = WebsiteArticleCategory::all();
         $data = Arr::tree($data->toArray());
 
         return Hint::result($data);

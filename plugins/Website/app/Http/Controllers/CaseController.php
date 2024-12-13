@@ -11,6 +11,7 @@ use App\Http\Controller;
 use App\Models\User\Browse;
 use App\Models\User\Favorite;
 use App\Models\User\UserLike;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
 use Plugins\Website\App\Models\WebsiteCase;
@@ -25,7 +26,7 @@ class CaseController extends Controller
 {
 
     /**
-     * 文章列表
+     * 案例列表
      *
      * @return Response
      */
@@ -33,16 +34,18 @@ class CaseController extends Controller
     {
         $keywords = $this->request->keywordsSql();
 
-        $order = 'publish_time desc';
-        if (!empty($keywords)) {
-            $order = 'view_count desc';
-        }
-
         $search = $this->request->query();
-        $data = WebsiteCase::with('category')
-            ->simple()->search($search)
+        $data = WebsiteCase::simple()
+            ->with('category')
+            ->search($search)
             ->where('status', 1)
-            ->order($order)
+            ->where(function (Builder $query) use ($keywords) {
+                if (!empty($keywords)) {
+                    $query->orderByDesc('view_count');
+                } else {
+                    $query->orderByDesc('publish_time');
+                }
+            })
             ->paginate();
 
         return Hint::result($data);
@@ -58,6 +61,7 @@ class CaseController extends Controller
         $id = $this->request->validId();
         $userId = $this->auth->id();
 
+        /** @var WebsiteCase $info */
         $info = WebsiteCase::with(['category'])->where('id', $id)->firstOrFail();
         if ($info->status == 0) {
             throw new ModelNotFoundException("案例不存在！", WebsiteCase::class);

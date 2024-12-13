@@ -9,9 +9,11 @@ namespace Plugins\Website\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
+use Plugins\Website\App\Models\WebsiteArticleCategory;
 use Plugins\Website\App\Models\WebsiteProduct;
 use Plugins\Website\App\Models\WebsiteProductCategory;
 use Xin\Hint\Facades\Hint;
+use Xin\Support\Arr;
 use Xin\Support\Number;
 
 class ProductCategoryController extends Controller
@@ -43,7 +45,7 @@ class ProductCategoryController extends Controller
 
                 if (!$isGood) {
                     $item['follow_users'] = $item->getLastFollowUsers(
-                        $this->auth->getUser(null, null, AuthVerifyType::NOT)
+                        $this->auth->user()
                     );
                 }
 
@@ -70,7 +72,7 @@ class ProductCategoryController extends Controller
         }
 
         $info['follow_users'] = $info->getLastFollowUsers(
-            $this->auth->getUser(null, null, AuthVerifyType::NOT)
+            $this->auth->user()
         );
 
         $info['article_list'] = WebsiteProduct::query()->where([
@@ -83,4 +85,15 @@ class ProductCategoryController extends Controller
         return Hint::result($info);
     }
 
+    /**
+     * 获取产品分类树形数据
+     * @return Response
+     */
+    public function tree()
+    {
+        $data = WebsiteProductCategory::all();
+        $data = Arr::tree($data->toArray());
+
+        return Hint::result($data);
+    }
 }
