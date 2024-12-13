@@ -50,7 +50,6 @@ class OrderBuilder
     protected $cartIds;
 
     /**
-     *
      */
     public function __construct()
     {

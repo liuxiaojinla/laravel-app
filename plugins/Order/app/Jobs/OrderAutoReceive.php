@@ -38,7 +38,6 @@ class OrderAutoReceive extends Job
 
     /**
      * 自动收货
-     *
      */
     protected function execute()
     {

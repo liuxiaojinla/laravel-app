@@ -12,8 +12,8 @@ use App\Http\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Plugins\VCard\app\Http\Requests\DynamicRequest;
-use Plugins\VCard\app\Models\VCardDynamic;
 use Plugins\VCard\app\Models\VCard;
+use Plugins\VCard\app\Models\VCardDynamic;
 use Xin\Hint\Facades\Hint;
 
 class DynamicController extends Controller
@@ -23,7 +23,6 @@ class DynamicController extends Controller
      * 获取动态列表
      *
      * @return Response
-     *
      */
     public function index()
     {
@@ -36,6 +35,20 @@ class DynamicController extends Controller
             ->paginate();
 
         return Hint::result($data);
+    }
+
+    /**
+     * 详情
+     * @return Response
+     */
+    public function detail()
+    {
+        $id = $this->request->validId();
+
+        /** @var VCardDynamic $info */
+        $info = VCardDynamic::query()->where('id', $id)->firstOrFail();
+
+        return Hint::result($info);
     }
 
     /**

@@ -12,10 +12,6 @@ use App\Models\Model;
 class VCardDynamic extends Model
 {
 
-    /**
-     * @var string
-     */
-    protected $table = 'vcard_dynamic';
 
     /**
      * 获取图册(原始值)

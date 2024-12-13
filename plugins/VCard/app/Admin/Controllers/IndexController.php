@@ -84,8 +84,6 @@ class IndexController extends Controller
     /**
      * 删除数据
      * @return Response
-     *
-     *
      */
     public function delete()
     {
@@ -112,7 +110,7 @@ class IndexController extends Controller
     {
         $ids = $this->request->validIds();
         $field = $this->request->validString('field');
-        $value = $this->request->param($field);
+        $value = $this->request->input($field);
 
         if ($field == 'goods_time') {
             $value = $value ? $this->request->time() : $value;

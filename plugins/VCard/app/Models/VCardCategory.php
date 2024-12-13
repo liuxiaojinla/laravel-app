@@ -32,12 +32,6 @@ class VCardCategory extends Model
      */
     const CACHE_KEY = 'plugin:vcard:category:list';
 
-
-    /**
-     * @var string
-     */
-    protected $table = 'vcard_category';
-
     /**
      * 获取列表
      *
@@ -46,7 +40,6 @@ class VCardCategory extends Model
      * @param int $page
      * @param int $limit
      * @return Collection
-     *
      *
      */
     public static function getGoodList($query, $order = 'sort', $page = 1, $limit = 10)

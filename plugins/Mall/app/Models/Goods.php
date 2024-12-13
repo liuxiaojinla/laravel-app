@@ -108,7 +108,6 @@ class Goods extends Model implements OrderListenerOfStatic
 
     /**
      * @inheritDoc
-     *
      */
     public static function onOrderGoodsSaved(OrderGoods $orderGoods)
     {

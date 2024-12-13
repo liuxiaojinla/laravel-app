@@ -12,15 +12,6 @@ use Xin\LaravelFortify\Request\FormRequest;
 class DynamicRequest extends FormRequest
 {
 
-    /**
-     * 验证规则
-     *
-     * @var array
-     */
-    protected $rule = [
-        'content' => 'required|max:5000',
-        'images'  => 'array',
-    ];
 
     /**
      * 字段信息
@@ -46,5 +37,18 @@ class DynamicRequest extends FormRequest
      * @var array
      */
     protected $scene = [];
+
+    /**
+     * 验证规则
+     *
+     * @return string[]
+     */
+    public function rules()
+    {
+        return [
+            'content' => 'required|max:5000',
+            'images'  => 'array',
+        ];
+    }
 
 }

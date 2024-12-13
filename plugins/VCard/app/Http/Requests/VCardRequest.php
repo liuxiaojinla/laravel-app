@@ -12,22 +12,6 @@ use Xin\LaravelFortify\Request\FormRequest;
 class VCardRequest extends FormRequest
 {
 
-    /**
-     * 验证规则
-     *
-     * @var array
-     */
-    protected $rule = [
-        'avatar'       => 'required|max:255',
-        'name'         => 'required|between:2,24',
-        'alias'        => 'max:24',
-        'description'  => 'max:255',
-        'phone'        => 'required|mobile',
-        'organization' => 'required|between:2,50',
-        'position'     => 'required|between:2,24',
-        'lat'          => 'nullable',
-        'lng'          => 'nullable',
-    ];
 
     /**
      * 字段信息
@@ -87,5 +71,24 @@ class VCardRequest extends FormRequest
 
             return $data;
         };
+    }
+    /**
+     * 验证规则
+     *
+     * @return string[]
+     */
+    public function rules()
+    {
+        return [
+            'avatar'       => 'required|max:255',
+            'name'         => 'required|between:2,24',
+            'alias'        => 'max:24',
+            'description'  => 'max:255',
+            'phone'        => 'required|mobile',
+            'organization' => 'required|between:2,50',
+            'position'     => 'required|between:2,24',
+            'lat'          => 'nullable',
+            'lng'          => 'nullable',
+        ];
     }
 }

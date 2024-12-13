@@ -1,6 +1,5 @@
 <?php
 
-use Plugins\Order\app\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------

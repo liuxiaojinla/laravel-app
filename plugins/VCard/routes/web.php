@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Plugins\VCard\app\Http\Controllers\VCardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +11,3 @@ use Plugins\VCard\app\Http\Controllers\VCardController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group([], function () {
-    Route::resource('vcard', VCardController::class)->names('vcard');
-});

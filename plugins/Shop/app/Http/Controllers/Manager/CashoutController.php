@@ -66,7 +66,6 @@ class CashoutController extends Controller
      * 提交申请
      * @return Response
      * @throws ValidationException
-     *
      */
     public function apply()
     {

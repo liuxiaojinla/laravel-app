@@ -22,7 +22,6 @@ class IndexController extends Controller
      * 名片列表
      *
      * @return Response
-     *
      */
     public function index()
     {
@@ -59,8 +58,6 @@ class IndexController extends Controller
      * 详细信息
      *
      * @return Response
-     *
-     *
      */
     public function detail()
     {
@@ -95,7 +92,6 @@ class IndexController extends Controller
      * 获取名片访问的用户
      *
      * @return Response
-     *
      */
     public function browseUserList()
     {
@@ -105,7 +101,7 @@ class IndexController extends Controller
             'topic_id'   => $vcardId,
             'topic_type' => VCard::MORPH_TYPE,
         ])
-            ->orderByDesc('update_time')
+            ->orderByDesc('updated_at')
             ->paginate();
 
         return Hint::result($data);

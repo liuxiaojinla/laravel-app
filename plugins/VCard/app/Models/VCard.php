@@ -37,11 +37,6 @@ class VCard extends Model
     const MORPH_TYPE = 'vcard';
 
     /**
-     * @var string
-     */
-    protected $table = 'vcard';
-
-    /**
      * @var string[]
      */
     protected $type = [

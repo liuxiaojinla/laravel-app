@@ -24,7 +24,8 @@ class BillboardController extends Controller
     {
         $data = VCard::query()->where([
             'status' => 1,
-        ])->orderByDesc('view_count')
+        ])
+            ->orderByDesc('view_count')
             ->limit(10)
             ->get();
 
@@ -36,13 +37,13 @@ class BillboardController extends Controller
      *
      * @return Response
      *
-     *
      */
     public function like()
     {
         $data = VCard::query()->where([
             'status' => 1,
-        ])->orderByDesc('like_count')
+        ])
+            ->orderByDesc('like_count')
             ->limit(10)->get();
 
         return Hint::result($data);
@@ -52,14 +53,13 @@ class BillboardController extends Controller
      * 获取收藏排名
      *
      * @return Response
-     *
-     *
      */
     public function collect()
     {
         $data = VCard::query()->where([
             'status' => 1,
-        ])->orderByDesc('collect_count')
+        ])
+            ->orderByDesc('collect_count')
             ->limit(10)->get();
 
         return Hint::result($data);
