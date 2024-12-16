@@ -45,8 +45,8 @@ class LogisticsController extends Controller
         $key = $config['key'];                        //客户授权key
         $customer = $config['customer'];                   //查询公司编号
         $param = [
-            'com'      => $order->express_name,             //快递公司编码
-            'num'      => $order->express_no,     //快递单号
+            'com' => $order->express_name,             //快递公司编码
+            'num' => $order->express_no,     //快递单号
             // 'phone'    => '',                //手机号
             // 'from'     => '',                 //出发地城市
             // 'to'       => '',                   //目的地城市
@@ -80,7 +80,7 @@ class LogisticsController extends Controller
 
         return Hint::result([
             'order' => $order,
-            'data'  => $data,
+            'data' => $data,
         ]);
     }
 

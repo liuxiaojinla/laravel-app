@@ -20,11 +20,11 @@ class AdminQuickSearchListener
                 'items' => !empty($keywords) ? Shop::simple()->where('title', 'like', $keywords)->orderByDesc('view_count')
                     ->forPage(1, 10)->select()->map(function (Shop $item) {
                         return [
-                            'title'       => $item->title,
+                            'title' => $item->title,
                             'description' => $item->description,
-                            'cover'       => $item->cover,
-                            'time'        => $item->update_time,
-                            'url'         => (string)url('shop>index/show', ['id' => $item->id]),
+                            'cover' => $item->cover,
+                            'time' => $item->update_time,
+                            'url' => (string)url('shop>index/show', ['id' => $item->id]),
                         ];
                     }) : [],
             ],

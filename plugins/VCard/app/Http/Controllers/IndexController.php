@@ -98,7 +98,7 @@ class IndexController extends Controller
         $vcardId = $this->request->validId();
 
         $data = Browse::with(['user',])->where([
-            'topic_id'   => $vcardId,
+            'topic_id' => $vcardId,
             'topic_type' => VCard::MORPH_TYPE,
         ])
             ->orderByDesc('updated_at')

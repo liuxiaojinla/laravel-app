@@ -17,9 +17,9 @@ class PluginRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'name'    => '插件标识',
-        'title'   => '插件名称',
-        'author'  => '作者姓名',
+        'name' => '插件标识',
+        'title' => '插件名称',
+        'author' => '作者姓名',
         'version' => '版本号',
     ];
 
@@ -40,9 +40,9 @@ class PluginRequest extends FormRequest
     {
         $id = $this->integer('id');
         return [
-            'name'    => ['required', 'alpha_dash:ascii', 'between:3,32', Rule::unique('plugins')->ignore($id)],
-            'title'   => ['required', 'between:2,24'],
-            'author'  => ['required', 'between:2,50'],
+            'name' => ['required', 'alpha_dash:ascii', 'between:3,32', Rule::unique('plugins')->ignore($id)],
+            'title' => ['required', 'between:2,24'],
+            'author' => ['required', 'between:2,50'],
             'version' => ['required'],
         ];
     }

@@ -18,8 +18,8 @@ class SinglePageRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'   => '单页标题',
-        'name'    => '唯一标识',
+        'title' => '单页标题',
+        'name' => '唯一标识',
         'content' => '单页内容',
     ];
     /**
@@ -45,8 +45,8 @@ class SinglePageRequest extends FormRequest
     {
         $id = $this->integer('id');
         return [
-            'title'   => ['required', 'between:2,50'],
-            'name'    => ['alpha_dash:ascii', 'between:3,48', Rule::unique(SinglePage::class)->ignore($id)],
+            'title' => ['required', 'between:2,50'],
+            'name' => ['alpha_dash:ascii', 'between:3,48', Rule::unique(SinglePage::class)->ignore($id)],
             'content' => ['required', 'string', 'between:1,65535'],
         ];
     }

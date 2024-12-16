@@ -25,8 +25,8 @@ class PayLog extends Model
     public function setPaidStatus($transactionId)
     {
         $this->save([
-            'status'         => 1,
-            'pay_time'       => time(),
+            'status' => 1,
+            'pay_time' => time(),
             'transaction_id' => $transactionId,
         ]);
     }

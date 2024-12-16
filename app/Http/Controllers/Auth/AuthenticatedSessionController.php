@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
             __('auth.successful'),
             null,
             [
-                'info'  => $user->makeHidden([
+                'info' => $user->makeHidden([
                     'password',
                 ])->toArray(),
                 'token' => WebServer::getEncryptSessionCookieValue(),

@@ -24,13 +24,13 @@ class ReturnAddressRequest extends FormRequest
      */
     protected $rule = [
         'contact_name' => 'required|between2,48',
-        'mobile'       => 'required|phone',
-        'province'     => 'required',
-        'city'         => 'required',
-        'district'     => 'required',
-        'lng'          => 'required|float',
-        'lat'          => 'required|float',
-        'address'      => 'required|between3,255',
+        'mobile' => 'required|phone',
+        'province' => 'required',
+        'city' => 'required',
+        'district' => 'required',
+        'lng' => 'required|float',
+        'lat' => 'required|float',
+        'address' => 'required|between3,255',
     ];
 
     /**
@@ -40,13 +40,13 @@ class ReturnAddressRequest extends FormRequest
      */
     protected $field = [
         'contact_name' => '联系人姓名',
-        'mobile'       => '联系人手机',
-        'province'     => '省',
-        'city'         => '市',
-        'district'     => '区/县',
-        'lng'          => '经度',
-        'lat'          => '纬度',
-        'address'      => '详细地址',
+        'mobile' => '联系人手机',
+        'province' => '省',
+        'city' => '市',
+        'district' => '区/县',
+        'lng' => '经度',
+        'lat' => '纬度',
+        'address' => '详细地址',
     ];
 
     /**

@@ -51,13 +51,13 @@ class RefundStatus extends Enum
     public static function data()
     {
         return [
-            self::CANCELED  => '已取消',
-            self::PENDING   => '申请中',
-            self::PASSED    => '买家待退货',
-            self::REFUSED   => '商家已拒绝',
+            self::CANCELED => '已取消',
+            self::PENDING => '申请中',
+            self::PASSED => '买家待退货',
+            self::REFUSED => '商家已拒绝',
             self::DELIVERED => '卖家待收货',
-            self::RECEIVED  => '卖家待打款',
-            self::FINISHED  => '受理完成',
+            self::RECEIVED => '卖家待打款',
+            self::FINISHED => '受理完成',
         ];
     }
 

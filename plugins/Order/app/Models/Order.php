@@ -69,13 +69,13 @@ class Order extends Model
      * @var array
      */
     protected $type = [
-        'pay_time'      => 'timestamp',
+        'pay_time' => 'timestamp',
         'delivery_time' => 'timestamp',
-        'receipt_time'  => 'timestamp',
+        'receipt_time' => 'timestamp',
         'evaluate_time' => 'timestamp',
-        'verify_time'   => 'timestamp',
-        'finish_time'   => 'timestamp',
-        'close_time'    => 'timestamp',
+        'verify_time' => 'timestamp',
+        'finish_time' => 'timestamp',
+        'close_time' => 'timestamp',
     ];
 
     /**
@@ -123,10 +123,10 @@ class Order extends Model
 
             if (isset($order['user_coupon_id'])) {
                 UserCoupon::query()->where([
-                    'id'      => $order->user_coupon_id,
+                    'id' => $order->user_coupon_id,
                     'user_id' => $order->user_id,
                 ])->update([
-                    'status'   => UserCoupon::STATUS_USED,
+                    'status' => UserCoupon::STATUS_USED,
                     'use_time' => now()->getTimestamp(),
                 ]);
             }
@@ -155,68 +155,68 @@ class Order extends Model
     protected static function validateData(array $order)
     {
         $order = array_merge([
-            'order_no'            => Str::makeOrderSn(),
-            'order_type'          => 0,
-            'order_status'        => 10,
+            'order_no' => Str::makeOrderSn(),
+            'order_type' => 0,
+            'order_status' => 10,
 
             // 订单相关金额
             // 'total_amount'        => 0,
-            'adjust_amount'       => 0,
-            'point_amount'        => 0,
-            'discount_amount'     => 0,
+            'adjust_amount' => 0,
+            'point_amount' => 0,
+            'discount_amount' => 0,
 
             // 发票信息
-            'need_invoice'        => 0,
-            'invoice_amount'      => 0,
+            'need_invoice' => 0,
+            'invoice_amount' => 0,
 
             // 优惠券
-            'user_coupon_id'      => 0,
-            'coupon_amount'       => 0,
+            'user_coupon_id' => 0,
+            'coupon_amount' => 0,
 
             // 支付信息
-            'pay_status'          => 10,
+            'pay_status' => 10,
             // 'pay_amount'          => 0,
-            'pay_type'            => 0,
-            'pay_time'            => 0,
-            'pay_no'              => Str::makeOrderSn(),
-            'transaction_id'      => '', //第三方流水号
+            'pay_type' => 0,
+            'pay_time' => 0,
+            'pay_no' => Str::makeOrderSn(),
+            'transaction_id' => '', //第三方流水号
 
             // 核销信息
-            'extract_shop_id'     => 0,
+            'extract_shop_id' => 0,
             'extract_verifier_id' => 0,
 
             // 物流信息
-            'delivery_type'       => 10,
-            'delivery_amount'     => 0,
-            'delivery_status'     => 10,
-            'delivery_time'       => 0,
-            'express_company'     => '',
-            'express_name'        => '',
-            'express_no'          => '',
+            'delivery_type' => 10,
+            'delivery_amount' => 0,
+            'delivery_status' => 10,
+            'delivery_time' => 0,
+            'express_company' => '',
+            'express_name' => '',
+            'express_no' => '',
 
             // 会员信息
-            'buyer_remark'        => '',
-            'buyer_rate'          => 0,
+            'buyer_remark' => '',
+            'buyer_rate' => 0,
 
             // 收货信息
-            'receipt_status'      => 10,
-            'receipt_time'        => 0,
-            'receiver_name'       => '',
-            'receiver_gender'     => 0,
-            'receiver_phone'      => '',
-            'receiver_province'   => '',
-            'receiver_city'       => '',
-            'receiver_district'   => '',
-            'receiver_address'    => '',
+            'receipt_status' => 10,
+            'receipt_time' => 0,
+            'receiver_name' => '',
+            'receiver_gender' => 0,
+            'receiver_phone' => '',
+            'receiver_province' => '',
+            'receiver_city' => '',
+            'receiver_district' => '',
+            'receiver_address' => '',
 
             // 其他订单属性
-            'is_allow_refund'     => 1,
-            'is_lock'             => 0,
-            'is_evaluate'         => 0,
-            'evaluate_time'       => 0,
-            'is_fenxiao'          => 0,
-            'finish_time'         => 0,
-            'close_time'          => 0,
+            'is_allow_refund' => 1,
+            'is_lock' => 0,
+            'is_evaluate' => 0,
+            'evaluate_time' => 0,
+            'is_fenxiao' => 0,
+            'finish_time' => 0,
+            'close_time' => 0,
         ], $order);
 
         // 验证数据合法性
@@ -333,8 +333,8 @@ class Order extends Model
             'id', 'nickname', 'gender', 'avatar',
         ])->bind([
             'user_nickname' => 'nickname',
-            'user_gender'   => 'gender',
-            'user_avatar'   => 'avatar',
+            'user_gender' => 'gender',
+            'user_avatar' => 'avatar',
         ]);
     }
 
@@ -564,12 +564,12 @@ class Order extends Model
     {
         $defaultStateTipColor = '#909399';
         $stateTipColors = [
-            OrderStatusEnum::PENDING   => '#0081ff',
-            OrderStatusEnum::PAYMENT   => '#39b54a',
+            OrderStatusEnum::PENDING => '#0081ff',
+            OrderStatusEnum::PAYMENT => '#39b54a',
             OrderStatusEnum::DELIVERED => '#39b54a',
-            OrderStatusEnum::RECEIVED  => '#39b54a',
-            OrderStatusEnum::FINISHED  => '#39b54a',
-            OrderStatusEnum::REFUNDED  => '#e03997',
+            OrderStatusEnum::RECEIVED => '#39b54a',
+            OrderStatusEnum::FINISHED => '#39b54a',
+            OrderStatusEnum::REFUNDED => '#e03997',
         ];
         $orderStatus = $this->getRawOriginal('order_status');
         return $stateTipColors[$orderStatus] ?? $defaultStateTipColor;
@@ -582,14 +582,14 @@ class Order extends Model
     protected function getStateTipTextAttribute()
     {
         $stateTipTexts = [
-            OrderStatusEnum::CANCEL    => '已取消',
-            OrderStatusEnum::CLOSED    => '已关闭',
-            OrderStatusEnum::PENDING   => '待付款',
-            OrderStatusEnum::PAYMENT   => '待发货',
+            OrderStatusEnum::CANCEL => '已取消',
+            OrderStatusEnum::CLOSED => '已关闭',
+            OrderStatusEnum::PENDING => '待付款',
+            OrderStatusEnum::PAYMENT => '待发货',
             OrderStatusEnum::DELIVERED => '待收货',
-            OrderStatusEnum::RECEIVED  => '待评价',
-            OrderStatusEnum::FINISHED  => '已完成',
-            OrderStatusEnum::REFUNDED  => '已退款',
+            OrderStatusEnum::RECEIVED => '待评价',
+            OrderStatusEnum::FINISHED => '已完成',
+            OrderStatusEnum::REFUNDED => '已退款',
         ];
         $orderStatus = $this->getRawOriginal('order_status');
         return $stateTipTexts[$orderStatus] ?? '';
@@ -602,14 +602,14 @@ class Order extends Model
     protected function getStateTipIconAttribute()
     {
         $stateTipIcons = [
-            OrderStatusEnum::CANCEL    => 'cuIcon-roundclose',
-            OrderStatusEnum::CLOSED    => 'cuIcon-roundclose',
-            OrderStatusEnum::PENDING   => 'cuIcon-pay',
-            OrderStatusEnum::PAYMENT   => 'cuIcon-send',
+            OrderStatusEnum::CANCEL => 'cuIcon-roundclose',
+            OrderStatusEnum::CLOSED => 'cuIcon-roundclose',
+            OrderStatusEnum::PENDING => 'cuIcon-pay',
+            OrderStatusEnum::PAYMENT => 'cuIcon-send',
             OrderStatusEnum::DELIVERED => 'cuIcon-deliver',
-            OrderStatusEnum::RECEIVED  => 'cuIcon-roundcheck',
-            OrderStatusEnum::FINISHED  => 'cuIcon-roundcheck',
-            OrderStatusEnum::REFUNDED  => 'cuIcon-refund',
+            OrderStatusEnum::RECEIVED => 'cuIcon-roundcheck',
+            OrderStatusEnum::FINISHED => 'cuIcon-roundcheck',
+            OrderStatusEnum::REFUNDED => 'cuIcon-refund',
         ];
         $orderStatus = $this->getRawOriginal('order_status');
         return $stateTipIcons[$orderStatus] ?? '';

@@ -231,7 +231,7 @@ class Category extends Model
     protected function getRealArticleCountAttribute()
     {
         return Article::query()->where([
-            'status'      => 1,
+            'status' => 1,
             'category_id' => $this->getRawOriginal('id'),
         ])->count();
     }
@@ -255,7 +255,7 @@ class Category extends Model
     protected function getRealArticleViewCountAttribute()
     {
         return Article::query()->where([
-            'status'      => 1,
+            'status' => 1,
             'category_id' => $this->getRawOriginal('id'),
         ])->sum('view_count');
     }
@@ -267,7 +267,7 @@ class Category extends Model
     protected function getVirtualArticleViewCountAttribute()
     {
         return Article::query()->where([
-            'status'      => 1,
+            'status' => 1,
             'category_id' => $this->getRawOriginal('id'),
         ])->sum('virtual_view_count');
     }

@@ -64,10 +64,10 @@ class PositionController extends Controller
         $id = $this->request->integer('id');
         return $this->request->validate([
             'title' => ['required', 'between:2,48'],
-            'name'  => ['alpha_dash:ascii', 'between:3,48', Rule::unique(AdvertisementPosition::class)->ignore($id)],
+            'name' => ['alpha_dash:ascii', 'between:3,48', Rule::unique(AdvertisementPosition::class)->ignore($id)],
         ], [], [
             'title' => '广告位名称',
-            'name'  => '唯一标识',
+            'name' => '唯一标识',
         ]);
     }
 

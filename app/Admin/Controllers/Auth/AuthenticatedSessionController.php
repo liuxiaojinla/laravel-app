@@ -24,8 +24,8 @@ class AuthenticatedSessionController extends Controller
 
         // 更新数据
         $user->forceFill([
-            'login_time'  => $this->request->time(),
-            'login_ip'    => $this->request->ip(),
+            'login_time' => $this->request->time(),
+            'login_ip' => $this->request->ip(),
             'login_count' => $user->login_count + 1,
         ])->save();
         $adminService->updateCache($user);
@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
             __('auth.successful'),
             null,
             [
-                'info'  => $user->makeHidden([
+                'info' => $user->makeHidden([
                     'password',
                 ])->toArray(),
                 'token' => WebServer::getEncryptSessionCookieValue(),

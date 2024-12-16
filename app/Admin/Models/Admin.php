@@ -45,7 +45,7 @@ class Admin extends Authenticatable
      */
     protected $type = [
         'login_count' => 'int',
-        'login_time'  => 'timestamp',
+        'login_time' => 'timestamp',
     ];
     /**
      * @var array

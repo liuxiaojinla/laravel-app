@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::enforceMorphMap([
             WebsiteArticle::MORPH_TYPE => WebsiteArticle::class,
-            WebsiteCase::MORPH_TYPE    => WebsiteCase::class,
+            WebsiteCase::MORPH_TYPE => WebsiteCase::class,
         ]);
     }
 }

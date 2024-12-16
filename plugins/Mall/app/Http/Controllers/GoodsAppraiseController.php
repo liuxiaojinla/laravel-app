@@ -25,7 +25,7 @@ class GoodsAppraiseController extends Controller
             'user',
         ])->where([
             'goods_id' => $goodsId,
-            'status'   => 1,
+            'status' => 1,
         ])->latest('id')->paginate();
 
         return Hint::result($data);
@@ -44,7 +44,7 @@ class GoodsAppraiseController extends Controller
 
         /** @var Order $order */
         $order = Order::with(['goods_list'])->where([
-            'id'      => $orderId,
+            'id' => $orderId,
             'user_id' => $userId,
         ])->firstOrFail();
         if ($this->request->isGet()) {

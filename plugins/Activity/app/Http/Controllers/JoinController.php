@@ -38,7 +38,7 @@ class JoinController extends Controller
 
         $info = ActivityUser::query()->where([
             'activity_id' => $activityId,
-            'user_id'     => $userId,
+            'user_id' => $userId,
         ])->first();
         if (!empty($info)) {
             return Hint::success("已参与！");
@@ -47,7 +47,7 @@ class JoinController extends Controller
         /** @var ActivityUser $info */
         $info = ActivityUser::query()->create([
             'activity_id' => $activityId,
-            'user_id'     => $userId,
+            'user_id' => $userId,
         ]);
 
         $this->activityRuleHandle($info);

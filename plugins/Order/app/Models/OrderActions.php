@@ -46,9 +46,9 @@ trait OrderActions
         $adjustAmount = bcsub($orderAmount, $this->total_amount - $this->discount_amount, 2);
 
         return $this->save([
-                'pay_no'          => Str::makeOrderSn(), // 修改订单号, 否则微信支付提示重复
-                'pay_amount'      => $payAmount,
-                'adjust_amount'   => $adjustAmount,
+                'pay_no' => Str::makeOrderSn(), // 修改订单号, 否则微信支付提示重复
+                'pay_amount' => $payAmount,
+                'adjust_amount' => $adjustAmount,
                 'delivery_amount' => $deliveryAmount,
             ]) !== false;
     }
@@ -102,7 +102,7 @@ trait OrderActions
 
         $result = $this->save([
             'order_status' => OrderStatusEnum::CLOSED,
-            'close_time'   => time(),
+            'close_time' => time(),
         ]);
         if ($result === false) {
             throw new \LogicException('订单关闭失败！');
@@ -158,9 +158,9 @@ trait OrderActions
     {
         $data = [
             'order_status' => OrderStatusEnum::PAYMENT,
-            'pay_status'   => PayStatusEnum::SUCCESS,
-            'pay_type'     => $payType,
-            'pay_time'     => time(),
+            'pay_status' => PayStatusEnum::SUCCESS,
+            'pay_type' => $payType,
+            'pay_time' => time(),
         ];
 
         if (!$payNo) {
@@ -234,12 +234,12 @@ trait OrderActions
         }
 
         $result = $this->save([
-            'order_status'    => OrderStatusEnum::DELIVERED,
+            'order_status' => OrderStatusEnum::DELIVERED,
             'express_company' => $express['title'],
-            'express_name'    => $express['code'],
-            'express_no'      => $expressNo,
+            'express_name' => $express['code'],
+            'express_no' => $expressNo,
             'delivery_status' => DeliverStatusEnum::SUCCESS,
-            'delivery_time'   => now()->getTimestamp(),
+            'delivery_time' => now()->getTimestamp(),
         ]);
         if ($result === false) {
             throw new \LogicException('订单发货失败！');
@@ -267,9 +267,9 @@ trait OrderActions
         }
 
         $result = $this->save([
-            'order_status'   => OrderStatusEnum::RECEIVED,
+            'order_status' => OrderStatusEnum::RECEIVED,
             'receipt_status' => ReceiptStatusEnum::SUCCESS,
-            'receipt_time'   => now()->getTimestamp(),
+            'receipt_time' => now()->getTimestamp(),
         ]);
         if ($result === false) {
             throw new \LogicException('订单确认收货失败！');
@@ -294,8 +294,8 @@ trait OrderActions
         }
 
         $result = $this->save([
-            'order_status'  => OrderStatusEnum::FINISHED,
-            'is_evaluate'   => 1,
+            'order_status' => OrderStatusEnum::FINISHED,
+            'is_evaluate' => 1,
             'evaluate_time' => now()->getTimestamp(),
         ]);
         if ($result === false) {
@@ -337,13 +337,13 @@ trait OrderActions
 
         $result = $this->save([
                 'extract_verifier_id' => $verifierId,
-                'delivery_status'     => DeliverStatusEnum::SUCCESS,
-                'delivery_time'       => time(),
-                'receipt_status'      => ReceiptStatusEnum::SUCCESS,
-                'receipt_time'        => time(),
-                'order_status'        => OrderStatusEnum::RECEIVED,
-                'is_verify'           => 1,
-                'verify_time'         => time(),
+                'delivery_status' => DeliverStatusEnum::SUCCESS,
+                'delivery_time' => time(),
+                'receipt_status' => ReceiptStatusEnum::SUCCESS,
+                'receipt_time' => time(),
+                'order_status' => OrderStatusEnum::RECEIVED,
+                'is_verify' => 1,
+                'verify_time' => time(),
             ]) !== false;
         if ($result === false) {
             throw new \LogicException('订单核销失败！');

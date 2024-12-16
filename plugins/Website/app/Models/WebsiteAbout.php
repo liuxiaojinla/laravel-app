@@ -32,11 +32,11 @@ class WebsiteAbout extends Model
      * @var array
      */
     protected $type = [
-        'id'            => 'int',
-        'view_count'    => 'int',
-        'good_count'    => 'int',
+        'id' => 'int',
+        'view_count' => 'int',
+        'good_count' => 'int',
         'comment_count' => 'int',
-        'delete_time'   => 'int',
+        'delete_time' => 'int',
     ];
 
 

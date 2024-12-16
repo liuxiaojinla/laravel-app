@@ -24,7 +24,7 @@ class RefundLog extends Model
     public function setPaidStatus()
     {
         $this->save([
-            'status'   => 1,
+            'status' => 1,
             'pay_time' => time(),
         ]);
     }

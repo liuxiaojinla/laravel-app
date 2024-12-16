@@ -78,7 +78,7 @@ class CategoryController extends Controller
 
         // 获取第一页数据文章数据
         $info['article_list'] = Article::simpleQuery()->where([
-            'status'      => 1,
+            'status' => 1,
             'category_id' => $info->id,
         ])->orderByDesc('id')
             ->limit(15)

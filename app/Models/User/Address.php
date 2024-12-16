@@ -47,11 +47,11 @@ class Address extends Model
         $city = Region::query()->where('name', $cityName)->where('pid', $data['province_id'])->first();
         if (empty($city)) {
             $city = Region::query()->create([
-                'pid'         => $province->id,
-                'shortname'   => '',
-                'name'        => $cityName,
+                'pid' => $province->id,
+                'shortname' => '',
+                'name' => $cityName,
                 'merger_name' => $province->name . ',' . $cityName,
-                'level'       => 2,
+                'level' => 2,
             ]);
         }
         $data['city_id'] = $city->id;
@@ -61,11 +61,11 @@ class Address extends Model
         $district = Region::query()->where('name', $districtName)->where('pid', $data['city_id'])->first();
         if (empty($district)) {
             $district = Region::query()->create([
-                'pid'         => $city->id,
-                'shortname'   => '',
-                'name'        => $districtName,
+                'pid' => $city->id,
+                'shortname' => '',
+                'name' => $districtName,
                 'merger_name' => $province->name . ',' . $cityName . ',' . $districtName,
-                'level'       => 3,
+                'level' => 3,
             ]);
         }
         $data['district_id'] = $district->id;
@@ -93,7 +93,7 @@ class Address extends Model
     public static function getUserDefaultSimpleInfo($userId)
     {
         return static::simple()->where([
-            'user_id'    => $userId,
+            'user_id' => $userId,
             'is_default' => 1,
         ])->orderByDesc('is_default')->first();
     }

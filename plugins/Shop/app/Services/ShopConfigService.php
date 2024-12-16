@@ -34,7 +34,7 @@ class ShopConfigService
 
         if (!$info->exists) {
             $info->save([
-                'shop_id'   => $identifier,
+                'shop_id' => $identifier,
                 'auto_play' => 0,
             ]);
         }

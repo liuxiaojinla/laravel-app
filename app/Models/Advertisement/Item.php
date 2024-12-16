@@ -28,7 +28,7 @@ class Item extends Model
      */
     protected $type = [
         'begin_time' => 'datetime',
-        'end_time'   => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     /**

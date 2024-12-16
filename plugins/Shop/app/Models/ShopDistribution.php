@@ -72,9 +72,9 @@ class ShopDistribution extends Model
     public static function getDefaultConfig($mergeData = [])
     {
         return array_merge([
-            'shop_ratio'            => '100',
-            'user_rebate_ratio'     => '0',
-            'partner_rebate_ratio'  => '0',
+            'shop_ratio' => '100',
+            'user_rebate_ratio' => '0',
+            'partner_rebate_ratio' => '0',
             'platform_rebate_ratio' => '0',
         ], $mergeData);
     }

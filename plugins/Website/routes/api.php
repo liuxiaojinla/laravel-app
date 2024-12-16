@@ -7,7 +7,6 @@ use Plugins\Website\App\Http\Controllers\CaseController;
 use Plugins\Website\App\Http\Controllers\IndexController;
 use Plugins\Website\App\Http\Controllers\ProductCategoryController;
 use Plugins\Website\App\Http\Controllers\ProductController;
-use Plugins\Wechat\App\Http\Controllers\OpenPlatformServerController;
 
 /*
     |--------------------------------------------------------------------------

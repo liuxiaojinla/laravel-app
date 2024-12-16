@@ -40,7 +40,7 @@ class VerifyController extends Controller
 
 
         return Hint::result([
-            'code'  => $code,
+            'code' => $code,
             'order' => $order,
         ]);
     }

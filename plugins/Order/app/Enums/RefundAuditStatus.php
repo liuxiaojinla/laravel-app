@@ -32,7 +32,7 @@ class RefundAuditStatus extends Enum
     {
         return [
             self::PENDING => '进行中',
-            self::PASSED  => '已通过',
+            self::PASSED => '已通过',
             self::REFUSED => '已拒绝',
         ];
     }

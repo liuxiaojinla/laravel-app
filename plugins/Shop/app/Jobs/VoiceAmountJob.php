@@ -53,7 +53,7 @@ class VoiceAmountJob extends Job
 
         Cloudtrumpet::playOfShopId($this->order->shop_id, [
             'amount' => $this->order->total_amount,
-            'type'   => 1,
+            'type' => 1,
         ]);
     }
 }

@@ -48,7 +48,7 @@ class Coupon extends Model
      */
     protected $type = [
         'start_time' => 'timestamp',
-        'end_time'   => 'timestamp',
+        'end_time' => 'timestamp',
     ];
 
     /**
@@ -113,7 +113,7 @@ class Coupon extends Model
         if ($giveCountLimit) {
             $giveCount = UserCoupon::query()->where([
                 'coupon_id' => $couponId,
-                'user_id'   => $userId,
+                'user_id' => $userId,
             ])->count();
 
             if ($giveCount >= $giveCountLimit) {
@@ -123,9 +123,9 @@ class Coupon extends Model
 
         return DB::transaction(function () use ($userId, $expireType, $endTime, $expireDay) {
             $userCoupon = UserCoupon::query()->create([
-                'coupon_id'   => $this->getRawOriginal('id'),
-                'user_id'     => $userId,
-                'status'      => 0,
+                'coupon_id' => $this->getRawOriginal('id'),
+                'user_id' => $userId,
+                'status' => 0,
                 'expire_time' => $expireType == static::EXPIRE_TYPE_FIXED ? $endTime : now()->addDays($expireDay)->getTimestamp(),
             ]);
 

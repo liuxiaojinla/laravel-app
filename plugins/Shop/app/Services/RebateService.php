@@ -38,14 +38,14 @@ class RebateService
         $result = $this->calcRebate($payFlow->total_amount, $payFlow->user_id, $distribution);
 
         return $this->makeOrder(array_merge($result, [
-            'pay_flow_id'    => $payFlow->id,
-            'shop_id'        => $payFlow->shop_id,
-            'user_id'        => $payFlow->user_id,
-            'partner_id'     => $payFlow->partner_id,
-            'out_trade_no'   => $payFlow->out_trade_no,
-            'total_amount'   => $payFlow->total_amount,
+            'pay_flow_id' => $payFlow->id,
+            'shop_id' => $payFlow->shop_id,
+            'user_id' => $payFlow->user_id,
+            'partner_id' => $payFlow->partner_id,
+            'out_trade_no' => $payFlow->out_trade_no,
+            'total_amount' => $payFlow->total_amount,
             'transaction_id' => $payFlow->transaction_id,
-            'pay_type'       => $payFlow->pay_type,
+            'pay_type' => $payFlow->pay_type,
         ]));
     }
 
@@ -75,16 +75,16 @@ class RebateService
     protected function calcRebate($totalAmount, $userId, ShopDistribution $distribution = null)
     {
         $result = [
-            'shop_ratio'  => 1,
+            'shop_ratio' => 1,
             'shop_amount' => $totalAmount,
 
-            'user_rebate_ratio'  => $distribution ? $distribution->user_rebate_ratio_percentage : 0,
+            'user_rebate_ratio' => $distribution ? $distribution->user_rebate_ratio_percentage : 0,
             'user_rebate_amount' => 0,
 
-            'partner_rebate_ratio'  => $distribution ? $distribution->partner_rebate_ratio_percentage : 0,
+            'partner_rebate_ratio' => $distribution ? $distribution->partner_rebate_ratio_percentage : 0,
             'partner_rebate_amount' => 0,
 
-            'platform_rebate_ratio'  => $distribution ? $distribution->platform_rebate_ratio_percentage : 0,
+            'platform_rebate_ratio' => $distribution ? $distribution->platform_rebate_ratio_percentage : 0,
             'platform_rebate_amount' => 0,
 
             'is_vip' => 0,
@@ -185,27 +185,27 @@ class RebateService
         $shop = $this->resolveShop($result['shop_id']);
 
         return PayOrder::create([
-            'pay_flow_id'    => isset($result['pay_flow_id']) ? $result['pay_flow_id'] : 0,
-            'user_id'        => $result['user_id'],
-            'shop_id'        => $result['shop_id'],
-            'partner_id'     => $result['partner_id'],
-            'out_trade_no'   => $result['out_trade_no'],
-            'total_amount'   => $result['total_amount'],
+            'pay_flow_id' => isset($result['pay_flow_id']) ? $result['pay_flow_id'] : 0,
+            'user_id' => $result['user_id'],
+            'shop_id' => $result['shop_id'],
+            'partner_id' => $result['partner_id'],
+            'out_trade_no' => $result['out_trade_no'],
+            'total_amount' => $result['total_amount'],
             'transaction_id' => isset($result['transaction_id']) ? $result['transaction_id'] : 0,
 
-            'user_rebate_ratio'  => $result['user_rebate_ratio'],
+            'user_rebate_ratio' => $result['user_rebate_ratio'],
             'user_rebate_amount' => $result['user_rebate_amount'],
 
-            'partner_rebate_ratio'  => $result['partner_rebate_ratio'],
+            'partner_rebate_ratio' => $result['partner_rebate_ratio'],
             'partner_rebate_amount' => $result['partner_rebate_amount'],
 
-            'platform_rebate_ratio'  => $result['platform_rebate_ratio'],
+            'platform_rebate_ratio' => $result['platform_rebate_ratio'],
             'platform_rebate_amount' => $result['platform_rebate_amount'],
 
-            'shop_ratio'  => $result['shop_ratio'],
+            'shop_ratio' => $result['shop_ratio'],
             'shop_amount' => $result['shop_amount'],
 
-            'pay_type'       => isset($result['pay_type']) ? $result['pay_type'] : 0,
+            'pay_type' => isset($result['pay_type']) ? $result['pay_type'] : 0,
             'cur_shop_money' => $shop->order_money + $result['shop_amount'],
 
             'is_vip' => $result['is_vip'],
@@ -246,9 +246,9 @@ class RebateService
         $user = $this->resolveUser($userId);
 
         return $this->makeOrder(array_merge($appends, $result, [
-            'user_id'      => $userId,
-            'shop_id'      => $shopId,
-            'partner_id'   => $user->partner_id,
+            'user_id' => $userId,
+            'shop_id' => $shopId,
+            'partner_id' => $user->partner_id,
             'total_amount' => $totalAmount,
         ]));
     }

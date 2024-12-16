@@ -85,18 +85,18 @@ class ItemController extends Controller
     {
         return $this->request->validate([
             'advertisement_id' => 'required',
-            'cover'            => 'required',
-            'url'              => 'max:255',
-            'begin_time'       => 'required|date',
-            'end_time'         => 'required|date|after:begin_time',
+            'cover' => 'required',
+            'url' => 'max:255',
+            'begin_time' => 'required|date',
+            'end_time' => 'required|date|after:begin_time',
         ], [
             'end_time.after' => '结束时间必须大于开始时间',
         ], [
             'advertisement_id' => '广告位',
-            'cover'            => '封面',
-            'url'              => '链接地址',
-            'begin_time'       => '开始时间',
-            'end_time'         => '结束时间',
+            'cover' => '封面',
+            'url' => '链接地址',
+            'begin_time' => '开始时间',
+            'end_time' => '结束时间',
         ]);
     }
 

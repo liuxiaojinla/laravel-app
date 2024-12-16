@@ -53,9 +53,9 @@ class UrlChoiceController extends Controller
         }
 
         return Hint::result([
-            'data'      => $data ?? [],
-            'config'    => $this->data,
-            'module'    => $module,
+            'data' => $data ?? [],
+            'config' => $this->data,
+            'module' => $module,
             'submodule' => $subModule,
         ]);
     }
@@ -69,7 +69,7 @@ class UrlChoiceController extends Controller
             if (!isset($this->data[$module])) {
                 $this->data[$module] = array_merge($options, [
                     'resources' => [],
-                    'statics'   => [],
+                    'statics' => [],
                 ]);
             }
 

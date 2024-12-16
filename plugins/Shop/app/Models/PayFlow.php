@@ -39,8 +39,8 @@ class PayFlow extends Model
         $data = array_merge([
             //'user_id'      => 0,
             //'shop_id'      => 0,
-            'partner_id'       => 0,
-            'out_trade_no'     => Str::makeOrderSn(),
+            'partner_id' => 0,
+            'out_trade_no' => Str::makeOrderSn(),
 
             // 'total_amount'     => 0,
             'deduction_amount' => 0,
@@ -48,7 +48,7 @@ class PayFlow extends Model
             // 'transaction_id'   => 0,
         ], $data, [
             'pay_status' => 0,
-            'pay_time'   => 0,
+            'pay_time' => 0,
         ]);
 
         $data = static::validateData($data);
@@ -66,12 +66,12 @@ class PayFlow extends Model
     private static function validateData($data)
     {
         $data = Validator::validate($data, [
-            'user_id'          => 'required',
-            'shop_id'          => 'required',
-            'total_amount'     => 'required|float|gt:0.01',
+            'user_id' => 'required',
+            'shop_id' => 'required',
+            'total_amount' => 'required|float|gt:0.01',
             'deduction_amount' => 'float|egt:0',
-            'out_trade_no'     => 'required',
-            'transaction_id'   => 'required',
+            'out_trade_no' => 'required',
+            'transaction_id' => 'required',
         ]);
 
         return $data;

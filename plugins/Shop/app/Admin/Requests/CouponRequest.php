@@ -20,14 +20,14 @@ class CouponRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'         => 'required|between2,48',
-        'money'         => 'required|egt:0.01',
-        'discount'      => 'required|egt:1|elt:9.9',
-        'total_num'     => 'required|integer|egt:1',
-        'max_give_num'  => 'required|integer',
+        'title' => 'required|between2,48',
+        'money' => 'required|egt:0.01',
+        'discount' => 'required|egt:1|elt:9.9',
+        'total_num' => 'required|integer|egt:1',
+        'max_give_num' => 'required|integer',
         'min_use_money' => 'required|float|egt:0',
-        'start_time'    => 'required|date',
-        'end_time'      => 'required|date|after:start_time',
+        'start_time' => 'required|date',
+        'end_time' => 'required|date|after:start_time',
     ];
 
     /**
@@ -36,14 +36,14 @@ class CouponRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'         => '优惠券名称',
-        'money'         => '优惠券面额',
-        'discount'      => '优惠券折扣',
-        'total_num'     => '发放数量',
-        'max_give_num'  => '每人领取数量',
+        'title' => '优惠券名称',
+        'money' => '优惠券面额',
+        'discount' => '优惠券折扣',
+        'total_num' => '发放数量',
+        'max_give_num' => '每人领取数量',
         'min_use_money' => '满多少元可使用',
-        'begin_time'    => '活动开始时间',
-        'end_time'      => '活动结束时间',
+        'begin_time' => '活动开始时间',
+        'end_time' => '活动结束时间',
     ];
 
     /**

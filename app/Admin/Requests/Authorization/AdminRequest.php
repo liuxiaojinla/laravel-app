@@ -15,8 +15,8 @@ class AdminRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'username'              => '用户名',
-        'password'              => '密码',
+        'username' => '用户名',
+        'password' => '密码',
         'password_confirmation' => '确认密码',
     ];
 

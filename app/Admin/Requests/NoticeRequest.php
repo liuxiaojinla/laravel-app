@@ -16,10 +16,10 @@ class NoticeRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'      => ['required', 'between:2,50'],
-        'content'    => ['required', 'between:2,255'],
+        'title' => ['required', 'between:2,50'],
+        'content' => ['required', 'between:2,255'],
         'begin_time' => ['required', 'date'],
-        'end_time'   => ['required', 'date', 'after:begin_time'],
+        'end_time' => ['required', 'date', 'after:begin_time'],
     ];
 
     /**
@@ -28,10 +28,10 @@ class NoticeRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'      => '公告标题',
-        'content'    => '公告内容',
+        'title' => '公告标题',
+        'content' => '公告内容',
         'begin_time' => '开始时间',
-        'end_time'   => '结束时间',
+        'end_time' => '结束时间',
     ];
 
     /**

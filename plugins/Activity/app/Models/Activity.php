@@ -27,9 +27,9 @@ class Activity extends Model
      * @var array
      */
     protected $type = [
-        'config'     => ['array', JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT],
+        'config' => ['array', JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT],
         'start_time' => 'timestamp',
-        'end_time'   => 'timestamp',
+        'end_time' => 'timestamp',
     ];
 
     /**

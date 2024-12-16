@@ -89,7 +89,7 @@ class ApiIndexListener
     private function goodsCategoryList()
     {
         return GoodsCategory::query()->where([
-            'pid'    => 0,
+            'pid' => 0,
         ])->oldest('sort')->get();
     }
 

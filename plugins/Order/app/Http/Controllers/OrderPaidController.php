@@ -132,10 +132,10 @@ class OrderPaidController extends Controller
         $notifyUrl = $this->request->root() . url('order_paid_notify/wechat');
         $orderPaymentInfo = [
             'out_trade_no' => $info->order_no,
-            'body'         => '购买商品',
-            'total_fee'    => intval($info->pay_amount * 100),
-            'openid'       => $user->openid,
-            'notify_url'   => $notifyUrl,
+            'body' => '购买商品',
+            'total_fee' => intval($info->pay_amount * 100),
+            'openid' => $user->openid,
+            'notify_url' => $notifyUrl,
         ];
 
         try {

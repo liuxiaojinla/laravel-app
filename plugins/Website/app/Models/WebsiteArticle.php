@@ -45,19 +45,19 @@ class WebsiteArticle extends Model implements FavoriteListenerOfStatic
      * @var array
      */
     protected $type = [
-        'id'              => 'int',
-        'uid'             => 'int',
-        'app_id'          => 'int',
-        'category_id'     => 'int',
-        'status'          => 'int',
-        'is_original'     => 'int',
-        'allow_comment'   => 'int',
-        'view_count'      => 'int',
-        'like_count'      => 'int',
-        'comment_count'   => 'int',
-        'last_reply_uid'  => 'int',
+        'id' => 'int',
+        'uid' => 'int',
+        'app_id' => 'int',
+        'category_id' => 'int',
+        'status' => 'int',
+        'is_original' => 'int',
+        'allow_comment' => 'int',
+        'view_count' => 'int',
+        'like_count' => 'int',
+        'comment_count' => 'int',
+        'last_reply_uid' => 'int',
         'last_reply_time' => 'int',
-        'delete_time'     => 'int',
+        'delete_time' => 'int',
     ];
 
     /**

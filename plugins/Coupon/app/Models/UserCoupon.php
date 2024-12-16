@@ -33,7 +33,7 @@ class UserCoupon extends Model
      */
     protected $type = [
         'expire_time' => 'timestamp',
-        'use_time'    => 'timestamp',
+        'use_time' => 'timestamp',
     ];
 
     /**
@@ -46,7 +46,7 @@ class UserCoupon extends Model
     {
         return static::with('coupon')->where([
             'user_id' => $userId,
-            'status'  => UserCoupon::STATUS_WAIT,
+            'status' => UserCoupon::STATUS_WAIT,
         ])
             ->where('expire_time', '>', now()->getTimestamp())
             ->get()->sort(function ($it1, $it2) {

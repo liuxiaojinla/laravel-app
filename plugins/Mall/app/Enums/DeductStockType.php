@@ -24,12 +24,12 @@ class DeductStockType extends Enum
     public static function data()
     {
         return [
-            self::CREATE  => [
-                'name'  => '下单减库存',
+            self::CREATE => [
+                'name' => '下单减库存',
                 'value' => self::CREATE,
             ],
             self::PAYMENT => [
-                'name'  => '付款减库存',
+                'name' => '付款减库存',
                 'value' => self::PAYMENT,
             ],
         ];

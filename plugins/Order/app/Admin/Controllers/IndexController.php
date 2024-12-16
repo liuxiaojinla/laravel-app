@@ -103,8 +103,8 @@ class IndexController extends Controller
         }
 
         return Hint::result([
-            'order'         => $info,
-            'express'       => $expressList,
+            'order' => $info,
+            'express' => $expressList,
             'verifier_list' => $verifierList,
         ]);
     }
@@ -121,7 +121,7 @@ class IndexController extends Controller
 
         if (!$this->request->isPost()) {
             return Hint::result([
-                'order_amount'    => $info->order_amount,
+                'order_amount' => $info->order_amount,
                 'delivery_amount' => $info->delivery_amount,
             ]);
         }
@@ -206,7 +206,7 @@ class IndexController extends Controller
         $data = $this->request->validate([
             'express_id', 'express_no',
         ], [
-            'rules'  => [
+            'rules' => [
                 'express_id' => 'required|number',
                 'express_no' => 'required|between5,30',
             ],

@@ -14,10 +14,10 @@ class FreightTemplateRuleRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'region'         => 'required',
-        'first'          => 'required|float',
-        'first_fee'      => 'required|float',
-        'additional'     => 'required|float',
+        'region' => 'required',
+        'first' => 'required|float',
+        'first_fee' => 'required|float',
+        'additional' => 'required|float',
         'additional_fee' => 'required|float',
     ];
 
@@ -27,10 +27,10 @@ class FreightTemplateRuleRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'region'         => '区域',
-        'first'          => '首件',
-        'first_fee'      => '运费',
-        'additional'     => '续件',
+        'region' => '区域',
+        'first' => '首件',
+        'first_fee' => '运费',
+        'additional' => '续件',
         'additional_fee' => '续费',
     ];
 

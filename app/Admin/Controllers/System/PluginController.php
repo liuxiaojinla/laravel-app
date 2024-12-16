@@ -184,12 +184,12 @@ class PluginController extends Controller
     protected function buildManifestContent($data)
     {
         $info = var_export([
-            'name'        => $data['name'],
-            'title'       => $data['title'],
+            'name' => $data['name'],
+            'title' => $data['title'],
             'description' => $data['description'],
-            'author'      => $data['author'],
-            'version'     => $data['version'],
-            'events'      => $data['events'],
+            'author' => $data['author'],
+            'version' => $data['version'],
+            'events' => $data['events'],
         ], true);
 
         return <<<EOT
@@ -899,7 +899,7 @@ EOT;
         if (!$request->isPost()) {
             // 获取插件配置
             $this->assign([
-                'info'       => $info,
+                'info' => $info,
                 'config_tpl' => $pluginInfo->getConfigTemplate((array)$info->config),
             ]);
 
@@ -949,7 +949,7 @@ EOT;
 
         DatabasePlugin::query()->where([
             'install' => 1,
-            'status'  => 1,
+            'status' => 1,
         ])->when($plugin, ['name' => $plugin])
             ->select()
             ->each(function (DatabasePlugin $info) {

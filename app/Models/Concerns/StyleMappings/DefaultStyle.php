@@ -13,10 +13,10 @@ class DefaultStyle
         'text_color_classs' => [
             'default' => 'text-secondary',
             'primary' => 'text-primary',
-            'danger'  => 'text-danger',
+            'danger' => 'text-danger',
             'success' => 'text-success',
-            'info'    => 'text-info',
-            'warn'    => 'text-warning',
+            'info' => 'text-info',
+            'warn' => 'text-warning',
         ],
     ];
 

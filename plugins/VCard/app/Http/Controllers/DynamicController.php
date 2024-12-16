@@ -73,9 +73,9 @@ class DynamicController extends Controller
         $data = array_merge([
             'images' => [],
         ], $data, [
-            'user_id'  => $userId,
+            'user_id' => $userId,
             'vcard_id' => $vcard->id,
-            'status'   => 1,
+            'status' => 1,
         ]);
 
         $model = VCardDynamic::query()->create($data);

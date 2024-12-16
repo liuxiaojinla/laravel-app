@@ -250,7 +250,7 @@ class Goods extends Model implements OrderListenerOfStatic
     {
         $options = array_merge([
             'is_sample' => 0,
-            'is_vip'    => 0,
+            'is_vip' => 0,
         ], $options);
 
         // 获取商品规格信息
@@ -279,21 +279,21 @@ class Goods extends Model implements OrderListenerOfStatic
         $goodsTotalAmount = bcmul($goodsPrice, $goodsNum, 2);
 
         return (new OrderGoods)->forceFill([
-            'goods_type'         => 0,
-            'goodsable_type'     => self::MORPH_TYPE,
-            'goodsable_id'       => $this->getRawOriginal('id'),
-            'goods_id'           => $this->getRawOriginal('id'),
-            'goods_sku_id'       => $goodsSkuId,
-            'goods_title'        => $this->getRawOriginal('title'),
-            'goods_cover'        => $goodsSku->cover ?: $this->getRawOriginal('cover'),
-            'goods_num'          => $goodsNum,
-            'goods_price'        => $goodsPrice,
+            'goods_type' => 0,
+            'goodsable_type' => self::MORPH_TYPE,
+            'goodsable_id' => $this->getRawOriginal('id'),
+            'goods_id' => $this->getRawOriginal('id'),
+            'goods_sku_id' => $goodsSkuId,
+            'goods_title' => $this->getRawOriginal('title'),
+            'goods_cover' => $goodsSku->cover ?: $this->getRawOriginal('cover'),
+            'goods_num' => $goodsNum,
+            'goods_price' => $goodsPrice,
             'goods_market_price' => $goodsSku->market_price,
-            'goods_weight'       => $goodsSku->weight,
-            'goods_spec_sku'     => $goodsSku->spec_sku_id,
-            'goods_spec'         => implode(";", $this->getSpecOf($goodsSku['spec_sku_id'])),
-            'total_price'        => $goodsTotalAmount,
-            'stock'              => $goodsStock,
+            'goods_weight' => $goodsSku->weight,
+            'goods_spec_sku' => $goodsSku->spec_sku_id,
+            'goods_spec' => implode(";", $this->getSpecOf($goodsSku['spec_sku_id'])),
+            'total_price' => $goodsTotalAmount,
+            'stock' => $goodsStock,
         ]);
     }
 

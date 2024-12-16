@@ -19,13 +19,13 @@ class ModuleBootstrapServiceProvider extends ServiceProvider
     {
         config([
             'auth.guards.admin' => array_merge([
-                'driver'   => 'session',
+                'driver' => 'session',
                 'provider' => 'admins',
             ], config('auth.guards.admin', [])),
 
             'auth.providers.admins' => array_merge([
                 'driver' => 'admin',
-                'model'  => \App\Admin\Models\Admin::class,
+                'model' => \App\Admin\Models\Admin::class,
             ], config('auth.providers.admins', [])),
         ]);
 

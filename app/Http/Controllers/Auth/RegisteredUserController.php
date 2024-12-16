@@ -26,9 +26,9 @@ class RegisteredUserController extends Controller
     public function store(Request $request): Response
     {
         $data = $request->validate([
-            'code'     => ['required', 'string'],
-            'mobile'   => ['required', 'string', new MobileRule(), Rule::unique(User::class)],
-            'email'    => ['string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)],
+            'code' => ['required', 'string'],
+            'mobile' => ['required', 'string', new MobileRule(), Rule::unique(User::class)],
+            'email' => ['string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -46,7 +46,7 @@ class RegisteredUserController extends Controller
             __('auth.registered'),
             null,
             [
-                'info'  => $user->makeHidden([
+                'info' => $user->makeHidden([
                     'password',
                 ])->toArray(),
                 'token' => WebServer::getEncryptSessionCookieValue(),
@@ -75,32 +75,32 @@ class RegisteredUserController extends Controller
     {
         $encryptPassword = Hash::make($password);
         $user = User::query()->create([
-            'mobile'      => $mobile,
-            'password'    => $encryptPassword,
-            'email'       => $this->request->string('email', ''),
-            'app_id'      => $this->request->appId(),
+            'mobile' => $mobile,
+            'password' => $encryptPassword,
+            'email' => $this->request->string('email', ''),
+            'app_id' => $this->request->appId(),
             'third_appid' => '',
-            'openid'      => '',
-            'origin'      => 'h5',
-            'parent_id'   => 0,
-            'energy'      => 0,
-            'status'      => 1,
-            'is_vip'      => 0,
+            'openid' => '',
+            'origin' => 'h5',
+            'parent_id' => 0,
+            'energy' => 0,
+            'status' => 1,
+            'is_vip' => 0,
 
             'belong_distributor_id' => 0,
 
             'nickname' => $this->request->string('nickname', '普通用户'),
-            'gender'   => $this->request->integer('gender', 1),
-            'avatar'   => $this->request->string('avatar', '/images/user.png'),
+            'gender' => $this->request->integer('gender', 1),
+            'avatar' => $this->request->string('avatar', '/images/user.png'),
             'language' => $this->request->string('language', 'zh_CN'),
-            'country'  => $this->request->string('country', '中国'),
+            'country' => $this->request->string('country', '中国'),
             'province' => $this->request->string('province', ''),
-            'city'     => $this->request->string('city', ''),
+            'city' => $this->request->string('city', ''),
 
             'last_login_time' => $this->request->time(),
-            'last_login_ip'   => $this->request->ip(),
-            'login_count'     => 1,
-            'create_ip'       => $this->request->ip(),
+            'last_login_ip' => $this->request->ip(),
+            'login_count' => 1,
+            'create_ip' => $this->request->ip(),
         ]);
 
         return value($user);

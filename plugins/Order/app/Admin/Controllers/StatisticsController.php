@@ -38,8 +38,8 @@ class StatisticsController extends Controller
         $orderGoodsTotalCount = OrderGoods::search($search)->sum('goods_num');
 
         return Hint::result([
-            'orderTotalAmount'     => $orderTotalAmount,
-            'orderTotalCount'      => $orderTotalCount,
+            'orderTotalAmount' => $orderTotalAmount,
+            'orderTotalCount' => $orderTotalCount,
             'orderGoodsTotalCount' => $orderGoodsTotalCount,
         ]);
     }
@@ -83,9 +83,9 @@ class StatisticsController extends Controller
         }
 
         return Hint::result([
-            'xAxis'                            => $xAxisData,
-            'everyDayOrderTotalAmountList'     => $everyDayOrderTotalAmountValues,
-            'everyDayOrderTotalCountList'      => $everyDayOrderTotalCountValues,
+            'xAxis' => $xAxisData,
+            'everyDayOrderTotalAmountList' => $everyDayOrderTotalAmountValues,
+            'everyDayOrderTotalCountList' => $everyDayOrderTotalCountValues,
             'everyDayOrderGoodsTotalCountList' => $everyDayOrderGoodsTotalCountValues,
         ]);
     }

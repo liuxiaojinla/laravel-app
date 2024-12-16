@@ -14,9 +14,9 @@ class OrderGoodsRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'goods_id'    => 'required|number',
+        'goods_id' => 'required|number',
         'goods_price' => 'required',
-        'goods_num'   => 'required|number|min:1',
+        'goods_num' => 'required|number|min:1',
         'total_price' => 'required|number|min:0',
     ];
 
@@ -27,7 +27,7 @@ class OrderGoodsRequest extends FormRequest
      */
     protected $field = [
         'goods_price' => '商品单价',
-        'goods_num'   => '商品数量',
+        'goods_num' => '商品数量',
         'total_price' => '商品总额',
     ];
 

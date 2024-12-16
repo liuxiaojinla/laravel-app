@@ -17,8 +17,8 @@ class AgreementRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'   => '协议标题',
-        'name'    => '协议标识',
+        'title' => '协议标题',
+        'name' => '协议标识',
         'content' => '协议内容',
     ];
 
@@ -47,8 +47,8 @@ class AgreementRequest extends FormRequest
     {
         $id = $this->integer('id');
         return [
-            'title'   => ['required', 'between:2,48'],
-            'name'    => ['required', 'alpha_dash:ascii', 'between:3,48', Rule::unique('agreements')->ignore($id)],
+            'title' => ['required', 'between:2,48'],
+            'name' => ['required', 'alpha_dash:ascii', 'between:3,48', Rule::unique('agreements')->ignore($id)],
             'content' => ['required'],
         ];
     }

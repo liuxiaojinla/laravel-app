@@ -24,19 +24,19 @@ class ShopRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'       => '店铺名称',
-        'logo'        => '店铺LOGO',
+        'title' => '店铺名称',
+        'logo' => '店铺LOGO',
         'description' => '店铺介绍',
-        'picture'     => '店铺图片',
-        'realname'    => '联系人姓名',
-        'phone'       => '联系人手机',
-        'wechat'      => '联系人微信',
-        'province'    => '省',
-        'city'        => '市',
-        'district'    => '区/县',
-        'lng'         => '经度',
-        'lat'         => '纬度',
-        'address'     => '详细地址',
+        'picture' => '店铺图片',
+        'realname' => '联系人姓名',
+        'phone' => '联系人手机',
+        'wechat' => '联系人微信',
+        'province' => '省',
+        'city' => '市',
+        'district' => '区/县',
+        'lng' => '经度',
+        'lat' => '纬度',
+        'address' => '详细地址',
     ];
 
     /**
@@ -78,18 +78,18 @@ class ShopRequest extends FormRequest
         //            return $data;
         //        };
         return [
-            'title'       => 'required|between2,48',
-            'logo'        => 'required',
+            'title' => 'required|between2,48',
+            'logo' => 'required',
             'description' => 'required|between15,255',
-            'picture'     => 'required|array',
-            'realname'    => 'required|between2,24',
-            'phone'       => 'required|phone',
-            'province'    => 'required',
-            'city'        => 'required',
-            'district'    => 'required',
-            'lng'         => 'required|float',
-            'lat'         => 'required|float',
-            'address'     => 'required|between3,255',
+            'picture' => 'required|array',
+            'realname' => 'required|between2,24',
+            'phone' => 'required|phone',
+            'province' => 'required',
+            'city' => 'required',
+            'district' => 'required',
+            'lng' => 'required|float',
+            'lat' => 'required|float',
+            'address' => 'required|between3,255',
         ];
     }
 }

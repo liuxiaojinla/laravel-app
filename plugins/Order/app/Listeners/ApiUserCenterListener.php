@@ -34,35 +34,35 @@ class ApiUserCenterListener
         $userId = $this->request->user()?->id ?? 0;
 
         $statusCount = [
-            'pending_count'   => 0,
-            'paid_count'      => 0,
+            'pending_count' => 0,
+            'paid_count' => 0,
             'delivered_count' => 0,
-            'received_count'  => 0,
-            'refunded_count'  => 0,
+            'received_count' => 0,
+            'refunded_count' => 0,
         ];
         if ($userId) {
             $statusCount['pending_count'] = Order::query()->where([
                 'order_status' => OrderStatus::PENDING,
-                'user_id'      => $userId,
+                'user_id' => $userId,
             ])->count();
 
             $statusCount['paid_count'] = Order::query()->where([
                 'order_status' => OrderStatus::PAYMENT,
-                'user_id'      => $userId,
+                'user_id' => $userId,
             ])->count();
 
             $statusCount['delivered_count'] = Order::query()->where([
                 'order_status' => OrderStatus::DELIVERED,
-                'user_id'      => $userId,
+                'user_id' => $userId,
             ])->count();
 
             $statusCount['received_count'] = Order::query()->where([
                 'order_status' => OrderStatus::RECEIVED,
-                'user_id'      => $userId,
+                'user_id' => $userId,
             ])->count();
 
             $statusCount['refunded_count'] = OrderRefund::query()->where([
-                'status'  => RefundStatus::PENDING,
+                'status' => RefundStatus::PENDING,
                 'user_id' => $userId,
             ])->count();
         }

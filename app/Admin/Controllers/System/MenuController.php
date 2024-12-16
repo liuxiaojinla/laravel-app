@@ -138,7 +138,7 @@ class MenuController extends Controller
             foreach ($group['childs'] as $kc => $childIds) {
                 AdminMenu::query()->where('id', $childIds)->update([
                     'sort' => $kc,
-                    'pid'  => $group['root'],
+                    'pid' => $group['root'],
                 ]);
             }
         }

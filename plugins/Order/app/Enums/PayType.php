@@ -30,9 +30,9 @@ class PayType extends Enum
     public static function data()
     {
         return [
-            self::BALANCE         => '余额支付',
-            self::WECHAT          => '微信支付',
-            self::ALIPAY          => '支付宝',
+            self::BALANCE => '余额支付',
+            self::WECHAT => '微信支付',
+            self::ALIPAY => '支付宝',
             self::ONLINE_TRANSFER => '网上转账',
         ];
     }

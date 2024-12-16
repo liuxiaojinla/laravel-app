@@ -16,7 +16,7 @@ class FreightTemplateRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'    => 'required|between2,48',
+        'title' => 'required|between2,48',
         'fee_type' => 'required|in:0,1,2',
     ];
 
@@ -26,7 +26,7 @@ class FreightTemplateRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'    => '模板名称',
+        'title' => '模板名称',
         'fee_type' => '计费方式',
     ];
 

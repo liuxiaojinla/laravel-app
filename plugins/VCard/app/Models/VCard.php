@@ -41,8 +41,8 @@ class VCard extends Model
      */
     protected $type = [
         'weapp_qrcode_id' => 'int',
-        'lat'             => 'float',
-        'lng'             => 'float',
+        'lat' => 'float',
+        'lng' => 'float',
     ];
 
     /**
@@ -97,7 +97,7 @@ class VCard extends Model
             $qrcode = WechatWeappQrcode::makeUnlimited('id=' . $this->getRawOriginal('id'), [
                 //				'page' => 'pages/vcard/info',
             ], [
-                'app_id'  => $this->getRawOriginal('app_id'),
+                'app_id' => $this->getRawOriginal('app_id'),
                 'user_id' => $this->getRawOriginal('user_id'),
             ]);
 

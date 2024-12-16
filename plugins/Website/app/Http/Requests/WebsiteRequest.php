@@ -23,17 +23,17 @@ class WebsiteRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'    => 'required|between:2,48',
-        'logo'     => 'required',
-        'phone'    => 'required|phone',
-        'wechat'   => 'between:2,50',
+        'title' => 'required|between:2,48',
+        'logo' => 'required',
+        'phone' => 'required|phone',
+        'wechat' => 'between:2,50',
         //		'wechat_qrcode' => '',
         'province' => 'required',
-        'city'     => 'required',
+        'city' => 'required',
         'district' => 'required',
-        'lng'      => 'required|float',
-        'lat'      => 'required|float',
-        'address'  => 'required|between:3,255',
+        'lng' => 'required|float',
+        'lat' => 'required|float',
+        'address' => 'required|between:3,255',
     ];
 
     /**
@@ -42,17 +42,17 @@ class WebsiteRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'    => '官网名称',
-        'logo'     => '官网LOGO',
-        'phone'    => '联系人手机',
-        'wechat'   => '联系人微信',
-        'banner'   => '微信二维码',
+        'title' => '官网名称',
+        'logo' => '官网LOGO',
+        'phone' => '联系人手机',
+        'wechat' => '联系人微信',
+        'banner' => '微信二维码',
         'province' => '省',
-        'city'     => '市',
+        'city' => '市',
         'district' => '区/县',
-        'lng'      => '经度',
-        'lat'      => '纬度',
-        'address'  => '详细地址',
+        'lng' => '经度',
+        'lat' => '纬度',
+        'address' => '详细地址',
     ];
 
     /**

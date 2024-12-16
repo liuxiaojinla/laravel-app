@@ -24,10 +24,10 @@ class ArticleRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'       => '文章标题',
-        'content'     => '文章正文',
+        'title' => '文章标题',
+        'content' => '文章正文',
         'category_id' => '所属分类',
-        'status'      => '状态',
+        'status' => '状态',
     ];
 
     /**
@@ -45,10 +45,10 @@ class ArticleRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'       => 'required|between:2,48',
-            'content'     => 'required',
+            'title' => 'required|between:2,48',
+            'content' => 'required',
             'category_id' => 'required',
-            'status'      => 'nullable|in:0,1,2,3',
+            'status' => 'nullable|in:0,1,2,3',
         ];
     }
 }

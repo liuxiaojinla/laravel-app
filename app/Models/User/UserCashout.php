@@ -50,19 +50,19 @@ class UserCashout extends Model
      * @var mixed
      */
     private static $TYPE_TEXT_MAP = [
-        self::TYPE_BANK    => '银行卡',
-        self::TYPE_WECHAT  => '微信',
-        self::TYPE_ALIPAY  => '支付宝',
+        self::TYPE_BANK => '银行卡',
+        self::TYPE_WECHAT => '微信',
+        self::TYPE_ALIPAY => '支付宝',
         self::TYPE_BALANCE => '余额',
     ];
     /**
      * @var mixed
      */
     private static $STATUS_TEXT_MAP = [
-        self::STATUS_WAIT_AUDIT    => '待审核',
+        self::STATUS_WAIT_AUDIT => '待审核',
         self::STATUS_WAIT_TRANSFER => '待转账',
-        self::STATUS_TRANSFERRED   => '已转账',
-        self::STATUS_REFUSED       => '已拒绝',
+        self::STATUS_TRANSFERRED => '已转账',
+        self::STATUS_REFUSED => '已拒绝',
     ];
     /**
      * @var string
@@ -72,7 +72,7 @@ class UserCashout extends Model
      * @var array
      */
     protected $type = [
-        'audit_time'    => 'timestamp',
+        'audit_time' => 'timestamp',
         'transfer_time' => 'timestamp',
     ];
 
@@ -85,9 +85,9 @@ class UserCashout extends Model
     public static function fastCreate($data)
     {
         $data = array_merge([
-            'status'        => 0,
-            'cashout_no'    => Str::makeOrderSn(),
-            'service_rate'  => 0,
+            'status' => 0,
+            'cashout_no' => Str::makeOrderSn(),
+            'service_rate' => 0,
             'service_money' => 0,
         ], $data);
 
@@ -125,7 +125,7 @@ class UserCashout extends Model
     {
         return $this->belongsTo(User::class)->withField(['id', 'nickname', 'avatar'])
             ->bind([
-                'avatar'   => 'avatar',
+                'avatar' => 'avatar',
                 'nickname' => 'nickname',
             ]);
     }

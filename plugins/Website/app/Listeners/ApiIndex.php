@@ -36,25 +36,25 @@ class ApiIndex
                 'icon' => 'http://scrm.res.ixiaochengxu.cc/67/20201225/e50036f3d7d8bc97c4aa1e489340fe84.png',
                 'text' => '案例',
                 'type' => 'page',
-                'url'  => '/pages/website/case/index',
+                'url' => '/pages/website/case/index',
             ],
             [
                 'icon' => 'http://scrm.res.ixiaochengxu.cc/67/20201225/3f4ffb0766d14c94b4c48500efcb4130.png',
                 'text' => '产品',
                 'type' => 'page',
-                'url'  => '/pages/website/product/index',
+                'url' => '/pages/website/product/index',
             ],
             [
                 'icon' => 'http://scrm.res.ixiaochengxu.cc/67/20201225/8820ea306fd81e8af177105c3243306c.png',
                 'text' => '动态',
                 'type' => 'page',
-                'url'  => '/pages/website/article/index',
+                'url' => '/pages/website/article/index',
             ],
             [
                 'icon' => 'http://scrm.res.ixiaochengxu.cc/67/20201225/b813772df5fec47bfb8ef590c8a68a31.png',
                 'text' => '关于我们',
                 'type' => 'page',
-                'url'  => '/pages/website/about',
+                'url' => '/pages/website/about',
             ],
         ];
 
@@ -64,7 +64,7 @@ class ApiIndex
             'status' => 1,
         ])->order([
             'top_time' => 'desc',
-            'id'       => 'desc',
+            'id' => 'desc',
         ])->limit(0, 5)->get();
 
         // 获取产品
@@ -73,7 +73,7 @@ class ApiIndex
             'status' => 1,
         ])->order([
             'top_time' => 'desc',
-            'id'       => 'desc',
+            'id' => 'desc',
         ])->limit(0, 5)->get();
 
         // 获取案例
@@ -82,7 +82,7 @@ class ApiIndex
             'status' => 1,
         ])->order([
             'top_time' => 'desc',
-            'id'       => 'desc',
+            'id' => 'desc',
         ])->limit(0, 5)->get();
 
         // 悬浮按钮
@@ -92,8 +92,8 @@ class ApiIndex
                 'type' => 'contact',
             ],
             [
-                'icon'  => '',
-                'type'  => 'phone',
+                'icon' => '',
+                'type' => 'phone',
                 'phone' => '13653975075',
             ],
         ];
@@ -108,18 +108,18 @@ class ApiIndex
             'items' => [
                 [
                     'title' => '您的姓名',
-                    'name'  => 'name',
-                    'type'  => 'string',
+                    'name' => 'name',
+                    'type' => 'string',
                 ],
                 [
                     'title' => '您的手机号',
-                    'name'  => 'phone',
-                    'type'  => 'number',
+                    'name' => 'phone',
+                    'type' => 'number',
                 ],
                 [
                     'title' => '您要了解的内容',
-                    'name'  => 'message',
-                    'type'  => 'text',
+                    'name' => 'message',
+                    'type' => 'text',
                 ],
             ],
         ];

@@ -13,7 +13,7 @@ return [
     | Default module namespace.
     |
     */
-    'namespace'  => 'Plugins',
+    'namespace' => 'Plugins',
 
     /*
     |--------------------------------------------------------------------------
@@ -23,30 +23,30 @@ return [
     | Default module stubs.
     |
     */
-    'stubs'      => [
-        'enabled'      => false,
-        'path'         => base_path('vendor/nwidart/laravel-modules/src/Commands/stubs'),
-        'files'        => [
-//            'routes/web'      => 'routes/web.php',
-            'routes/api'      => 'routes/api.php',
+    'stubs' => [
+        'enabled' => false,
+        'path' => base_path('vendor/nwidart/laravel-modules/src/Commands/stubs'),
+        'files' => [
+            //            'routes/web'      => 'routes/web.php',
+            'routes/api' => 'routes/api.php',
             //            'views/index'     => 'resources/views/index.blade.php',
             //            'views/master'    => 'resources/views/layouts/master.blade.php',
             'scaffold/config' => 'config/config.php',
-            'composer'        => 'composer.json',
+            'composer' => 'composer.json',
             //            'assets/js/app'   => 'resources/assets/js/app.js',
             //            'assets/sass/app' => 'resources/assets/sass/app.scss',
             //            'vite'            => 'vite.config.js',
             //            'package'         => 'package.json',
         ],
         'replacements' => [
-            'routes/web'      => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE', 'CONTROLLER_NAMESPACE'],
-            'routes/api'      => ['LOWER_NAME', 'STUDLY_NAME'],
-            'vite'            => ['LOWER_NAME'],
-            'json'            => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE', 'PROVIDER_NAMESPACE'],
-            'views/index'     => ['LOWER_NAME'],
-            'views/master'    => ['LOWER_NAME', 'STUDLY_NAME'],
+            'routes/web' => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE', 'CONTROLLER_NAMESPACE'],
+            'routes/api' => ['LOWER_NAME', 'STUDLY_NAME'],
+            'vite' => ['LOWER_NAME'],
+            'json' => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE', 'PROVIDER_NAMESPACE'],
+            'views/index' => ['LOWER_NAME'],
+            'views/master' => ['LOWER_NAME', 'STUDLY_NAME'],
             'scaffold/config' => ['STUDLY_NAME'],
-            'composer'        => [
+            'composer' => [
                 'LOWER_NAME',
                 'STUDLY_NAME',
                 'VENDOR',
@@ -56,9 +56,9 @@ return [
                 'PROVIDER_NAMESPACE',
             ],
         ],
-        'gitkeep'      => false,
+        'gitkeep' => false,
     ],
-    'paths'      => [
+    'paths' => [
         /*
         |--------------------------------------------------------------------------
         | Modules path
@@ -68,7 +68,7 @@ return [
         | This path will also be added automatically to the list of scanned folders.
         |
         */
-        'modules'   => base_path('plugins'),
+        'modules' => base_path('plugins'),
 
         /*
         |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return [
         | Here you may update the modules' assets path.
         |
         */
-        'assets'    => public_path('plugins'),
+        'assets' => public_path('plugins'),
 
         /*
         |--------------------------------------------------------------------------
@@ -99,60 +99,60 @@ return [
         | Setting the generate key to false will not generate that folder
         */
         'generator' => [
-            'config'          => ['path' => 'config', 'generate' => true],
+            'config' => ['path' => 'config', 'generate' => true],
 
             // App
-            'command'         => ['path' => 'app/Console', 'namespace' => 'App/Console', 'generate' => false],
-            'channels'        => ['path' => 'app/Broadcasting', 'namespace' => 'App/Broadcasting', 'generate' => false],
-            'model'           => ['path' => 'app/Models', 'namespace' => 'App/Models', 'generate' => true],
-            'observer'        => ['path' => 'app/Observers', 'namespace' => 'App/Observers', 'generate' => false],
-            'provider'        => ['path' => 'app/Providers', 'namespace' => 'App/Providers', 'generate' => true],
-            'controller'      => [
+            'command' => ['path' => 'app/Console', 'namespace' => 'App/Console', 'generate' => false],
+            'channels' => ['path' => 'app/Broadcasting', 'namespace' => 'App/Broadcasting', 'generate' => false],
+            'model' => ['path' => 'app/Models', 'namespace' => 'App/Models', 'generate' => true],
+            'observer' => ['path' => 'app/Observers', 'namespace' => 'App/Observers', 'generate' => false],
+            'provider' => ['path' => 'app/Providers', 'namespace' => 'App/Providers', 'generate' => true],
+            'controller' => [
                 'path' => 'app/Http/Controllers', 'namespace' => 'App/Http/Controllers', 'generate' => true,
             ],
-            'filter'          => [
+            'filter' => [
                 'path' => 'app/Http/Middleware', 'namespace' => 'App/Http/Middleware', 'generate' => false,
             ],
-            'request'         => [
+            'request' => [
                 'path' => 'app/Http/Requests', 'namespace' => 'App/Http/Requests', 'generate' => true,
             ],
-            'repository'      => ['path' => 'app/Repositories', 'namespace' => 'App/Repositories', 'generate' => false],
-            'event'           => ['path' => 'app/Events', 'namespace' => 'App/Events', 'generate' => false],
-            'listener'        => ['path' => 'app/Listeners', 'namespace' => 'App/Listeners', 'generate' => false],
-            'policies'        => ['path' => 'app/Policies', 'namespace' => 'App/Policies', 'generate' => false],
-            'rules'           => ['path' => 'app/Rules', 'namespace' => 'App/Rules', 'generate' => false],
-            'jobs'            => ['path' => 'app/Jobs', 'namespace' => 'App/Jobs', 'generate' => false],
-            'emails'          => ['path' => 'app/Emails', 'namespace' => 'App/Emails', 'generate' => false],
-            'notifications'   => [
+            'repository' => ['path' => 'app/Repositories', 'namespace' => 'App/Repositories', 'generate' => false],
+            'event' => ['path' => 'app/Events', 'namespace' => 'App/Events', 'generate' => false],
+            'listener' => ['path' => 'app/Listeners', 'namespace' => 'App/Listeners', 'generate' => false],
+            'policies' => ['path' => 'app/Policies', 'namespace' => 'App/Policies', 'generate' => false],
+            'rules' => ['path' => 'app/Rules', 'namespace' => 'App/Rules', 'generate' => false],
+            'jobs' => ['path' => 'app/Jobs', 'namespace' => 'App/Jobs', 'generate' => false],
+            'emails' => ['path' => 'app/Emails', 'namespace' => 'App/Emails', 'generate' => false],
+            'notifications' => [
                 'path' => 'app/Notifications', 'namespace' => 'App/Notifications', 'generate' => false,
             ],
-            'resource'        => ['path' => 'app/Resources', 'namespace' => 'App/Resources', 'generate' => false],
+            'resource' => ['path' => 'app/Resources', 'namespace' => 'App/Resources', 'generate' => false],
 
             // database
-            'migration'       => [
+            'migration' => [
                 'path' => 'database/migrations', 'namespace' => 'Database/Migrations', 'generate' => false,
             ],
-            'seeder'          => ['path' => 'database/seeders', 'namespace' => 'Database/Seeders', 'generate' => false],
-            'factory'         => [
+            'seeder' => ['path' => 'database/seeders', 'namespace' => 'Database/Seeders', 'generate' => false],
+            'factory' => [
                 'path' => 'database/factories', 'namespace' => 'Database/Factories', 'generate' => false,
             ],
 
             // route
-            'routes'          => ['path' => 'routes', 'generate' => true],
+            'routes' => ['path' => 'routes', 'generate' => true],
 
             // lang
-            'lang'            => ['path' => 'lang', 'generate' => false],
+            'lang' => ['path' => 'lang', 'generate' => false],
 
             // resources
-            'assets'          => ['path' => 'resources/assets', 'generate' => false],
-            'views'           => ['path' => 'resources/views', 'generate' => false],
+            'assets' => ['path' => 'resources/assets', 'generate' => false],
+            'views' => ['path' => 'resources/views', 'generate' => false],
 
             // test
-            'test'            => ['path' => 'tests/Unit', 'generate' => false],
-            'test-feature'    => ['path' => 'tests/Feature', 'generate' => false],
+            'test' => ['path' => 'tests/Unit', 'generate' => false],
+            'test-feature' => ['path' => 'tests/Feature', 'generate' => false],
 
             // component
-            'component-view'  => [
+            'component-view' => [
                 'path' => 'resources/views/components', 'generate' => false,
             ],
             'component-class' => [
@@ -170,7 +170,7 @@ return [
     | application. You can add your own commands to merge section.
     |
     */
-    'commands'   => ConsoleServiceProvider::defaultCommands()
+    'commands' => ConsoleServiceProvider::defaultCommands()
         ->merge([
             // New commands go here
         ])->toArray(),
@@ -184,9 +184,9 @@ return [
     | directory. This is useful if you host the package in packagist website.
     |
     */
-    'scan'       => [
+    'scan' => [
         'enabled' => false,
-        'paths'   => [
+        'paths' => [
             base_path('vendor/*/*'),
         ],
     ],
@@ -199,10 +199,10 @@ return [
     | Here is the config for the composer.json file, generated by this package
     |
     */
-    'composer'   => [
-        'vendor'          => 'plugins',
-        'author'          => [
-            'name'  => 'liuxiaojinla',
+    'composer' => [
+        'vendor' => 'plugins',
+        'author' => [
+            'name' => 'liuxiaojinla',
             'email' => '1540175452@qq.com',
         ],
         'composer-output' => false,
@@ -216,10 +216,10 @@ return [
     | Here is the config for setting up the caching feature.
     |
     */
-    'cache'      => [
-        'enabled'  => false,
-        'driver'   => 'file',
-        'key'      => 'laravel-plugins',
+    'cache' => [
+        'enabled' => false,
+        'driver' => 'file',
+        'key' => 'laravel-plugins',
         'lifetime' => 60,
     ],
 
@@ -230,12 +230,12 @@ return [
     | in your own Service Provider class.
     |--------------------------------------------------------------------------
     */
-    'register'   => [
+    'register' => [
         'translations' => true,
         /**
          * load files on boot or register method
          */
-        'files'        => 'register',
+        'files' => 'register',
     ],
 
     /*
@@ -249,9 +249,9 @@ return [
     */
     'activators' => [
         'file' => [
-            'class'          => FileActivator::class,
-            'statuses-file'  => base_path('plugins_statuses.json'),
-            'cache-key'      => 'activator.installed',
+            'class' => FileActivator::class,
+            'statuses-file' => base_path('plugins_statuses.json'),
+            'cache-key' => 'activator.installed',
             'cache-lifetime' => 604800,
         ],
     ],

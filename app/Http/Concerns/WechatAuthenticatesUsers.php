@@ -93,30 +93,30 @@ trait WechatAuthenticatesUsers
         }
 
         $userData = array_merge([
-            'app_id'      => $this->request->appId(),
+            'app_id' => $this->request->appId(),
             'third_appid' => $wechatAppId,
-            'openid'      => $openid ?? '',
-            'origin'      => $origin,
-            'parent_id'   => $shareUserId,
-            'energy'      => 0,
-            'status'      => 1,
-            'is_vip'      => 0,
+            'openid' => $openid ?? '',
+            'origin' => $origin,
+            'parent_id' => $shareUserId,
+            'energy' => 0,
+            'status' => 1,
+            'is_vip' => 0,
 
             'belong_distributor_id' => $shareUser ? $shareUser->distributor_id : 0,
 
-            'mobile'   => $this->request->string('phone', ''),
+            'mobile' => $this->request->string('phone', ''),
             'nickname' => $this->request->string('nickName', '普通用户'),
-            'gender'   => $this->request->integer('gender', 1),
-            'avatar'   => $this->request->string('avatarUrl', '/images/user.png'),
+            'gender' => $this->request->integer('gender', 1),
+            'avatar' => $this->request->string('avatarUrl', '/images/user.png'),
             'language' => $this->request->string('language', 'zh_CN'),
-            'country'  => $this->request->string('country', '中国'),
+            'country' => $this->request->string('country', '中国'),
             'province' => $this->request->string('province', ''),
-            'city'     => $this->request->string('city', ''),
+            'city' => $this->request->string('city', ''),
 
             'last_login_time' => $this->request->time(),
-            'last_login_ip'   => $this->request->ip(),
-            'login_count'     => 1,
-            'create_ip'       => $this->request->ip(),
+            'last_login_ip' => $this->request->ip(),
+            'login_count' => 1,
+            'create_ip' => $this->request->ip(),
         ], $this->resolveUpdateUserData());
 
         $user = User::query()->forceCreate($userData);

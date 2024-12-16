@@ -66,8 +66,8 @@ class UserLike extends Model
     {
         return static::where([
             'topic_type' => $type,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
+            'topic_id' => $topicId,
+            'user_id' => $userId,
         ])->find();
     }
 
@@ -83,8 +83,8 @@ class UserLike extends Model
     {
         return static::where([
             'topic_type' => $type,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
+            'topic_id' => $topicId,
+            'user_id' => $userId,
         ])->delete();
     }
 
@@ -100,8 +100,8 @@ class UserLike extends Model
     {
         static::create([
             'topic_type' => $type,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
+            'topic_id' => $topicId,
+            'user_id' => $userId,
         ]);
 
         return true;

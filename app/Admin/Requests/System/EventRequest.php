@@ -16,10 +16,10 @@ class EventRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'name'        => '唯一标识',
+        'name' => '唯一标识',
         'description' => '描述',
-        'type'        => '类型',
-        'addons'      => '插件',
+        'type' => '类型',
+        'addons' => '插件',
     ];
 
     /**
@@ -38,10 +38,10 @@ class EventRequest extends FormRequest
     {
         $id = $this->integer('id');
         return [
-            'name'        => ['required', 'alpha_dash:ascii', 'between:3,48', Rule::unique(Event::class)->ignore($id)],
+            'name' => ['required', 'alpha_dash:ascii', 'between:3,48', Rule::unique(Event::class)->ignore($id)],
             'description' => ['required', 'between:3,255'],
-            'type'        => ['required', 'in:0,1'],
-            'addons'      => ['array'],
+            'type' => ['required', 'in:0,1'],
+            'addons' => ['array'],
         ];
     }
 }

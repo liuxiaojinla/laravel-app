@@ -73,9 +73,9 @@ class AppServiceProvider extends ServiceProvider
             if ($data instanceof LengthAwarePaginator) {
                 return [
                     'current_page' => $data->currentPage(),
-                    'data'         => $data->items(),
-                    'per_page'     => $data->perPage(),
-                    'total'        => $data->total(),
+                    'data' => $data->items(),
+                    'per_page' => $data->perPage(),
+                    'total' => $data->total(),
                 ];
             }
 

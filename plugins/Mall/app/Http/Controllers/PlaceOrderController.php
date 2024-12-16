@@ -78,7 +78,7 @@ class PlaceOrderController extends Controller
         if ($isSample) {
             $sampleCount = OrderGoods::query()->where([
                 'goods_id' => $goodsId,
-                'user_id'  => $this->userId,
+                'user_id' => $this->userId,
             ])->sum('goods_num');
 
             $maxSampleCount = (int)Config::get('mall_sample_count');
@@ -89,7 +89,7 @@ class PlaceOrderController extends Controller
 
         // 组装订单商品信息
         $orderGoods = $goods->toOrderGoods($goodsSkuId, $goodsNum, $this->request->isPost(), [
-            'is_vip'    => $this->isVipUser,
+            'is_vip' => $this->isVipUser,
             'is_sample' => $isSample,
         ]);
         $orderGoods['is_sample'] = $isSample;
@@ -135,11 +135,11 @@ class PlaceOrderController extends Controller
         $userBalance = 0;
 
         return Hint::result([
-            'user_address'     => $userAddress,
+            'user_address' => $userAddress,
             'user_coupon_list' => $userCouponList,
-            'user_balance'     => $userBalance,
-            'delivery_list'    => $deliveryList,
-            'goods_list'       => $orderGoodsList,
+            'user_balance' => $userBalance,
+            'delivery_list' => $deliveryList,
+            'goods_list' => $orderGoodsList,
         ]);
     }
 
@@ -199,11 +199,11 @@ class PlaceOrderController extends Controller
     {
         return [
             [
-                'type'  => '10',
+                'type' => '10',
                 'title' => '物流配送',
             ],
             [
-                'type'  => '20',
+                'type' => '20',
                 'title' => '线下自提',
             ],
         ];

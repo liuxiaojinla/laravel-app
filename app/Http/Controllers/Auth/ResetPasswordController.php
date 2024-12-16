@@ -24,7 +24,7 @@ class ResetPasswordController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'token'    => ['required'],
+            'token' => ['required'],
             'username' => ['required', 'string'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -36,7 +36,7 @@ class ResetPasswordController extends Controller
             $request->only('username', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
                 $user->forceFill([
-                    'password'       => Hash::make($request->password),
+                    'password' => Hash::make($request->password),
                     'remember_token' => Str::random(60),
                 ])->save();
 

@@ -144,7 +144,7 @@ class EventController extends Controller
             foreach ($info->addons as $addon) {
                 if (isset($data[$addon])) {
                     $addons[] = [
-                        'name'  => $addon,
+                        'name' => $addon,
                         'title' => $data[$addon],
                     ];
                 }
@@ -152,7 +152,7 @@ class EventController extends Controller
         }
 
         return Hint::result([
-            'info'   => $info,
+            'info' => $info,
             'addons' => $addons,
         ]);
     }

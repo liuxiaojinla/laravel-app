@@ -7,64 +7,64 @@
 return [
     [
         'title' => '首页',
-        'url'   => 'index/index',
-        'icon'  => 'fa fa-home',
-        'show'  => true,
-        'link'  => true,
-        'sort'  => -9999,
+        'url' => 'index/index',
+        'icon' => 'fa fa-home',
+        'show' => true,
+        'link' => true,
+        'sort' => -9999,
     ],
 
     [
         'title' => '内容',
-        'url'   => 'article',
-        'show'  => true,
-        'link'  => false,
-        'icon'  => 'fa fa-book',
-        'sort'  => 7000,
+        'url' => 'article',
+        'show' => true,
+        'link' => false,
+        'icon' => 'fa fa-book',
+        'sort' => 7000,
         'child' => [
             [
                 'title' => '文章管理',
-                'url'   => 'article.index/index',
-                'show'  => true,
+                'url' => 'article.index/index',
+                'show' => true,
                 'child' => [
                     [
                         'title' => '新增文章',
-                        'url'   => 'article.index/create',
+                        'url' => 'article.index/create',
                     ],
                     [
                         'title' => '更新文章',
-                        'url'   => 'article.index/update',
+                        'url' => 'article.index/update',
                     ],
                     [
                         'title' => '删除文章',
-                        'url'   => 'article.index/delete',
+                        'url' => 'article.index/delete',
                     ],
                     [
                         'title' => '更新文章字段',
-                        'url'   => 'article.index/setvalue',
+                        'url' => 'article.index/setvalue',
                     ],
                 ],
             ],
             [
                 'title' => '分类管理',
-                'url'   => 'article.category/index',
-                'show'  => true,
+                'url' => 'article.category/index',
+                'show' => true,
                 'child' => [
                     [
                         'title' => '新增分类',
-                        'url'   => 'article.category/create',
+                        'url' => 'article.category/create',
                     ],
                     [
                         'title' => '更新分类',
-                        'url'   => 'article.category/update',
+                        'url' => 'article.category/update',
                     ],
                     [
                         'title' => '删除分类',
-                        'url'   => 'article.category/delete',
+                        'url' => 'article.category/delete',
                     ],
                     [
                         'title' => '更新分类字段',
-                        'url'   => 'article.category/setvalue',
+                        'url' => 'article.category/setvalue',
                     ],
                 ],
             ],
@@ -73,98 +73,98 @@ return [
 
     [
         'title' => '营销',
-        'url'   => 'marketing',
-        'show'  => true,
-        'link'  => false,
-        'sort'  => 7400,
-        'icon'  => 'fa fa-ticket',
+        'url' => 'marketing',
+        'show' => true,
+        'link' => false,
+        'sort' => 7400,
+        'icon' => 'fa fa-ticket',
         'child' => [
         ],
     ],
 
     [
         'title' => '工具',
-        'url'   => 'tool',
-        'show'  => true,
-        'link'  => false,
-        'sort'  => 7500,
-        'icon'  => 'fa fa-leaf',
+        'url' => 'tool',
+        'show' => true,
+        'link' => false,
+        'sort' => 7500,
+        'icon' => 'fa fa-leaf',
         'child' => [
         ],
     ],
 
     [
         'title' => '运营',
-        'url'   => 'operate',
-        'show'  => true,
-        'link'  => false,
-        'sort'  => 8000,
-        'icon'  => 'fa fa-desktop',
+        'url' => 'operate',
+        'show' => true,
+        'link' => false,
+        'sort' => 8000,
+        'icon' => 'fa fa-desktop',
         'child' => [
             [
                 'title' => '公告管理',
-                'url'   => 'notice/index',
-                'show'  => true,
+                'url' => 'notice/index',
+                'show' => true,
                 'child' => [
                     [
                         'title' => '新增公告',
-                        'url'   => 'notice/create',
+                        'url' => 'notice/create',
                     ],
                     [
                         'title' => '更新公告',
-                        'url'   => 'notice/update',
+                        'url' => 'notice/update',
                     ],
                     [
                         'title' => '删除公告',
-                        'url'   => 'notice/delete',
+                        'url' => 'notice/delete',
                     ],
                     [
                         'title' => '更新公告字段',
-                        'url'   => 'notice/setvalue',
+                        'url' => 'notice/setvalue',
                     ],
                 ],
             ],
             [
                 'title' => '广告管理',
-                'url'   => 'advertisement.position/index',
-                'show'  => true,
+                'url' => 'advertisement.position/index',
+                'show' => true,
                 'child' => [
                     [
                         'title' => '新增广告位',
-                        'url'   => 'advertisement.position/create',
+                        'url' => 'advertisement.position/create',
                     ],
                     [
                         'title' => '更新广告位',
-                        'url'   => 'advertisement.position/update',
+                        'url' => 'advertisement.position/update',
                     ],
                     [
                         'title' => '删除广告位',
-                        'url'   => 'advertisement.position/delete',
+                        'url' => 'advertisement.position/delete',
                     ],
                     [
                         'title' => '更新广告位字段',
-                        'url'   => 'advertisement.position/setvalue',
+                        'url' => 'advertisement.position/setvalue',
                     ],
                     [
                         'title' => '广告管理',
-                        'url'   => 'advertisement.item/index',
-                        'show'  => true,
+                        'url' => 'advertisement.item/index',
+                        'show' => true,
                         'child' => [
                             [
                                 'title' => '新增广告',
-                                'url'   => 'advertisement.item/create',
+                                'url' => 'advertisement.item/create',
                             ],
                             [
                                 'title' => '更新广告',
-                                'url'   => 'advertisement.item/update',
+                                'url' => 'advertisement.item/update',
                             ],
                             [
                                 'title' => '删除广告',
-                                'url'   => 'advertisement.item/delete',
+                                'url' => 'advertisement.item/delete',
                             ],
                             [
                                 'title' => '更新广告字段',
-                                'url'   => 'advertisement.item/setvalue',
+                                'url' => 'advertisement.item/setvalue',
                             ],
                         ],
                     ],
@@ -172,169 +172,169 @@ return [
             ],
             [
                 'title' => '意见反馈',
-                'url'   => 'feedback/index',
-                'show'  => true,
-                'sort'  => 8000,
+                'url' => 'feedback/index',
+                'show' => true,
+                'sort' => 8000,
             ],
             [
                 'title' => '留言管理',
-                'url'   => 'leave_message/index',
-                'show'  => true,
-                'sort'  => 8000,
+                'url' => 'leave_message/index',
+                'show' => true,
+                'sort' => 8000,
             ],
             [
                 'title' => '协议管理',
-                'url'   => 'agreement/index',
-                'show'  => true,
-                'sort'  => 9000,
+                'url' => 'agreement/index',
+                'show' => true,
+                'sort' => 9000,
                 'child' => [
                     [
                         'title' => '新增协议',
-                        'url'   => 'agreement/create',
+                        'url' => 'agreement/create',
                     ],
                     [
                         'title' => '更新协议',
-                        'url'   => 'agreement/update',
+                        'url' => 'agreement/update',
                     ],
                     [
                         'title' => '删除协议',
-                        'url'   => 'agreement/delete',
+                        'url' => 'agreement/delete',
                     ],
                 ],
             ],
             [
                 'title' => '单页管理',
-                'url'   => 'single_page/index',
-                'show'  => true,
-                'sort'  => 9000,
+                'url' => 'single_page/index',
+                'show' => true,
+                'sort' => 9000,
                 'child' => [
                     [
                         'title' => '单页协议',
-                        'url'   => 'single_page/create',
+                        'url' => 'single_page/create',
                     ],
                     [
                         'title' => '单页协议',
-                        'url'   => 'single_page/update',
+                        'url' => 'single_page/update',
                     ],
                     [
                         'title' => '单页协议',
-                        'url'   => 'single_page/delete',
+                        'url' => 'single_page/delete',
                     ],
                     [
                         'title' => '更新单页字段',
-                        'url'   => 'single_page/setvalue',
+                        'url' => 'single_page/setvalue',
                     ],
                 ],
             ],
             [
                 'title' => '关于我们',
-                'url'   => 'single_page/about',
-                'show'  => true,
-                'sort'  => 10000,
+                'url' => 'single_page/about',
+                'show' => true,
+                'sort' => 10000,
             ],
         ],
     ],
 
     [
         'title' => '统计',
-        'url'   => 'statistics',
-        'show'  => true,
-        'link'  => false,
-        'icon'  => 'fa fa-area-chart',
-        'sort'  => 9000,
+        'url' => 'statistics',
+        'show' => true,
+        'link' => false,
+        'icon' => 'fa fa-area-chart',
+        'sort' => 9000,
         'child' => [
             [
                 'title' => '用户概览',
-                'url'   => 'statistics.user/index',
-                'show'  => true,
+                'url' => 'statistics.user/index',
+                'show' => true,
             ],
         ],
     ],
 
     [
         'title' => '财务',
-        'url'   => 'finance',
-        'show'  => true,
-        'link'  => false,
-        'icon'  => 'fa fa-rmb',
-        'sort'  => 9000,
+        'url' => 'finance',
+        'show' => true,
+        'link' => false,
+        'icon' => 'fa fa-rmb',
+        'sort' => 9000,
         'child' => [],
     ],
 
     [
         'title' => '用户',
-        'url'   => 'user',
-        'icon'  => 'fa fa-user',
-        'show'  => true,
-        'link'  => false,
-        'sort'  => 9000,
+        'url' => 'user',
+        'icon' => 'fa fa-user',
+        'show' => true,
+        'link' => false,
+        'sort' => 9000,
         'child' => [
             [
                 'title' => '用户管理',
-                'url'   => 'user.index/index',
-                'show'  => true,
+                'url' => 'user.index/index',
+                'show' => true,
                 'child' => [
                     [
                         'title' => '查看用户',
-                        'url'   => 'user.index/detail',
+                        'url' => 'user.index/detail',
                     ],
                     [
                         'title' => '更新用户',
-                        'url'   => 'user.index/update',
+                        'url' => 'user.index/update',
                     ],
                     [
                         'title' => '余额记录',
-                        'url'   => 'user.index/balancelog',
+                        'url' => 'user.index/balancelog',
                     ],
                     [
                         'title' => '积分记录',
-                        'url'   => 'user.index/scorelog',
+                        'url' => 'user.index/scorelog',
                     ],
                 ],
             ],
             [
                 'title' => '用户等级',
-                'url'   => 'user.level/index',
-                'show'  => config('app.actions.user.level'),
+                'url' => 'user.level/index',
+                'show' => config('app.actions.user.level'),
                 'child' => [
                     [
                         'title' => '新增用户等级',
-                        'url'   => 'user.level/create',
+                        'url' => 'user.level/create',
                     ],
                     [
                         'title' => '更新用户等级',
-                        'url'   => 'user.level/update',
+                        'url' => 'user.level/update',
                     ],
                     [
                         'title' => '删除用户等级',
-                        'url'   => 'user.level/delete',
+                        'url' => 'user.level/delete',
                     ],
                     [
                         'title' => '更新用户等级字段',
-                        'url'   => 'user.level/setvalue',
+                        'url' => 'user.level/setvalue',
                     ],
                 ],
             ],
             [
                 'title' => '用户标签',
-                'url'   => 'user.tag/index',
-                'show'  => config('app.actions.user.level'),
+                'url' => 'user.tag/index',
+                'show' => config('app.actions.user.level'),
                 'child' => [
                     [
                         'title' => '新增会员标签',
-                        'url'   => 'user.tag/create',
+                        'url' => 'user.tag/create',
                     ],
                     [
                         'title' => '更新会员标签',
-                        'url'   => 'user.tag/update',
+                        'url' => 'user.tag/update',
                     ],
                     [
                         'title' => '更新会员标签',
-                        'url'   => 'user.tag/delete',
+                        'url' => 'user.tag/delete',
                     ],
                     [
                         'title' => '更新用户标签字段',
-                        'url'   => 'user.tag/setvalue',
+                        'url' => 'user.tag/setvalue',
                     ],
                 ],
             ],
@@ -343,160 +343,160 @@ return [
 
     [
         'title' => '系统',
-        'url'   => 'system',
-        'icon'  => 'fa fa-cogs',
-        'show'  => true,
-        'link'  => false,
-        'sort'  => 10000,
+        'url' => 'system',
+        'icon' => 'fa fa-cogs',
+        'show' => true,
+        'link' => false,
+        'sort' => 10000,
         'child' => [
             [
                 'title' => '网站配置',
-                'url'   => 'system.setting/group',
-                'show'  => true,
+                'url' => 'system.setting/group',
+                'show' => true,
             ],
             [
                 'title' => '配置管理',
-                'url'   => 'system.setting/index',
-                'show'  => true,
+                'url' => 'system.setting/index',
+                'show' => true,
                 'child' => [
                     [
                         'title' => '新增配置',
-                        'url'   => 'system.setting/create',
+                        'url' => 'system.setting/create',
                     ],
                     [
                         'title' => '更新配置',
-                        'url'   => 'system.setting/update',
+                        'url' => 'system.setting/update',
                     ],
                     [
                         'title' => '配置排序',
-                        'url'   => 'system.setting/sort',
+                        'url' => 'system.setting/sort',
                     ],
                     [
                         'title' => '更新配置字段',
-                        'url'   => 'system.setting/setvalue',
+                        'url' => 'system.setting/setvalue',
                     ],
                 ],
             ],
             [
-                'title'      => '管理员管理',
-                'url'        => 'authorization.admin/index',
-                'show'       => true,
+                'title' => '管理员管理',
+                'url' => 'authorization.admin/index',
+                'show' => true,
                 'only_admin' => true,
-                'child'      => [
+                'child' => [
                     [
                         'title' => '新增管理员',
-                        'url'   => 'authorization.admin/create',
+                        'url' => 'authorization.admin/create',
                     ],
                     [
                         'title' => '更新管理员',
-                        'url'   => 'authorization.admin/update',
+                        'url' => 'authorization.admin/update',
                     ],
                     [
                         'title' => '删除管理员',
-                        'url'   => 'authorization.admin/delete',
+                        'url' => 'authorization.admin/delete',
                     ],
                     [
                         'title' => '更新管理员字段',
-                        'url'   => 'authorization.admin/setvalue',
+                        'url' => 'authorization.admin/setvalue',
                     ],
                 ],
             ],
             [
-                'title'      => '角色管理',
-                'url'        => 'authorization.role/index',
-                'show'       => true,
+                'title' => '角色管理',
+                'url' => 'authorization.role/index',
+                'show' => true,
                 'only_admin' => true,
-                'child'      => [
+                'child' => [
                     [
                         'title' => '新增角色',
-                        'url'   => 'authorization.role/create',
+                        'url' => 'authorization.role/create',
                     ],
                     [
                         'title' => '更新角色',
-                        'url'   => 'authorization.role/update',
+                        'url' => 'authorization.role/update',
                     ],
                     [
                         'title' => '分配权限',
-                        'url'   => 'authorization.role/access',
+                        'url' => 'authorization.role/access',
                     ],
                     [
                         'title' => '更新角色字段',
-                        'url'   => 'authorization.role/setvalue',
+                        'url' => 'authorization.role/setvalue',
                     ],
                 ],
             ],
             [
-                'title'      => '插件管理',
-                'url'        => 'system.plugin/index',
-                'show'       => true,
+                'title' => '插件管理',
+                'url' => 'system.plugin/index',
+                'show' => true,
                 'only_admin' => true,
-                'only_dev'   => false,
-                'child'      => [
+                'only_dev' => false,
+                'child' => [
                     [
                         'title' => '新增插件',
-                        'url'   => 'system.plugin/create',
+                        'url' => 'system.plugin/create',
                     ],
                     [
                         'title' => '更新插件',
-                        'url'   => 'system.plugin/update',
+                        'url' => 'system.plugin/update',
                     ],
                     [
                         'title' => '配置',
-                        'url'   => 'system.plugin/config',
+                        'url' => 'system.plugin/config',
                     ],
                     [
                         'title' => '更新插件字段',
-                        'url'   => 'system.plugin/setvalue',
+                        'url' => 'system.plugin/setvalue',
                     ],
                 ],
             ],
             [
-                'title'      => '菜单管理',
-                'url'        => 'system.menu/index',
-                'show'       => true,
+                'title' => '菜单管理',
+                'url' => 'system.menu/index',
+                'show' => true,
                 'only_admin' => true,
-                'only_dev'   => false,
-                'child'      => [
+                'only_dev' => false,
+                'child' => [
                     [
                         'title' => '新增菜单',
-                        'url'   => 'system.menu/create',
+                        'url' => 'system.menu/create',
                     ],
                     [
                         'title' => '更新菜单',
-                        'url'   => 'system.menu/update',
+                        'url' => 'system.menu/update',
                     ],
                     [
                         'title' => '更新菜单',
-                        'url'   => 'system.menu/delete',
+                        'url' => 'system.menu/delete',
                     ],
                     [
                         'title' => '更新菜单字段',
-                        'url'   => 'system.menu/setvalue',
+                        'url' => 'system.menu/setvalue',
                     ],
                 ],
             ],
             [
-                'title'      => '事件管理',
-                'url'        => 'system.event/index',
-                'show'       => true,
+                'title' => '事件管理',
+                'url' => 'system.event/index',
+                'show' => true,
                 'only_admin' => true,
-                'only_dev'   => true,
-                'child'      => [
+                'only_dev' => true,
+                'child' => [
                     [
                         'title' => '新增事件',
-                        'url'   => 'system.event/create',
+                        'url' => 'system.event/create',
                     ],
                     [
                         'title' => '更新事件',
-                        'url'   => 'system.event/update',
+                        'url' => 'system.event/update',
                     ],
                     [
                         'title' => '更新事件',
-                        'url'   => 'system.event/delete',
+                        'url' => 'system.event/delete',
                     ],
                     [
                         'title' => '更新事件字段',
-                        'url'   => 'system.event/setvalue',
+                        'url' => 'system.event/setvalue',
                     ],
                 ],
             ],

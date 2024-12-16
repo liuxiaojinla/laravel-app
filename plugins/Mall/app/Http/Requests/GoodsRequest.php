@@ -25,11 +25,11 @@ class GoodsRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'         => '商品名称',
-        'cover'         => '商品封面',
-        'picture'       => '商品图册',
-        'content'       => '商品详情',
-        'category_ids'  => '所属分类',
+        'title' => '商品名称',
+        'cover' => '商品封面',
+        'picture' => '商品图册',
+        'content' => '商品详情',
+        'category_ids' => '所属分类',
         'is_multi_spec' => '商品规格类型',
     ];
 
@@ -76,12 +76,12 @@ class GoodsRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'         => ['required', 'between:2,80'],
-            'cover'         => ['required'],
-            'picture'       => ['required', 'array'],
-            'category_ids'  => ['required'],
+            'title' => ['required', 'between:2,80'],
+            'cover' => ['required'],
+            'picture' => ['required', 'array'],
+            'category_ids' => ['required'],
             'is_multi_spec' => ['required'],
-            'content'       => ['required'],
+            'content' => ['required'],
         ];
     }
 }

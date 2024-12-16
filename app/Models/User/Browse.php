@@ -45,15 +45,15 @@ class Browse extends Pivot
         /** @var static $info */
         $info = static::query()->where([
             'topic_type' => $type,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
+            'topic_id' => $topicId,
+            'user_id' => $userId,
         ])->first();
 
         if (empty($info)) {
             $info = static::query()->create([
                 'topic_type' => $type,
-                'topic_id'   => $topicId,
-                'user_id'    => $userId,
+                'topic_id' => $topicId,
+                'user_id' => $userId,
                 'view_count' => 1,
             ]);
         } else {
@@ -75,9 +75,9 @@ class Browse extends Pivot
     public static function detach($type, $topicId, $userId)
     {
         return static::query()->where([
-            'user_id'    => $userId,
+            'user_id' => $userId,
             'topic_type' => $type,
-            'topic_id'   => $topicId,
+            'topic_id' => $topicId,
         ])->delete();
     }
 

@@ -61,10 +61,10 @@ trait OrderRefundActions
     {
         Validator::make($data, [
             'audit_status' => 'required|in:1,2',
-            'refuse_desc'  => 'requireIf:audit_status,2|between3,255',
+            'refuse_desc' => 'requireIf:audit_status,2|between3,255',
         ], [], [
             'audit_status' => '审核状态',
-            'refuse_desc'  => '拒绝原因',
+            'refuse_desc' => '拒绝原因',
         ]);
 
         if (!$this->isPending()) {
@@ -133,7 +133,7 @@ trait OrderRefundActions
 
         if (!$this->save([
             'refuse_desc' => $refuseDesc,
-            'status'      => RefundStatusEnum::REFUSED,
+            'status' => RefundStatusEnum::REFUSED,
         ])) {
             return false;
         }
@@ -155,7 +155,7 @@ trait OrderRefundActions
             'express_no' => 'required',
         ], [], [
             'express_name' => '物流公司',
-            'express_no'   => '物流单号',
+            'express_no' => '物流单号',
         ]);
 
         // 验证售后单类型
@@ -175,9 +175,9 @@ trait OrderRefundActions
 
         // 更新数据
         $data = array_merge($data, [
-            'status'       => RefundStatusEnum::DELIVERED,
+            'status' => RefundStatusEnum::DELIVERED,
             'is_user_send' => 1,
-            'send_time'    => time(),
+            'send_time' => time(),
         ]);
 
         if (!$this->forceFill($data)->save()) {
@@ -203,7 +203,7 @@ trait OrderRefundActions
 
         // 更新数据
         $data = array_merge($attributes, [
-            'status'       => RefundStatusEnum::RECEIVED,
+            'status' => RefundStatusEnum::RECEIVED,
             'is_user_send' => 1,
             'receipt_time' => time(),
         ]);
@@ -252,10 +252,10 @@ trait OrderRefundActions
     public function setPaid($payType, $payNo = null)
     {
         $data = [
-            'status'     => RefundStatusEnum::FINISHED,
+            'status' => RefundStatusEnum::FINISHED,
             'pay_status' => PayStatusEnum::SUCCESS,
-            'pay_type'   => $payType,
-            'pay_time'   => time(),
+            'pay_type' => $payType,
+            'pay_time' => time(),
         ];
 
         if (!$payNo) {

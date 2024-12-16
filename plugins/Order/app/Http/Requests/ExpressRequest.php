@@ -16,7 +16,7 @@ class ExpressRequest extends FormRequest
      */
     protected $field = [
         'title' => '物流名称',
-        'url'   => '官网地址',
+        'url' => '官网地址',
     ];
 
     /**
@@ -35,7 +35,7 @@ class ExpressRequest extends FormRequest
     {
         return [
             'title' => 'required|between2,48',
-            'url'   => 'required',
+            'url' => 'required',
         ];
     }
 

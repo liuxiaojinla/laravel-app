@@ -79,20 +79,20 @@ class ShoppingCartController extends Controller
         // 购物车是否存在
         /** @var ShoppingCart $info */
         $info = ShoppingCart::query()->where([
-            'user_id'      => $userId,
-            'goods_id'     => $goodsId,
+            'user_id' => $userId,
+            'goods_id' => $goodsId,
             'goods_sku_id' => $goodsSkuId,
         ])->first();
         if (empty($info)) {
             $info = ShoppingCart::query()->forceCreate([
-                'user_id'      => $userId,
-                'goods_id'     => $goodsId,
+                'user_id' => $userId,
+                'goods_id' => $goodsId,
                 'goods_sku_id' => $goodsSkuId,
-                'goods_title'  => $goods['title'],
-                'goods_cover'  => empty($goodsSku['cover']) ? $goods['cover'] : $goodsSku['cover'],
-                'goods_price'  => $goodsSku['price'],
-                'goods_spec'   => implode(";", $goods->getSpecOf($goodsSku['spec_sku_id'])),
-                'goods_num'    => $count,
+                'goods_title' => $goods['title'],
+                'goods_cover' => empty($goodsSku['cover']) ? $goods['cover'] : $goodsSku['cover'],
+                'goods_price' => $goodsSku['price'],
+                'goods_spec' => implode(";", $goods->getSpecOf($goodsSku['spec_sku_id'])),
+                'goods_num' => $count,
             ]);
         } else {
             $info->increment('goods_num', $count);
@@ -103,8 +103,8 @@ class ShoppingCartController extends Controller
         ])->count();
 
         return Hint::success('已加入购物车！', null, [
-            'id'          => $info->id,
-            'goods_num'   => $info->goods_num,
+            'id' => $info->id,
+            'goods_num' => $info->goods_num,
             'total_count' => $goodsCartCount,
         ]);
     }
@@ -126,14 +126,14 @@ class ShoppingCartController extends Controller
         $userId = $this->auth->id();
 
         ShoppingCart::query()->where([
-            'id'      => $id,
+            'id' => $id,
             'user_id' => $userId,
         ])->update([
             'goods_num' => $count,
         ]);
 
         return Hint::result([
-            'id'        => $id,
+            'id' => $id,
             'goods_num' => $count,
         ]);
     }

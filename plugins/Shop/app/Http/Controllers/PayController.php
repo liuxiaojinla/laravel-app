@@ -100,32 +100,32 @@ class PayController extends Controller
         $outTradeNo = Str::makeOrderSn();
         $data = $this->payment->wechat()->mini([
             'out_trade_no' => $outTradeNo,
-            'description'  => "付款给{$shopTitle}",
-            'amount'       => [
-                'total'    => $amount * 100,
+            'description' => "付款给{$shopTitle}",
+            'amount' => [
+                'total' => $amount * 100,
                 'currency' => 'CNY',
             ],
-            'payer'        => [
+            'payer' => [
                 'openid' => $openid,
             ],
-            'notify_url'   => $notifyUrl,
+            'notify_url' => $notifyUrl,
         ]);
 
         $flow = PayFlow::make([
-            'user_id'        => $userId,
-            'shop_id'        => $shopId,
-            'partner_id'     => $partnerId,
-            'total_amount'   => $amount,
-            'out_trade_no'   => $outTradeNo,
+            'user_id' => $userId,
+            'shop_id' => $shopId,
+            'partner_id' => $partnerId,
+            'total_amount' => $amount,
+            'out_trade_no' => $outTradeNo,
             'transaction_id' => 0,
-            'pay_type'       => 1,
+            'pay_type' => 1,
         ]);
 
         //		$this->imitateNotify($flow);
 
         return [
             'flow' => $flow,
-            'pay'  => $data,
+            'pay' => $data,
         ];
     }
 
@@ -150,7 +150,7 @@ class PayController extends Controller
             /** @var PayOrder $payOrder */
             $payOrder = $this->rebateService->rebate($userId, $shopId, $amount, [
                 'out_trade_no' => Str::makeOrderSn(),
-                'pay_type'     => 0,
+                'pay_type' => 0,
             ]);
 
             // 更新门店金额
@@ -162,7 +162,7 @@ class PayController extends Controller
         VoiceAmountJob::dispatch($payOrder);
 
         return [
-            'pay_type'     => 1,
+            'pay_type' => 1,
             'out_trade_no' => $payOrder->out_trade_no,
         ];
     }
@@ -215,13 +215,13 @@ class PayController extends Controller
     {
         Db::transaction(function () use ($shop, $user, $money) {
             $data = [
-                'shop_id'       => $shop->id,
-                'type'          => Cashout::TYPE_BALANCE,
-                'apply_money'   => $money,
-                'service_rate'  => 0,
-                'status'        => 1,
+                'shop_id' => $shop->id,
+                'type' => Cashout::TYPE_BALANCE,
+                'apply_money' => $money,
+                'service_rate' => 0,
+                'status' => 1,
                 'transfer_time' => $this->request->time(),
-                'remark'        => '从商家账户转余额消费',
+                'remark' => '从商家账户转余额消费',
             ];
 
             Cashout::query()->forceCreate($data);
@@ -256,7 +256,7 @@ class PayController extends Controller
 XML;
 
         $result = Client::post($notifyUrl, null, [
-            'body'    => $xml,
+            'body' => $xml,
             'headers' => [
                 'Content-Type' => 'text/xml',
             ],

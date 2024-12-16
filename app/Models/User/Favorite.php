@@ -76,8 +76,8 @@ class Favorite extends Pivot
     {
         $info = static::query()->where([
             'topic_type' => $type,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
+            'topic_id' => $topicId,
+            'user_id' => $userId,
         ])->first();
 
         return value($info);
@@ -95,8 +95,8 @@ class Favorite extends Pivot
     {
         $flag = static::query()->where([
             'topic_type' => $topicType,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
+            'topic_id' => $topicId,
+            'user_id' => $userId,
         ])->delete();
         if ($flag === false) {
             return false;
@@ -106,8 +106,8 @@ class Favorite extends Pivot
             'result' => 0,
             new static([
                 'topic_type' => $topicType,
-                'topic_id'   => $topicId,
-                'user_id'    => $userId,
+                'topic_id' => $topicId,
+                'user_id' => $userId,
             ]),
         ]);
 
@@ -128,8 +128,8 @@ class Favorite extends Pivot
 
         $info = static::query()->create([
             'topic_type' => $topicType,
-            'topic_id'   => $topicId,
-            'user_id'    => $userId,
+            'topic_id' => $topicId,
+            'user_id' => $userId,
         ]);
 
         Relation::call($topicType, 'onFavorite', ['result' => 1, $info]);

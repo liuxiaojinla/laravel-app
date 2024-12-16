@@ -37,7 +37,7 @@ class ArticleCategoryController extends Controller
         $data = WebsiteArticleCategory::simple()->search($search)->order($order)
             ->select()->each(function (WebsiteArticleCategory $item) use ($isGood, $userId) {
                 $postCount = WebsiteArticle::query()->where([
-                    'status'      => 1,
+                    'status' => 1,
                     'category_id' => $item->id,
                 ])->count();
                 $item['article_count'] = Number::formatSimple($postCount);
@@ -72,7 +72,7 @@ class ArticleCategoryController extends Controller
         $info['follow_users'] = $info->getLastFollowUsers($userId);
 
         $info['article_list'] = WebsiteArticle::query()->where([
-            'status'      => 1,
+            'status' => 1,
             'category_id' => $info->id,
         ])->orderByDesc('id')->paginate();
 

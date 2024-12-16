@@ -51,25 +51,25 @@ class UserCashoutController extends Controller
         $data = $request->validate([
             'transfer_type', 'audit_status', 'refuse_msg',
         ], [
-            'rules'  => [
-                'audit_status'  => 'require|in:0,1',
-                'refuse_msg'    => 'requireIf:audit_status,1|length:3,255',
+            'rules' => [
+                'audit_status' => 'require|in:0,1',
+                'refuse_msg' => 'requireIf:audit_status,1|length:3,255',
                 'transfer_type' => 'require|in:0,1,2,3',
             ],
             'fields' => [
                 'transfer_type' => '打款类型',
-                'audit_status'  => '审核状态',
-                'refuse_msg'    => '拒绝原因',
+                'audit_status' => '审核状态',
+                'refuse_msg' => '拒绝原因',
             ],
         ]);
 
         if ($data['audit_status'] == 0) { // 同意打款
             $status = $this->dispatch($data['type'], $info);
             $info->save([
-                'status'        => UserCashout::STATUS_TRANSFERRED,
-                'audit_time'    => $request->time(),
+                'status' => UserCashout::STATUS_TRANSFERRED,
+                'audit_time' => $request->time(),
                 'transfer_time' => $request->time(),
-                'refuse_msg'    => $data['refuse_msg'],
+                'refuse_msg' => $data['refuse_msg'],
             ]);
         } else {
             /** @var User $user */
@@ -77,7 +77,7 @@ class UserCashoutController extends Controller
             $user->inc('cash_amount', $info->apply_money)->update([]);
 
             $info->save([
-                'status'     => 3,
+                'status' => 3,
                 'audit_time' => $request->time(),
                 'refuse_msg' => $data['refuse_msg'],
             ]);
@@ -107,11 +107,11 @@ class UserCashoutController extends Controller
                 'cert' => true,
             ])->transfer([
                 'partner_trade_no' => $info->cashout_no, //商户订单号
-                'openid'           => $openid, //收款人的openid
-                'check_name'       => 'NO_CHECK', //NO_CHECK：不校验真实姓名\FORCE_CHECK：强校验真实姓名
+                'openid' => $openid, //收款人的openid
+                'check_name' => 'NO_CHECK', //NO_CHECK：不校验真实姓名\FORCE_CHECK：强校验真实姓名
                 // 're_user_name'=>'张三', //check_name为 FORCE_CHECK 校验实名的时候必须提交
-                'amount'           => $amount, //企业付款金额，单位为分
-                'desc'             => '帐户提现',
+                'amount' => $amount, //企业付款金额，单位为分
+                'desc' => '帐户提现',
             ]);
 
             $status = 2;

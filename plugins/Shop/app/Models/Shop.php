@@ -65,13 +65,13 @@ class Shop extends Model
     public static function balanceAccountAssets()
     {
         return static::makeAccountAssets('balance', [
-            'title'                   => '余额',
-            'assets_field'            => 'order_money',
+            'title' => '余额',
+            'assets_field' => 'order_money',
             'cumulative_assets_field' => 'total_money',
-            'log'                     => [
-                'type'         => 'table',
+            'log' => [
+                'type' => 'table',
                 'assets_field' => 'order_money',
-                'table'        => (new static)->getTable() . "_balance_log",
+                'table' => (new static)->getTable() . "_balance_log",
             ],
         ]);
     }
@@ -150,7 +150,7 @@ class Shop extends Model
     {
         return [
             "province" => $this->getData('province'),
-            "city"     => $this->getData('city'),
+            "city" => $this->getData('city'),
             "district" => $this->getData('district'),
             "township" => $this->getData('township'),
         ];

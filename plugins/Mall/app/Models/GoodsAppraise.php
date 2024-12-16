@@ -27,18 +27,18 @@ class GoodsAppraise extends Model
     {
         $validate = new Validate();
         $validate->rule([
-            'order_goods_id'  => 'required',
-            'whole_credit'    => 'required|min:0|max:5',
-            'service_credit'  => 'required|min:0|max:5',
+            'order_goods_id' => 'required',
+            'whole_credit' => 'required|min:0|max:5',
+            'service_credit' => 'required|min:0|max:5',
             'delivery_credit' => 'required|min:0|max:5',
-            'content'         => 'required|between3,255',
-            'images'          => 'array',
+            'content' => 'required|between3,255',
+            'images' => 'array',
         ], [
-            'whole_credit'    => '综合评分',
-            'service_credit'  => '服务评分',
+            'whole_credit' => '综合评分',
+            'service_credit' => '服务评分',
             'delivery_credit' => '物流评分',
-            'content'         => '评价内容',
-            'images'          => '评价图片',
+            'content' => '评价内容',
+            'images' => '评价图片',
         ]);
 
         $orderGoodsList = $order->goods_list->dictionary();
@@ -92,8 +92,8 @@ class GoodsAppraise extends Model
             'id', 'nickname', 'gender', 'avatar',
         ])->bind([
             'user_nickname' => 'nickname',
-            'user_gender'   => 'gender',
-            'user_avatar'   => 'avatar',
+            'user_gender' => 'gender',
+            'user_avatar' => 'avatar',
         ]);
     }
 

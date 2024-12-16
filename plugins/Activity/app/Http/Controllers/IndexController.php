@@ -21,7 +21,7 @@ class IndexController extends Controller
     {
         $data = Activity::simple()->with(['user', 'latestJoinUser'])
             ->where([
-                'status'  => 1,
+                'status' => 1,
                 'display' => 2,
             ])
             ->orderByDesc('id')

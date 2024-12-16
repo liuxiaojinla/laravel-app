@@ -131,15 +131,15 @@ class Handler extends ExceptionHandler
         }
 
         return $isDebug ? [
-            'code'      => $code,
-            'msg'       => $message,
+            'code' => $code,
+            'msg' => $message,
             'exception' => get_class($e),
-            'file'      => $e->getFile(),
-            'line'      => $e->getLine(),
-            'trace'     => collect($e->getTrace())->map(fn($trace) => Arr::except($trace, ['args']))->all(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => collect($e->getTrace())->map(fn($trace) => Arr::except($trace, ['args']))->all(),
         ] : [
             'code' => $code,
-            'msg'  => $this->isSafetyException($e) ? $message : 'Server Error',
+            'msg' => $this->isSafetyException($e) ? $message : 'Server Error',
         ];
     }
 

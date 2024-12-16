@@ -42,7 +42,7 @@ class AddressController extends Controller
         $userId = $this->auth->id();
 
         $info = Address::query()->where([
-            'id'      => $id,
+            'id' => $id,
             'user_id' => $userId,
         ])->firstOrFail();
 
@@ -80,19 +80,19 @@ class AddressController extends Controller
     private function validateData()
     {
         return $this->request->validate([
-            'name'     => 'required|between:2,15',
-            'phone'    => 'required|mobile',
+            'name' => 'required|between:2,15',
+            'phone' => 'required|mobile',
             'province' => 'required',
-            'city'     => 'required',
+            'city' => 'required',
             'district' => 'required',
-            'address'  => 'required|between:2,255',
+            'address' => 'required|between:2,255',
         ], [], [
-            'name'     => '收货人姓名',
-            'phone'    => '收货人手机号',
+            'name' => '收货人姓名',
+            'phone' => '收货人手机号',
             'province' => '省',
-            'city'     => '市',
+            'city' => '市',
             'district' => '县/区',
-            'address'  => '详细地址',
+            'address' => '详细地址',
         ]);
     }
 
@@ -127,7 +127,7 @@ class AddressController extends Controller
         $data = Address::optimizeWithRelationId($data);
 
         $info = Address::query()->where([
-            'id'      => $id,
+            'id' => $id,
             'user_id' => $userId,
         ])->firstOrFail();
 
@@ -165,7 +165,7 @@ class AddressController extends Controller
         $userId = $this->auth->id();
 
         $info = Address::query()->where([
-            'id'      => $id,
+            'id' => $id,
             'user_id' => $userId,
         ])->firstOrFail();
 

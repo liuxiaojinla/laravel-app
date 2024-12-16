@@ -15,12 +15,12 @@ class ActivityRequest extends FormRequest
      * @var array
      */
     protected $rule = [
-        'title'       => 'required|between2,48',
+        'title' => 'required|between2,48',
         'description' => 'required|between15,255',
-        'content'     => 'required',
-        'cover'       => 'required',
-        'start_time'  => 'required|date|after:+15 minutes',
-        'end_time'    => 'required|date|after:start_time',
+        'content' => 'required',
+        'cover' => 'required',
+        'start_time' => 'required|date|after:+15 minutes',
+        'end_time' => 'required|date|after:start_time',
     ];
 
     /**
@@ -29,12 +29,12 @@ class ActivityRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'       => '活动标题',
+        'title' => '活动标题',
         'description' => '活动描述',
-        'content'     => '活动详情',
-        'cover'       => '活动封面',
-        'start_time'  => '活动开始时间',
-        'end_time'    => '活动结束时间',
+        'content' => '活动详情',
+        'cover' => '活动封面',
+        'start_time' => '活动开始时间',
+        'end_time' => '活动结束时间',
     ];
 
     /**
@@ -44,7 +44,7 @@ class ActivityRequest extends FormRequest
      */
     protected $message = [
         'start_time.after' => '活动开始时间必须是15分钟后',
-        'end_time.after'   => '活动结束时间必须大于开始时间',
+        'end_time.after' => '活动结束时间必须大于开始时间',
     ];
 
     /**

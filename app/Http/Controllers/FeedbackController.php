@@ -38,12 +38,12 @@ class FeedbackController extends Controller
 
         $user = $this->request->user();
         $data = [
-            'user_id'    => $user?->id ?? 0,
-            'name'       => $user?->nickname ?? '',
-            'content'    => $message,
-            'ip'         => $this->request->ip(),
+            'user_id' => $user?->id ?? 0,
+            'name' => $user?->nickname ?? '',
+            'content' => $message,
+            'ip' => $this->request->ip(),
             'user_agent' => $this->request->server('HTTP_USER_AGENT'),
-            'referer'    => $this->request->server('HTTP_REFERER') ?: '',
+            'referer' => $this->request->server('HTTP_REFERER') ?: '',
         ];
 
         Feedback::create($data);

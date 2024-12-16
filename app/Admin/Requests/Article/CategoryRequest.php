@@ -29,7 +29,7 @@ class CategoryRequest extends FormRequest
      */
     protected $field = [
         'title' => '分类标题',
-        'pid'   => '父级分类',
+        'pid' => '父级分类',
     ];
 
     /**
@@ -55,7 +55,7 @@ class CategoryRequest extends FormRequest
         return [
             'title' => ['required', 'between:2,48'],
             //		'name'  =>'require|alpha_dash:ascii|between:3,48|unique:category',
-            'pid'   => [
+            'pid' => [
                 'integer',
                 // 验证父级是不是自己
                 $this->checkOneself(...),

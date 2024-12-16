@@ -135,8 +135,8 @@ class RoleController extends Controller
 
         return Hint::result([
             'roleId' => $info->id,
-            'role'   => $info,
-            'type'   => $type,
+            'role' => $info,
+            'type' => $type,
         ]);
     }
 
@@ -164,7 +164,7 @@ class RoleController extends Controller
         }
 
         $saveIdList = AdminAccess::query()->where([
-            'type'    => 'menu',
+            'type' => 'menu',
             'role_id' => $info->id,
         ])->pluck('target_id')->toArray();
         $data = AdminMenu::all()->each(function ($item) use ($saveIdList) {
@@ -209,7 +209,7 @@ class RoleController extends Controller
         $data = Admin::with('roles')->when(!empty($keywords), [
             ['username', 'like', $keywords],
         ])->where('id', '<>', 1)->orderByDesc('id')->paginate([
-            'page'  => $this->request->page(),
+            'page' => $this->request->page(),
             'query' => $this->request->query(),
         ])->each(function (Admin $admin) use ($info) {
             $admin['isOwn'] = in_array($info->id, $admin->roles->pluck('id')->toArray(), true);

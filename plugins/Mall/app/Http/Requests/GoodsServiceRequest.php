@@ -24,7 +24,7 @@ class GoodsServiceRequest extends FormRequest
      * @var array
      */
     protected $field = [
-        'title'       => '标题',
+        'title' => '标题',
         'description' => '描述',
     ];
 
@@ -43,7 +43,7 @@ class GoodsServiceRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'       => ['required', 'between:2,48', 'unique:goods_service,app_id^title'],
+            'title' => ['required', 'between:2,48', 'unique:goods_service,app_id^title'],
             'description' => ['required'],
         ];
     }

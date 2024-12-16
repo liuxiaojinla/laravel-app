@@ -68,13 +68,13 @@ class OrderPay extends Notification
             ->setPage('')
             ->setMiniprogram([])
             ->setData([
-                "name1"  => [
+                "name1" => [
                     "value" => "广州腾讯科技有限公司",
                 ],
                 "thing8" => [
                     "value" => "广州腾讯科技有限公司",
                 ],
-                "time7"  => [
+                "time7" => [
                     "value" => "2019年8月8日",
                 ],
             ]);

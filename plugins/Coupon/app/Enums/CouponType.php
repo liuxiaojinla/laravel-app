@@ -34,11 +34,11 @@ final class CouponType extends Enum
     {
         return [
             self::FULL_MINUS => [
-                'name'  => '满减券',
+                'name' => '满减券',
                 'value' => self::FULL_MINUS,
             ],
-            self::DISCOUNT   => [
-                'name'  => '折扣券',
+            self::DISCOUNT => [
+                'name' => '折扣券',
                 'value' => self::DISCOUNT,
             ],
         ];

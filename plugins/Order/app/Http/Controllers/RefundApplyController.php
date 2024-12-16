@@ -51,9 +51,9 @@ class RefundApplyController extends Controller
 
         if ($this->request->isGet()) {
             return Hint::result([
-                'apply_desc_list'  => $this->loadApplyDescList(),
+                'apply_desc_list' => $this->loadApplyDescList(),
                 'order_goods_list' => $order->goods_list,
-                'refund_amount'    => $refundAmount,
+                'refund_amount' => $refundAmount,
             ]);
         }
 
@@ -61,11 +61,11 @@ class RefundApplyController extends Controller
 
         // 组合数据
         $data = array_merge($data, [
-            'user_id'       => $userId,
+            'user_id' => $userId,
             'refund_amount' => $refundAmount,
-            'refund_no'     => Str::makeOrderSn(),
-            'status'        => RefundStatusEnum::PENDING,
-            'audit_status'  => RefundAuditStatusEnum::PENDING,
+            'refund_no' => Str::makeOrderSn(),
+            'status' => RefundStatusEnum::PENDING,
+            'audit_status' => RefundAuditStatusEnum::PENDING,
         ]);
 
         $refund = OrderRefund::query()->forceCreate($data);
@@ -96,11 +96,11 @@ class RefundApplyController extends Controller
             'order_id', 'order_goods_list', 'type', 'receipt_status',
             'amount', 'apply_desc', 'apply_desc_img', 'phone',
         ], [
-            'rules'  => [
-                'order_id'         => 'required',
+            'rules' => [
+                'order_id' => 'required',
                 'order_goods_list' => 'required|array',
-                'type'             => 'required|in:0,1',
-                'receipt_status'   => 'required|in:0,1',
+                'type' => 'required|in:0,1',
+                'receipt_status' => 'required|in:0,1',
                 //				'apply_desc'     => 'required|between3,1000',
                 //				'amount'         => 'required|float|min:0',
                 //				'apply_desc_img' => 'required|array',
@@ -108,12 +108,12 @@ class RefundApplyController extends Controller
             ],
             'fields' => [
                 'order_goods_list' => '订单商品',
-                'type'             => '退款类型',
-                'receipt_status'   => '收货状态',
-                'amount'           => '退款金额',
-                'apply_desc'       => '申请退款原因',
-                'apply_desc_img'   => '截图证明',
-                'phone'            => '联系人电话',
+                'type' => '退款类型',
+                'receipt_status' => '收货状态',
+                'amount' => '退款金额',
+                'apply_desc' => '申请退款原因',
+                'apply_desc_img' => '截图证明',
+                'phone' => '联系人电话',
             ],
         ]);
     }

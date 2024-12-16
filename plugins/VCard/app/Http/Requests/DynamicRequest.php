@@ -20,7 +20,7 @@ class DynamicRequest extends FormRequest
      */
     protected $field = [
         'content' => '内容',
-        'images'  => '图片',
+        'images' => '图片',
     ];
 
     /**
@@ -47,7 +47,7 @@ class DynamicRequest extends FormRequest
     {
         return [
             'content' => 'required|max:5000',
-            'images'  => 'array',
+            'images' => 'array',
         ];
     }
 

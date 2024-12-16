@@ -9,7 +9,6 @@ namespace Plugins\Website\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
-use Plugins\Website\App\Models\WebsiteArticleCategory;
 use Plugins\Website\App\Models\WebsiteProduct;
 use Plugins\Website\App\Models\WebsiteProductCategory;
 use Xin\Hint\Facades\Hint;
@@ -38,7 +37,7 @@ class ProductCategoryController extends Controller
             ->paginate()
             ->each(function (WebsiteProductCategory $item) use ($isGood) {
                 $postCount = WebsiteProduct::query()->where([
-                    'status'      => 1,
+                    'status' => 1,
                     'category_id' => $item->id,
                 ])->count();
                 $item['product_count'] = Number::formatSimple($postCount);
@@ -76,7 +75,7 @@ class ProductCategoryController extends Controller
         );
 
         $info['article_list'] = WebsiteProduct::query()->where([
-            'status'      => 1,
+            'status' => 1,
             'category_id' => $info->id,
         ])->orderByDesc('id')->paginate();
 

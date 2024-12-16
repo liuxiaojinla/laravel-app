@@ -100,13 +100,13 @@ class GoodsController extends Controller
         } else { // 验证单规格数据
             $skuData = [
                 [
-                    'sn'           => isset($data['sn']) ? $data['sn'] : '',
-                    'cover'        => $data['cover'],
-                    'price'        => $data['price'],
+                    'sn' => isset($data['sn']) ? $data['sn'] : '',
+                    'cover' => $data['cover'],
+                    'price' => $data['price'],
                     'market_price' => $data['market_price'],
-                    'stock'        => $data['stock'],
-                    'stock_alarm'  => $data['stock_alarm'],
-                    'weight'       => $data['weight'],
+                    'stock' => $data['stock'],
+                    'stock_alarm' => $data['stock_alarm'],
+                    'weight' => $data['weight'],
                 ],
             ];
             GoodsSku::validateData($data);

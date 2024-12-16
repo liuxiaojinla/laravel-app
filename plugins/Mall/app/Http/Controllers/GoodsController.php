@@ -135,7 +135,7 @@ class GoodsController extends Controller
 
         return Hint::result([
             'spec_list' => $goods->spec_list,
-            'sku_list'  => $data,
+            'sku_list' => $data,
         ]);
     }
 

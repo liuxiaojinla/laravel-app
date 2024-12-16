@@ -40,17 +40,17 @@ class UserController extends Controller
         return Hint::result([
             'totalCount' => $totalCount,
 
-            'todayCount'     => $todayCount,
+            'todayCount' => $todayCount,
             'yesterdayCount' => $yesterdayCount,
 
-            'weekCount'     => $weekCount,
+            'weekCount' => $weekCount,
             'lastWeekCount' => $lastWeekCount,
 
-            'monthCount'     => $monthCount,
+            'monthCount' => $monthCount,
             'lastMonthCount' => $lastMonthCount,
 
-            'cityCounts'     => $cityCounts,
-            'cityCountAvg'   => $cityCountAvg,
+            'cityCounts' => $cityCounts,
+            'cityCountAvg' => $cityCountAvg,
             'cityCountsData' => $this->toChartCityData($cityCounts->all()),
         ]);
     }

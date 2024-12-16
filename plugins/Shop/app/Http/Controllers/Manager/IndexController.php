@@ -86,7 +86,7 @@ class IndexController extends Controller
         $info = $this->shopService->getBank($shopId);
 
         return Hint::result([
-            'bank'               => $info,
+            'bank' => $info,
             'shop_change_mobile' => Config::get('web.shop_change_mobile'),
         ]);
     }

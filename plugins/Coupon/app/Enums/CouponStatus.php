@@ -22,8 +22,8 @@ final class CouponStatus extends Enum
      * @var string[]
      */
     protected static $TEXT_MAP = [
-        self::WAITING   => '等待中',
-        self::PENDING   => '进行中',
+        self::WAITING => '等待中',
+        self::PENDING => '进行中',
         self::COMPLETED => '已结束',
     ];
 

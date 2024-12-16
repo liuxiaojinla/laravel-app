@@ -63,18 +63,18 @@ class ShoppingCart extends Model
                 $goodsTotalAmount = bcadd($goodsTotalAmount, $goodsTotal, 2);
 
                 return new static([
-                    'cart_id'            => $item['id'],
-                    'goods_id'           => $item['goods_id'],
-                    'goods_sku_id'       => $item['goods_sku_id'],
-                    'goods_title'        => $item['goods_title'],
-                    'goods_cover'        => $item['goods_cover'],
-                    'goods_num'          => $item['goods_num'],
-                    'goods_price'        => $item['goodsSku__price'],
+                    'cart_id' => $item['id'],
+                    'goods_id' => $item['goods_id'],
+                    'goods_sku_id' => $item['goods_sku_id'],
+                    'goods_title' => $item['goods_title'],
+                    'goods_cover' => $item['goods_cover'],
+                    'goods_num' => $item['goods_num'],
+                    'goods_price' => $item['goodsSku__price'],
                     'goods_market_price' => $item['goodsSku__market_price'],
-                    'goods_weight'       => $item['goodsSku__weight'],
-                    'goods_spec_sku'     => $item['goodsSku__spec_sku_id'],
-                    'goods_spec'         => $item['goods_spec'],
-                    'total_price'        => $goodsTotal,
+                    'goods_weight' => $item['goodsSku__weight'],
+                    'goods_spec_sku' => $item['goodsSku__spec_sku_id'],
+                    'goods_spec' => $item['goods_spec'],
+                    'total_price' => $goodsTotal,
                 ]);
             });
         if (empty($orderGoodsList)) {
@@ -82,7 +82,7 @@ class ShoppingCart extends Model
         }
 
         return [
-            'total_amount'     => $goodsTotalAmount,
+            'total_amount' => $goodsTotalAmount,
             'order_goods_list' => $orderGoodsList,
         ];
     }
@@ -118,7 +118,7 @@ class ShoppingCart extends Model
     {
         $options = array_merge([
             'is_sample' => 0,
-            'is_vip'    => 0,
+            'is_vip' => 0,
         ], $options);
 
         $goodsId = $this->getRawOriginal('goods_id');
@@ -151,20 +151,20 @@ class ShoppingCart extends Model
         $goodsTotalAmount = bcmul($goodsPrice, $this->getRawOriginal('goods_num'), 2);
 
         return new OrderGoods([
-            'goods_type'         => Goods::MORPH_TYPE,
-            'cart_id'            => $this->getRawOriginal('id'),
-            'goods_id'           => $this->getRawOriginal('goods_id'),
-            'goods_sku_id'       => $this->getRawOriginal('goods_sku_id'),
-            'goods_num'          => $this->getRawOriginal('goods_num'),
-            'goods_title'        => $goods->title,
-            'goods_cover'        => $goodsSku->cover ?: $goods->getOrigin('cover'),
-            'goods_price'        => $goodsPrice,
+            'goods_type' => Goods::MORPH_TYPE,
+            'cart_id' => $this->getRawOriginal('id'),
+            'goods_id' => $this->getRawOriginal('goods_id'),
+            'goods_sku_id' => $this->getRawOriginal('goods_sku_id'),
+            'goods_num' => $this->getRawOriginal('goods_num'),
+            'goods_title' => $goods->title,
+            'goods_cover' => $goodsSku->cover ?: $goods->getOrigin('cover'),
+            'goods_price' => $goodsPrice,
             'goods_market_price' => $goodsSku->market_price,
-            'goods_weight'       => $goodsSku->weight,
-            'goods_spec_sku'     => $goodsSku->spec_sku_id,
-            'goods_spec'         => implode(";", $goods->getSpecOf($goodsSku->spec_sku_id)),
-            'total_price'        => $goodsTotalAmount,
-            'stock'              => $goodsSku->stock,
+            'goods_weight' => $goodsSku->weight,
+            'goods_spec_sku' => $goodsSku->spec_sku_id,
+            'goods_spec' => implode(";", $goods->getSpecOf($goodsSku->spec_sku_id)),
+            'total_price' => $goodsTotalAmount,
+            'stock' => $goodsSku->stock,
         ]);
     }
 

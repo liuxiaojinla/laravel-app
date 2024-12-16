@@ -46,20 +46,20 @@ class IndexController extends Controller
         $userId = $this->auth->id();
 
         $data = $this->request->validate([
-            'name'         => 'between:2,24',
-            'title'        => 'between:2,24',
-            'alias'        => 'max:24',
-            'phone'        => 'mobile',
+            'name' => 'between:2,24',
+            'title' => 'between:2,24',
+            'alias' => 'max:24',
+            'phone' => 'mobile',
             'organization' => 'between:2,50',
         ], [], [
-            'avatar'         => '头像',
-            'name'           => '姓名',
-            'alias'          => '别名',
-            'title'          => '职位',
-            'organization'   => '公司全称',
-            'phone'          => '手机号',
+            'avatar' => '头像',
+            'name' => '姓名',
+            'alias' => '别名',
+            'title' => '职位',
+            'organization' => '公司全称',
+            'phone' => '手机号',
             'wechat_account' => '微信号',
-            'wechat_qrcode'  => '微信二维码',
+            'wechat_qrcode' => '微信二维码',
         ]);
 
         /** @var VCard $info */

@@ -25,7 +25,7 @@ class Notice extends Model
      */
     protected $type = [
         'begin_time' => 'timestamp',
-        'end_time'   => 'timestamp',
+        'end_time' => 'timestamp',
     ];
 
     /**

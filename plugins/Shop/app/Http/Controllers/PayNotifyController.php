@@ -94,8 +94,8 @@ class PayNotifyController extends Controller
         $flow = PayFlow::query()->where('out_trade_no', $outTradeNo)->findOrFail();
 
         $flow->save([
-            'pay_status'     => PayFlow::STATUS_PAID,
-            'pay_time'       => now(),
+            'pay_status' => PayFlow::STATUS_PAID,
+            'pay_time' => now(),
             'transaction_id' => $transactionId,
         ]);
 

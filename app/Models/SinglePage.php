@@ -19,9 +19,9 @@ class SinglePage extends Model
      * @var array
      */
     protected $casts = [
-        'id'     => 'int',
+        'id' => 'int',
         'app_id' => 'int',
-        'extra'  => 'json',
+        'extra' => 'json',
     ];
 
     /**

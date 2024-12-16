@@ -98,9 +98,9 @@ class CashoutController extends Controller
         }
 
         $data = array_merge($data, [
-            'user_id'      => $userId,
-            'realname'     => '',//todo
-            'mobile'       => '',// todo
+            'user_id' => $userId,
+            'realname' => '',//todo
+            'mobile' => '',// todo
             'service_rate' => bcdiv(Config::get('web.user_service_charge'), 100, 4),
         ]);
 

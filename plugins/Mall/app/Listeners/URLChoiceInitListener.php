@@ -28,13 +28,13 @@ class URLChoiceInitListener
     {
         $define('mall', [
             [
-                'title'  => '商品列表',
-                'url'    => '/pages/mall/goods/lists',
+                'title' => '商品列表',
+                'url' => '/pages/mall/goods/lists',
                 'static' => true,
             ],
             [
                 'title' => '商品详情',
-                'data'  => function (Request $request) {
+                'data' => function (Request $request) {
                     $keywords = $request->keywordsSql();
 
                     return Goods::getPaginate(

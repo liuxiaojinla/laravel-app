@@ -47,7 +47,7 @@ class Website extends Model
     {
         return [
             "province" => $this->getData('province'),
-            "city"     => $this->getData('city'),
+            "city" => $this->getData('city'),
             "district" => $this->getData('district'),
             "township" => $this->getData('township'),
         ];

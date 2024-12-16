@@ -91,9 +91,9 @@ class CashoutController extends Controller
 
             Cashout::query()->create([
                 'shop_id' => $shop->id,
-                'type'    => $type,
-                'money'   => $money,
-                'status'  => 1,
+                'type' => $type,
+                'money' => $money,
+                'status' => 1,
             ]);
         });
 

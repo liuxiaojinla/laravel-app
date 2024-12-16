@@ -50,7 +50,7 @@ class RefundController extends Controller
         $info = OrderRefund::with([
             'masterOrder', 'orderGoodsList',
         ])->where([
-            'id'      => $id,
+            'id' => $id,
             'user_id' => $userId,
         ])->firstOrFail();
 
@@ -94,7 +94,7 @@ class RefundController extends Controller
         $userId = $this->auth->id();
         /** @var OrderRefund $info */
         $info = OrderRefund::with($with)->where([
-            'id'      => $id,
+            'id' => $id,
             'user_id' => $userId,
         ])->firstOrFail();
         if ($info->user_id != $userId) {

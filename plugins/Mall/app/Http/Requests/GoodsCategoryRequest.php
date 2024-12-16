@@ -28,7 +28,7 @@ class GoodsCategoryRequest extends FormRequest
     protected $field = [
         'title' => '分类标题',
         'cover' => '分类封面',
-        'pid'   => '父级分类',
+        'pid' => '父级分类',
     ];
 
     /**
@@ -37,7 +37,7 @@ class GoodsCategoryRequest extends FormRequest
      * @var array
      */
     protected $message = [
-        'pid.checkOneself'  => '父级分类不能是自己',
+        'pid.checkOneself' => '父级分类不能是自己',
         'pid.checkCategory' => '父级分类不存在',
     ];
 
@@ -58,7 +58,7 @@ class GoodsCategoryRequest extends FormRequest
         return [
             'title' => ['required', 'between:2,48', 'unique:goods_category,app_id^title'],
             'cover' => ['required'],
-            'pid'   => [
+            'pid' => [
                 $this->checkOneself(...),
             ],
         ];

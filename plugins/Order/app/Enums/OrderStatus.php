@@ -58,14 +58,14 @@ class OrderStatus extends Enum
     public static function data()
     {
         return [
-            self::CANCEL    => '已取消',
-            self::CLOSED    => '已关闭',
-            self::PENDING   => '交易中',
-            self::PAYMENT   => '已支付',
+            self::CANCEL => '已取消',
+            self::CLOSED => '已关闭',
+            self::PENDING => '交易中',
+            self::PAYMENT => '已支付',
             self::DELIVERED => '已发货',
-            self::RECEIVED  => '已收货',
-            self::FINISHED  => '已完成',
-            self::REFUNDED  => '退款中',
+            self::RECEIVED => '已收货',
+            self::FINISHED => '已完成',
+            self::REFUNDED => '退款中',
         ];
     }
 

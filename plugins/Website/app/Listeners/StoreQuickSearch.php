@@ -25,11 +25,11 @@ class StoreQuickSearch
                 'items' => !empty($keywords) ? WebsiteArticle::query()->where('title', 'like', $keywords)->order('view_count desc')
                     ->page(1, 10)->select()->map(function (WebsiteArticle $item) {
                         return [
-                            'title'       => $item->title,
+                            'title' => $item->title,
                             'description' => $item->description,
-                            'cover'       => $item->cover,
-                            'time'        => $item->update_time,
-                            'url'         => (string)url('article/update', ['id' => $item->id]),
+                            'cover' => $item->cover,
+                            'time' => $item->update_time,
+                            'url' => (string)url('article/update', ['id' => $item->id]),
                         ];
                     }) : [],
             ],
@@ -38,11 +38,11 @@ class StoreQuickSearch
                 'items' => !empty($keywords) ? WebsiteProduct::query()->where('title', 'like', $keywords)->orderByDesc('id')
                     ->page(1, 10)->select()->map(function (WebsiteProduct $item) {
                         return [
-                            'title'       => $item->title,
+                            'title' => $item->title,
                             'description' => $item->description,
-                            'cover'       => $item->cover,
-                            'time'        => $item->update_time,
-                            'url'         => (string)url('product/update', ['id' => $item->id]),
+                            'cover' => $item->cover,
+                            'time' => $item->update_time,
+                            'url' => (string)url('product/update', ['id' => $item->id]),
                         ];
                     }) : [],
             ],
