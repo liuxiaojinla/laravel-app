@@ -3,7 +3,7 @@
 
 namespace Plugins\Activity\App\Enums;
 
-use MyCLabs\Enum\Enum;
+use Xin\Support\Enum;
 
 class ActivityStatus extends Enum
 {

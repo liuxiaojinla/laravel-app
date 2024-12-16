@@ -3,7 +3,7 @@
 
 namespace Plugins\Order\App\Enums;
 
-use MyCLabs\Enum\Enum;
+use Xin\Support\Enum;
 
 class RefundType extends Enum
 {

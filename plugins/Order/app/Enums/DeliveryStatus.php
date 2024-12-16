@@ -2,7 +2,7 @@
 
 namespace Plugins\Order\App\Enums;
 
-use MyCLabs\Enum\Enum;
+use Xin\Support\Enum;
 
 /**
  * 订单发货状态枚举类

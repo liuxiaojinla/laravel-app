@@ -2,7 +2,7 @@
 
 namespace Plugins\Mall\App\Enums;
 
-use MyCLabs\Enum\Enum;
+use Xin\Support\Enum;
 
 /**
  * 枚举类：商品库存计算方式
