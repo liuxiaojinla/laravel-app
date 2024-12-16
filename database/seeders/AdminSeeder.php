@@ -26,7 +26,7 @@ class AdminSeeder extends Seeder
             'username' => 'admin',
         ], [
             'password' => Hash::make('123456'),
-            'status'   => 1,
+            'status' => 1,
         ]);
         if (empty($admin->password)) {
             $admin->forceFill([
