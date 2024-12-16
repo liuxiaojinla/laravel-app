@@ -28,11 +28,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class WebsiteCaseCategory extends Model
 {
-
     /**
-     * @var string
+     * 主题类型
      */
-    protected $table = 'website_case_category';
+    const MORPH_TYPE = 'website_case_category';
 
     /**
      * 获取推荐列表
@@ -45,13 +44,14 @@ class WebsiteCaseCategory extends Model
      */
     public static function getGoodList($query, $order = 'sort asc', $page = 1, $limit = 10)
     {
-        $field = 'id,title,cover';
+        $field = ['id', 'title', 'cover'];
 
+        $order = explode(" ", $order);
         return static::query()->where('status', 1)
             ->where($query)
             ->select($field)
-            ->order($order)
-            ->page($page, $limit)
+            ->orderBy($order[0], $order[1] ?? 'desc')
+            ->forPage($page, $limit)
             ->get();
     }
 
@@ -84,11 +84,11 @@ class WebsiteCaseCategory extends Model
      */
     public function getLastFollowUsers($user = null, $count = 5)
     {
-        $followUsers = $this->followUsers()->select('user.id,user.nickname,user.avatar')
+        $followUsers = $this->followUsers()->select(['users.id', 'users.nickname', 'users.avatar'])
             ->where('pivot.type', WebsiteCase::MORPH_TYPE)
-            ->order('pivot.id desc')->limit(0, $count)
-            ->hidden(['pivot'])
-            ->get();
+            ->orderByPivot('id', 'desc')->limit($count)
+            ->get()
+            ->makeHidden(['pivot']);
 
         if (empty($user)) {
             return $followUsers;
@@ -98,13 +98,13 @@ class WebsiteCaseCategory extends Model
         foreach ($followUsers as $key => $followUser) {
             if ($user['id'] == $followUser['id']) {
                 unset($followUsers[$key]);
-                $followUsers->unshift($user);
+                $followUsers->prepend($user);
 
                 return $followUsers;
             }
         }
 
-        $followUsers->unshift($user);
+        $followUsers->prepend($user);
 
         return $followUsers;
     }

@@ -7,6 +7,7 @@
 
 namespace Plugins\Website\App\Http\Controllers;
 
+use App\Exceptions\Error;
 use App\Http\Controller;
 use App\Models\User\Browse;
 use App\Models\User\Favorite;
@@ -26,11 +27,6 @@ class ProductController extends Controller
 {
 
     /**
-     * @var string
-     */
-    protected $favoriteType = 'website_product';
-
-    /**
      * 产品列表
      *
      * @return Response
@@ -39,16 +35,17 @@ class ProductController extends Controller
     {
         $keywords = $this->request->keywordsSql();
 
-        $order = 'publish_time desc';
+        $order = 'publish_time';
         if (!empty($keywords)) {
-            $order = 'view_count desc';
+            $order = 'view_count';
         }
 
         $search = $this->request->query();
-        $data = WebsiteArticle::with('category')
-            ->simple()->search($search)
+        $data = WebsiteArticle::simple()
+            ->with('category')
+            ->search($search)
             ->where('status', 1)
-            ->order($order)
+            ->orderByDesc($order)
             ->paginate();
 
         return Hint::result($data);
@@ -67,7 +64,7 @@ class ProductController extends Controller
         /** @var WebsiteProduct $info */
         $info = WebsiteProduct::with(['category'])->where('id', $id)->firstOrFail();
         if ($info->status == 0) {
-            throw new ModelNotFoundException("产品不存在！", WebsiteProduct::class);
+            Error::modelNotFound(WebsiteProduct::class);
         }
 
         // 当有user_id时判断信息

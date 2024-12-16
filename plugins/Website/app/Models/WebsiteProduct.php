@@ -10,9 +10,10 @@ namespace Plugins\Website\App\Models;
 use App\Contracts\FavoriteListenerOfStatic;
 use App\Events\FavoriteEvent;
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PDOException;
-use Xin\ThinkPHP\Util\DbUtil;
+use Xin\LaravelFortify\Support\DbUtil;
 
 /**
  * @property int id
@@ -30,15 +31,13 @@ class WebsiteProduct extends Model implements FavoriteListenerOfStatic
 
     use SoftDeletes, FieldFormatable;
 
+    // 模型标题
+    const TITLE = '产品';
+
     /**
      * 主题类型
      */
     const MORPH_TYPE = 'website_product';
-
-    /**
-     * @var string
-     */
-    protected $table = 'website_product';
 
     /**
      * @var array
@@ -95,7 +94,7 @@ class WebsiteProduct extends Model implements FavoriteListenerOfStatic
     public function category()
     {
         return $this->belongsTo(WebsiteProductCategory::class, "category_id")
-            ->select('id,title,cover');
+            ->select(['id', 'title', 'cover']);
     }
 
 }

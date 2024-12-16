@@ -18,7 +18,7 @@ trait FieldFormatable
      *
      * @return string
      */
-    protected function getSimplyViewCountAttr()
+    protected function getSimplyViewCountAttribute()
     {
         $val = $this->getRawOriginal('view_count');
 
@@ -30,7 +30,7 @@ trait FieldFormatable
      *
      * @return string
      */
-    protected function getSimplyGoodCountAttr()
+    protected function getSimplyGoodCountAttribute()
     {
         $val = $this->getRawOriginal('good_count');
 
@@ -42,7 +42,7 @@ trait FieldFormatable
      *
      * @return string
      */
-    protected function getSimplyCollectCountAttr()
+    protected function getSimplyCollectCountAttribute()
     {
         $val = $this->getRawOriginal('collect_count');
 
@@ -54,7 +54,7 @@ trait FieldFormatable
      *
      * @return string
      */
-    protected function getSimplyCommentCountAttr()
+    protected function getSimplyCommentCountAttribute()
     {
         $val = $this->getRawOriginal('comment_count');
 
@@ -66,7 +66,7 @@ trait FieldFormatable
      *
      * @return string
      */
-    protected function getSimplyUpdateTimeAttr()
+    protected function getSimplyUpdateTimeAttribute()
     {
         $val = $this->getRawOriginal('update_time');
 

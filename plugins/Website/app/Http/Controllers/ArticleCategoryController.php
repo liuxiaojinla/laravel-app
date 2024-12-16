@@ -28,14 +28,15 @@ class ArticleCategoryController extends Controller
         $isGood = $this->request->integer('is_good', 0);
         $userId = $this->auth->id();
 
-        $order = 'id DESC';
+        $order = 'id';
         if ($isGood) {
-            $order = 'good_time DESC';
+            $order = 'good_time';
         }
 
         $search = $this->request->query();
-        $data = WebsiteArticleCategory::simple()->search($search)->order($order)
-            ->select()->each(function (WebsiteArticleCategory $item) use ($isGood, $userId) {
+        $data = WebsiteArticleCategory::simple()->search($search)->orderByDesc($order)
+            ->get()
+            ->each(function (WebsiteArticleCategory $item) use ($isGood, $userId) {
                 $postCount = WebsiteArticle::query()->where([
                     'status' => 1,
                     'category_id' => $item->id,

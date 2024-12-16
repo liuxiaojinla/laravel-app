@@ -20,13 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class WebsiteAbout extends Model
 {
-
     use SoftDeletes, FieldFormatable;
-
-    /**
-     * @var string
-     */
-    protected $table = 'website_about';
 
     /**
      * @var array

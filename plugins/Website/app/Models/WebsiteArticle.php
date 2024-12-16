@@ -37,11 +37,6 @@ class WebsiteArticle extends Model implements FavoriteListenerOfStatic
     const MORPH_TYPE = 'website_article';
 
     /**
-     * @var string
-     */
-    protected $table = 'website_article';
-
-    /**
      * @var array
      */
     protected $type = [
@@ -117,7 +112,7 @@ class WebsiteArticle extends Model implements FavoriteListenerOfStatic
     public function category()
     {
         return $this->belongsTo(WebsiteArticleCategory::class, "category_id")
-            ->select('id,title,cover');
+            ->select(['id','title','cover']);
     }
 
 }

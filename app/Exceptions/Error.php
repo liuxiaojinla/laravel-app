@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException as BaseValidationException;
 use Xin\LaravelFortify\Validation\ValidationException;
@@ -27,7 +28,7 @@ class Error
      * @return mixed
      * @throws BaseValidationException
      */
-    public static function throwValidateException($message)
+    public static function validation($message)
     {
         throw self::validationException($message);
     }
@@ -58,6 +59,31 @@ class Error
 
         return new AuthenticationException(
             'Unauthenticated.', $guards, $redirectTo
+        );
+    }
+
+    /**
+     * 抛出模型未找到异常
+     * @param object|string $objectOrClass
+     * @param array<int, int|string>|int|string $ids
+     * @return ModelNotFoundException
+     */
+    public static function modelNotFound($objectOrClass, $ids = [])
+    {
+        return self::modelNotFoundException($objectOrClass, $ids);
+    }
+
+    /**
+     * 返回模型未找到异常
+     * @param object|string $objectOrClass
+     * @param array<int, int|string>|int|string $ids
+     * @return ModelNotFoundException
+     */
+    public static function modelNotFoundException($objectOrClass, $ids = [])
+    {
+        return (new ModelNotFoundException)->setModel(
+            is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass
+            , $ids
         );
     }
 }

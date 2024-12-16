@@ -19,7 +19,7 @@ use Plugins\Website\App\Http\Controllers\ProductController;
     |
 */
 
-Route::prefix('article')->name('article.')->group(function () {
+Route::prefix('index')->name('index.')->group(function () {
     Route::get('/about', [IndexController::class, 'about'])->name('about');
     Route::get('/submit_leaving_msg', [ArticleController::class, 'submitLeavingMsg'])->name('submit_leaving_msg');
 });

@@ -29,12 +29,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class WebsiteArticleCategory extends Model
 {
-
-
     /**
-     * @var string
+     * 主题类型
      */
-    protected $table = 'website_article_category';
+    const MORPH_TYPE = 'website_article_category';
 
     /**
      * 获取推荐列表
@@ -45,15 +43,16 @@ class WebsiteArticleCategory extends Model
      * @param int $limit
      * @return array|Collection
      */
-    public static function getGoodList($query, $order = 'sort asc', $page = 1, $limit = 10)
+    public static function getGoodList($query, $order = 'sort desc', $page = 1, $limit = 10)
     {
-        $field = 'id,title,cover';
+        $field = ['id', 'title', 'cover'];
 
+        $order = explode(" ", $order);
         return static::query()->where('status', 1)
             ->where($query)
             ->select($field)
-            ->order($order)
-            ->page($page, $limit)
+            ->orderBy($order[0], $order[1] ?? 'desc')
+            ->forPage($page, $limit)
             ->get();
     }
 
@@ -86,11 +85,11 @@ class WebsiteArticleCategory extends Model
      */
     public function getLastFollowUsers($user = null, $count = 5)
     {
-        $followUsers = $this->followUsers()->select('user.id,user.nickname,user.avatar')
-            ->where('pivot.topic_type', 'website_article_category')
-            ->order('pivot.id desc')->limit(0, $count)
-            ->hidden(['pivot'])
-            ->get();
+        $followUsers = $this->followUsers()->select(['users.id', 'users.nickname', 'users.avatar'])
+            ->wherePivot('topic_type', self::MORPH_TYPE)
+            ->orderByPivot('id')->limit($count)
+            ->get()
+            ->makeHidden('pivot');
 
         if (empty($user)) {
             return $followUsers;
@@ -100,13 +99,13 @@ class WebsiteArticleCategory extends Model
         foreach ($followUsers as $key => $followUser) {
             if ($user['id'] == $followUser['id']) {
                 unset($followUsers[$key]);
-                $followUsers->unshift($user);
+                $followUsers->prepend($user);
 
                 return $followUsers;
             }
         }
 
-        $followUsers->unshift($user);
+        $followUsers->prepend($user);
 
         return $followUsers;
     }

@@ -12,13 +12,10 @@ use App\Models\Model;
 
 class Website extends Model
 {
-
-    use  OpenAppable;
-
     /**
-     * @var string
+     * 主题类型
      */
-    protected $table = 'website';
+    const MORPH_TYPE = 'website';
 
     /**
      * @var string[]
@@ -35,7 +32,7 @@ class Website extends Model
      */
     protected function getRegionJsonAttr()
     {
-        return json_encode($this->getRegionAttr(), JSON_UNESCAPED_UNICODE);
+        return json_encode($this->getRegionAttribute(), JSON_UNESCAPED_UNICODE);
     }
 
     /**
@@ -43,13 +40,13 @@ class Website extends Model
      *
      * @return array
      */
-    protected function getRegionAttr()
+    protected function getRegionAttribute()
     {
         return [
-            "province" => $this->getData('province'),
-            "city" => $this->getData('city'),
-            "district" => $this->getData('district'),
-            "township" => $this->getData('township'),
+            "province" => $this->getRawOriginal('province'),
+            "city" => $this->getRawOriginal('city'),
+            "district" => $this->getRawOriginal('district'),
+            "township" => $this->getRawOriginal('township'),
         ];
     }
 

@@ -30,11 +30,6 @@ class WebsiteCase extends Model
     const MORPH_TYPE = 'website_cases';
 
     /**
-     * @var string
-     */
-    protected $table = 'website_case';
-
-    /**
      * @var array
      */
     protected $type = [
@@ -74,7 +69,7 @@ class WebsiteCase extends Model
     public function category()
     {
         return $this->belongsTo(WebsiteCaseCategory::class, "category_id")
-            ->select('id,title,cover');
+            ->select(['id', 'title', 'cover']);
     }
 
 }

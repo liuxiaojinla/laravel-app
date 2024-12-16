@@ -7,9 +7,12 @@
 
 namespace Plugins\Website\App\Models;
 
-use app\common\model\User;
-use app\common\model\user\Favorite;
 use App\Models\Model;
+use App\Models\User;
+use App\Models\User\Favorite;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 /**
@@ -27,13 +30,10 @@ use App\Models\Model;
 class WebsiteProductCategory extends Model
 {
 
-    use OpenAppable;
-
-
     /**
-     * @var string
+     * 主题类型
      */
-    protected $table = 'website_product_category';
+    const MORPH_TYPE = 'website_product_category';
 
     /**
      * 获取列表
@@ -42,17 +42,18 @@ class WebsiteProductCategory extends Model
      * @param string $order
      * @param int $page
      * @param int $limit
-     * @return array|Collection
+     * @return Collection
      */
     public static function getGoodList($query, $order = 'sort asc', $page = 1, $limit = 10)
     {
-        $field = 'id,title,cover';
+        $field = ['id', 'title', 'cover'];
 
+        $order = explode(" ", $order);
         return static::query()->where('status', 1)
             ->where($query)
             ->select($field)
-            ->order($order)
-            ->page($page, $limit)
+            ->orderBy($order[0], $order[1] ?? 'desc')
+            ->forPage($page, $limit)
             ->get();
     }
 
@@ -85,11 +86,11 @@ class WebsiteProductCategory extends Model
      */
     public function getLastFollowUsers($user = null, $count = 5)
     {
-        $followUsers = $this->followUsers()->select('user.id,user.nickname,user.avatar')
-            ->where('pivot.topic_type', static::class)
-            ->order('pivot.id desc')->limit(0, $count)
-            ->hidden(['pivot'])
-            ->get();
+        $followUsers = $this->followUsers()->select(['users.id', 'users.nickname', 'users.avatar'])
+            ->wherePivot('topic_type', static::MORPH_TYPE)
+            ->orderByPivot('id', 'desc')->limit($count)
+            ->get()
+            ->makeHidden(['pivot']);
 
         if (empty($user)) {
             return $followUsers;
@@ -99,13 +100,13 @@ class WebsiteProductCategory extends Model
         foreach ($followUsers as $key => $followUser) {
             if ($user['id'] == $followUser['id']) {
                 unset($followUsers[$key]);
-                $followUsers->unshift($user);
+                $followUsers->prepend($user);
 
                 return $followUsers;
             }
         }
 
-        $followUsers->unshift($user);
+        $followUsers->prepend($user);
 
         return $followUsers;
     }
