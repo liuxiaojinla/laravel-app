@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Xin\Support\Arr;
 
 class LoginRequest extends FormRequest
 {
@@ -29,7 +30,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string',
+            'username' => 'sometimes|required|string',
+            'account' => 'required_without:username|string',
             'password' => 'required|string',
         ];
     }
@@ -41,8 +43,10 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): User
     {
-        $credentials = $this->only(['username', 'password']);
+        $credentials = $this->only(['username', 'account', 'password']);
         $remember = $this->boolean('remember');
+
+        $credentials = Arr::transformKeys($credentials, ['account' => 'username']);
         $account = $credentials['username'];
 
         $this->ensureIsNotRateLimited($account);

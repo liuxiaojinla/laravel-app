@@ -1,0 +1,19 @@
+{
+    "name": "plugins/point-mall",
+    "description": "",
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\PointMall\\": "",
+            "Plugins\\PointMall\\App\\": "app/",
+            "Plugins\\PointMall\\Database\\Factories\\": "database/factories/",
+            "Plugins\\PointMall\\Database\\Seeders\\": "database/seeders/"
+        }
+    }
+}

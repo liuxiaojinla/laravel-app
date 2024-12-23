@@ -3,8 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Controller;
+use Illuminate\Http\Response;
 use Qiniu\Http\Request;
 use Xin\Hint\Facades\Hint;
+use Xin\Setting\Contracts\Factory as SettingFactory;
 use Xin\Support\Arr;
 
 class IndexController extends Controller
@@ -25,16 +27,22 @@ class IndexController extends Controller
      */
     public function quickSearch(Request $request)
     {
-        $data = adv_event('QuickSearch', $request->keywordsSql('global_keywords'));
+        $data = event('QuickSearch', $request->keywordsSql('global_keywords'));
         if (!empty($data)) {
             $data = array_filter(Arr::flatten($data, 1));
         }
 
-        $this->assign('data', $data);
+        return Hint::result($data);
+    }
 
-        return view('quick_search', [
-            'data' => $data,
-        ]);
+    /**
+     * @param SettingFactory $factory
+     * @return Response
+     */
+    public function config(SettingFactory $factory)
+    {
+        $data = $factory->loadOnPublic();
+        return Hint::result($data);
     }
 
 }

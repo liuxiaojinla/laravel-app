@@ -9,10 +9,11 @@ use App\Admin\Controllers\Media\VideoController;
 use App\Admin\Controllers\NoticeController;
 use App\Admin\Controllers\SinglePageController;
 use App\Admin\Controllers\UrlChoiceController;
-use App\Http\Controllers\IndexController;
+use App\Admin\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index']);
+Route::get('/config', [IndexController::class, 'config']);
 
 // 协议
 Route::middleware(['auth'])->prefix('agreement')->name('agreement.')->group(function () {

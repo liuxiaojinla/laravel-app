@@ -105,7 +105,7 @@ class Order extends Model
      * @param array $orderData
      * @param iterable $orderGoodsList
      * @return static
-     * @throws \Exception
+     * @throws ValidationException
      */
     public static function fastCreate(array $orderData, $orderGoodsList)
     {
@@ -219,7 +219,7 @@ class Order extends Model
             'close_time' => 0,
         ], $order);
 
-        // 验证数据合法性
+        // 验证数据合法性 todo
         $request = OrderRequest::create('', 'POST', $order);
         $request->setContainer(app());
         $request->setRedirector(redirect());

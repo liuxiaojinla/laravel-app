@@ -44,9 +44,13 @@ class Handler extends ExceptionHandler
             if ($this->shouldReturnJson($request, $e)) {
                 $response = $e->getResponse();
                 if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-                    return Hint::success($response->getContent());
+                    return $this->responseAddCorsHeaders(
+                        Hint::success($response->getContent())
+                    );
                 } else {
-                    return Hint::error($response->getContent(), $response->getStatusCode());
+                    return $this->responseAddCorsHeaders(
+                        Hint::error($response->getContent(), $response->getStatusCode())
+                    );
                 }
             }
 
@@ -72,7 +76,9 @@ class Handler extends ExceptionHandler
     protected function unauthenticatedJson(AuthenticationException $exception)
     {
         $url = $exception->redirectTo();
-        return Hint::error($exception->getMessage(), Error::UNAUTHENTICATED, $url);
+        return $this->responseAddCorsHeaders(
+            Hint::error($exception->getMessage(), Error::UNAUTHENTICATED, $url)
+        );
     }
 
     /**
@@ -85,13 +91,13 @@ class Handler extends ExceptionHandler
     protected function invalidJson($request, ValidationException $exception)
     {
         $msg = current($exception->errors())[0];
-        return Hint::error(
-            $msg,
-            $exception->status,
-            null,
-            [
-                'errors' => $exception->errors(),
-            ]
+        return $this->responseAddCorsHeaders(
+            Hint::error(
+                $msg, $exception->status, null,
+                [
+                    'errors' => $exception->errors(),
+                ]
+            )
         );
     }
 
@@ -105,8 +111,10 @@ class Handler extends ExceptionHandler
     protected function prepareJsonResponse($request, Throwable $e)
     {
         $result = $this->convertExceptionToArray($e);
-        return Hint::error(
-            $result['msg'], $result['code'], $request->url(), $result
+        return $this->responseAddCorsHeaders(
+            Hint::error(
+                $result['msg'], $result['code'], $request->url(), $result
+            )
         );
     }
 

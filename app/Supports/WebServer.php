@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Route;
 
 final class WebServer
 {
@@ -22,6 +23,7 @@ final class WebServer
         return $request->expectsJson() || $request->is([
                 'api/*',
                 'admin/*',
+                'adminapi/*',
                 'notify/*',
             ]);
     }

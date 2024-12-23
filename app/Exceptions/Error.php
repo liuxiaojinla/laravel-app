@@ -23,17 +23,6 @@ class Error
     }
 
     /**
-     * 抛出验证错误
-     * @param string $message
-     * @return mixed
-     * @throws BaseValidationException
-     */
-    public static function validation($message)
-    {
-        throw self::validationException($message);
-    }
-
-    /**
      * 验证错误
      * @param string $message
      * @return BaseValidationException
@@ -46,12 +35,33 @@ class Error
     }
 
     /**
+     * 抛出验证错误
+     * @param string $message
+     * @throws BaseValidationException
+     */
+    public static function validation($message)
+    {
+        throw self::validationException($message);
+    }
+
+    /**
+     * 用户未登录授权
+     * @param null $redirectTo
+     * @param null $guards
+     * @throws AuthenticationException
+     */
+    public static function unauthenticated($redirectTo = null, $guards = null)
+    {
+        throw self::unauthenticatedException($redirectTo, $guards);
+    }
+
+    /**
      * 用户未登录授权
      * @param string $redirectTo
      * @param array|null $guards
      * @return AuthenticationException
      */
-    public static function unauthenticated($redirectTo = null, $guards = null)
+    public static function unauthenticatedException($redirectTo = null, $guards = null)
     {
         if ($guards === null) {
             $guards = [Auth::getDefaultDriver()];
@@ -66,11 +76,11 @@ class Error
      * 抛出模型未找到异常
      * @param object|string $objectOrClass
      * @param array<int, int|string>|int|string $ids
-     * @return ModelNotFoundException
+     * @throws ModelNotFoundException
      */
     public static function modelNotFound($objectOrClass, $ids = [])
     {
-        return self::modelNotFoundException($objectOrClass, $ids);
+        throw self::modelNotFoundException($objectOrClass, $ids);
     }
 
     /**

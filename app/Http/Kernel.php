@@ -52,7 +52,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \App\Http\Middleware\StartSession::class,
-            \App\Admin\Middleware\CheckForSafeVisit::class,
+//            \App\Admin\Middleware\CheckForSafeVisit::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \App\Admin\Middleware\CheckForRouteAuth::class,
             //            \App\Http\Middleware\VerifyCsrfToken::class,

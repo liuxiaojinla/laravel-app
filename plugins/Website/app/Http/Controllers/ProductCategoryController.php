@@ -9,6 +9,7 @@ namespace Plugins\Website\App\Http\Controllers;
 
 use App\Http\Controller;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Plugins\Website\App\Models\WebsiteProduct;
 use Plugins\Website\App\Models\WebsiteProductCategory;
 use Xin\Hint\Facades\Hint;
@@ -27,29 +28,33 @@ class ProductCategoryController extends Controller
     {
         $isGood = $this->request->integer('is_good', 0);
 
-        $order = 'id DESC';
+        $order = 'id';
         if ($isGood) {
-            $order = 'good_time DESC';
+            $order = 'good_time';
         }
 
         $search = $this->request->query();
-        $data = WebsiteProductCategory::simple()->search($search)->order($order)
-            ->paginate()
-            ->each(function (WebsiteProductCategory $item) use ($isGood) {
-                $postCount = WebsiteProduct::query()->where([
-                    'status' => 1,
-                    'category_id' => $item->id,
-                ])->count();
-                $item['product_count'] = Number::formatSimple($postCount);
 
-                if (!$isGood) {
-                    $item['follow_users'] = $item->getLastFollowUsers(
-                        $this->auth->user()
-                    );
-                }
+        /** @var LengthAwarePaginator $data */
+        $data = WebsiteProductCategory::simple()
+            ->search($search)
+            ->orderByDesc($order)
+            ->paginate();
+        $data->each(function (WebsiteProductCategory $item) use ($isGood) {
+            $postCount = WebsiteProduct::query()->where([
+                'status' => 1,
+                'category_id' => $item->id,
+            ])->count();
+            $item['product_count'] = Number::formatSimple($postCount);
 
-                return $item;
-            });
+            if (!$isGood) {
+                $item['follow_users'] = $item->getLastFollowUsers(
+                    $this->auth->user()
+                );
+            }
+
+            return $item;
+        });
 
         return Hint::result($data);
     }

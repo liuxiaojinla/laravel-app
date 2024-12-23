@@ -21,7 +21,7 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * @var string[]
      */
-    protected static $allowModuleList = ['api', 'admin', 'web'];
+    protected static $allowModuleList = ['api', 'adminapi', 'web'];
     /**
      * @var string
      */
@@ -79,10 +79,10 @@ class RouteServiceProvider extends ServiceProvider
                 $this->app->register(ApiModuleBootstrapServiceProvider::class);
             }
 
-            if ($module === 'admin' || app()->runningInConsole()) {
+            if ($module === 'adminapi' || app()->runningInConsole()) {
                 Route::middleware('admin')
-                    ->prefix('admin')
-                    ->name('admin.')
+                    ->prefix('adminapi')
+                    ->name('adminapi.')
                     ->group(base_path('routes/admin/index.php'));
                 $this->app->register(AdminModuleBootstrapServiceProvider::class);
             }
@@ -100,18 +100,18 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function moduleParse(string $requestPath): array
     {
-        $module = self::$defaultModule;
+        $module = self::getDefaultModule();
         $modulePath = $requestPath;
 
         if ($index = strpos($requestPath, '/')) {
             $module = substr($requestPath, 0, $index);
-            if (in_array($module, self::$allowModuleList)) {
+            if (in_array($module, self::getAllowModuleList())) {
                 $modulePath = substr($requestPath, $index + 1);
             } else {
                 $module = self::$defaultModule;
             }
         } else {
-            if (in_array($requestPath, self::$allowModuleList)) {
+            if (in_array($requestPath, self::getAllowModuleList())) {
                 $module = $requestPath;
                 $modulePath = '';
             }

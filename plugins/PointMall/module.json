@@ -1,0 +1,11 @@
+{
+    "name": "PointMall",
+    "alias": "pointmall",
+    "description": "积分商城",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Plugins\\PointMall\\App\\Providers\\AppServiceProvider"
+    ],
+    "files": []
+}

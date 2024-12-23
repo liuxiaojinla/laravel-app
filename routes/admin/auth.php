@@ -23,5 +23,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->prefix('auth')->name('auth.')->group(function () {
     Route::post('/password', [PasswordController::class, 'update'])->name('password.update');
     Route::get('/info', [ProfileController::class, 'info'])->name('info');
+    Route::get('/update', [ProfileController::class, 'update'])->name('update');
     Route::get('/menus', [MenuController::class, 'index'])->name('menus');
 });
