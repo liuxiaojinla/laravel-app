@@ -9,6 +9,7 @@ use App\Supports\WebServer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Xin\Hint\Facades\Hint;
 
@@ -39,7 +40,9 @@ class AuthenticatedSessionController extends Controller
                 'info' => $user->makeHidden([
                     'password',
                 ])->toArray(),
-                'token' => WebServer::getEncryptSessionCookieValue(),
+                'token' => WebServer::encryptSessionIdAsCookieValue(
+                    Session::getId()
+                ),
             ]
         );
     }

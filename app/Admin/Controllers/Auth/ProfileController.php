@@ -6,6 +6,8 @@ use App\Admin\Controller;
 use App\Admin\Services\AdminService;
 use Illuminate\Foundation\Application;
 use Xin\Hint\Facades\Hint;
+use Xin\Menu\Contracts\Factory as MenuFactory;
+use Xin\Support\Arr;
 
 class ProfileController extends Controller
 {
@@ -29,12 +31,34 @@ class ProfileController extends Controller
      * 获取当前登录用户信息
      * @return mixed
      */
-    public function info()
+    public function info(MenuFactory $factory)
     {
         $userId = $this->auth->id();
         $user = $this->adminService->get($userId);
 
-        return Hint::result($user);
+        [$menus, $breads] = $factory->menu()->generate('');
+
+        $permissions = [];
+        Arr::treeEach($menus, function ($item) use (&$permissions) {
+            $permissions[] = $item['url'];
+        });
+
+        return Hint::result([
+            'user' => $user,
+            'permissions' => $permissions,
+            'menu' => $menus,
+        ]);
+    }
+
+    /**
+     * @param MenuFactory $factory
+     * @return mixed
+     */
+    public function menus(MenuFactory $factory)
+    {
+        [$menus, $breads] = $factory->menu()->generate('');
+
+        return Hint::result($menus);
     }
 
     /**

@@ -36,13 +36,22 @@ class IndexController extends Controller
     }
 
     /**
+     * 获取站点配置
      * @param SettingFactory $factory
      * @return Response
      */
     public function config(SettingFactory $factory)
     {
         $data = $factory->loadOnPublic();
-        return Hint::result($data);
+
+        $config = [];
+        foreach ($data as $key => &$item) {
+            $key = str_replace(".", "_", $key);
+            $config[$key] = &$item;
+        }
+        unset($item);
+
+        return Hint::result($config);
     }
 
 }

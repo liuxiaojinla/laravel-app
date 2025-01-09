@@ -13,8 +13,8 @@ return [
         'admin' => [
             'driver' => 'model',
             'model' => \Xin\Menu\Laravel\DatabaseMenu::class,
-            'base_path' => base_path('admin') . 'menus.php',
-            'target_path' => storage_path('admin') . 'menus.php',
+            'base_path' => app_path(join_paths('Admin', 'menus.php')),
+//            'target_path' => storage_path('admin_menus.php'),
         ],
     ],
 ];

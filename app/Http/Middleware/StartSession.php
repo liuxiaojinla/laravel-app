@@ -18,10 +18,7 @@ class StartSession extends Middleware
     {
         $session = parent::getSession($request);
         if ($token = $request->header('token')) {
-            $sessionId = WebServer::decryptCookieValue(
-                WebServer::getSessionCookieKey(),
-                $token
-            );
+            $sessionId = WebServer::decryptCookieValueAsSessionId($token);
             $session->setId($sessionId);
         }
 

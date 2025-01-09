@@ -105,7 +105,7 @@ trait CrudOperations
             return null;
         }
 
-        $info = $this->newQuery()->make()->setRawAttributes($data, true);
+        $info = $this->newQuery()->make()->forceFill($data);
         $info->exists = true;
 
         return $info;

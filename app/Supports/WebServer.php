@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Route;
 
 final class WebServer
 {
@@ -32,18 +31,31 @@ final class WebServer
      * 解密Cookie的值
      *
      * @param string $cookieName
-     * @param string $cookieValue
+     * @param string $encryptedCookieValue
      * @return string
      */
-    public static function decryptCookieValue($cookieName, $cookieValue)
+    public static function decryptCookieValue($cookieName, $encryptedCookieValue)
     {
-        $value = Crypt::decrypt($cookieValue);
-
-        return CookieValuePrefix::validate($cookieName, $value, Crypt::getKey());
+        try {
+            $value = Crypt::decrypt($encryptedCookieValue);
+            return CookieValuePrefix::validate($cookieName, $value, Crypt::getKey());
+        } finally {
+            return null;
+        }
     }
 
     /**
-     * 获取Session的Cookie加密的值
+     * 解密Session的Cookie的值
+     * @param string $encryptedCookieValue
+     * @return string|null
+     */
+    public static function decryptCookieValueAsSessionId($encryptedCookieValue)
+    {
+        return self::decryptCookieValue(self::getSessionCookieKey(), $encryptedCookieValue);
+    }
+
+    /**
+     * 从Cookie中获取当前Session的加密值
      * @return string
      */
     public static function getEncryptSessionCookieValue()
@@ -77,6 +89,16 @@ final class WebServer
         return Crypt::encrypt(
             CookieValuePrefix::create($cookieName, Crypt::getKey()) . $cookieValue
         );
+    }
+
+    /**
+     * 加密SessionId为Cookie值
+     * @param string $sessionId
+     * @return string
+     */
+    public static function encryptSessionIdAsCookieValue($sessionId)
+    {
+        return self::encryptCookieValue(self::getSessionCookieKey(), $sessionId);
     }
 
     /**

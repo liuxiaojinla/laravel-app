@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Xin\Menu\Contracts\Factory;
 
 class ModuleBootstrapServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,13 @@ class ModuleBootstrapServiceProvider extends ServiceProvider
                 'driver' => 'admin',
                 'model' => \App\Admin\Models\Admin::class,
             ], config('auth.providers.admins', [])),
+
+            'auth.passwords.admins' => array_merge([
+                'provider' => 'admins',
+                'table' => 'password_reset_tokens',
+                'expire' => 60,
+                'throttle' => 60,
+            ], config('auth.passwords.admins', [])),
         ]);
 
         RateLimiter::for('admin', function (Request $request) {
@@ -48,6 +56,10 @@ class ModuleBootstrapServiceProvider extends ServiceProvider
 
         Auth::resolved(function ($auth) {
             //            dd(config('auth'));
+        });
+
+        $this->booted(function (Factory $factory){
+            $factory->menu()->refresh();
         });
     }
 }

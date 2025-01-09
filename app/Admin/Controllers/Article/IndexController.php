@@ -27,7 +27,9 @@ class IndexController extends Controller
     public function index(Request $request)
     {
         $search = $request->query();
-        $data = Article::simple()->search($search)
+        $data = Article::simple()
+            ->with(['category'])
+            ->search($search)
             ->orderByDesc('id')
             ->paginate();
 
