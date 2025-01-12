@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Translation\Translator;
 use Xin\Hint\Facades\Hint;
 use Xin\Setting\Facades\Setting;
+use Xin\Support\Arr;
 use Xin\Support\Fluent;
 use Xin\Support\Reflect;
 
@@ -101,7 +102,14 @@ class IndexController extends Controller
      */
     public function config()
     {
-        return Hint::result(Setting::loadOnPublic());
+        $config = Setting::loadOnPublic();
+        $config = Arr::transformKeys($config, function ($key) {
+            return str_ireplace('.', '_', $key);
+        });
+//        $config = array_combine(array_map(function ($key) {
+//            return str_ireplace('.', '_', $key);
+//        }, array_keys($config)), array_values($config));
+        return Hint::result($config);
     }
 
     /**
@@ -158,7 +166,7 @@ class IndexController extends Controller
         $translator = $this->app['translator'];
         $translator->load('*', '*', 'en');
         $translator->load('*', '*', 'zh_CN');
-        $languages = Reflect::getPropertyValue($translator, 'loaded')['*']['*'];
+        $languages = Reflect::get($translator, 'loaded')['*']['*'];
         return Hint::result($languages);
     }
 }
